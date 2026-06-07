@@ -203,9 +203,6 @@
   button:disabled{opacity:.4;cursor:not-allowed}
   .hidden{display:none!important}
   #board{background:#070611;border:2px solid var(--line);border-radius:10px;display:block;image-rendering:pixelated}
-  #boardWrap{position:relative;max-width:100%;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
-  /* 脱出ボタンは下部・誤タップ防止のため十字から離して配置 */
-  .gamebtns #escapeMenuBtn{font-weight:800}
   .stat{display:flex;justify-content:space-between;font-size:13px;margin:2px 0}
   .bar{height:12px;background:#241c3f;border-radius:7px;overflow:hidden;border:1px solid var(--line)}
   .bar > i{display:block;height:100%}
@@ -391,12 +388,10 @@
   #homeBtn.hidden{display:none}
   /* ===== モバイル（縦並び・大ボタン・キャンバス全幅） ===== */
   @media(max-width:860px){
-    #app{padding:3px}
-    .row{flex-direction:column;gap:7px}
+    #app{padding:6px}
+    .row{flex-direction:column;gap:8px}
     .row > .col{min-width:0!important;width:100%}
-    #board{width:calc(100% * var(--bz,1));height:auto;max-width:calc(680px * var(--bz,1));margin:0 auto}
-    .gamebtns button{font-size:15px;padding:12px 14px}
-    #escapeMenuBtn{min-width:140px}
+    #board{width:100%;height:auto;max-width:560px;margin:0 auto}
     .legend{display:none}
     .controls{grid-template-columns:repeat(3,64px);grid-template-rows:repeat(3,64px);gap:6px}
     .controls button{font-size:26px}
@@ -744,7 +739,7 @@
   <div id="game" class="hidden">
     <div class="row">
       <div class="col" style="position:relative">
-        <div id="boardWrap"><canvas id="board" width="780" height="672"></canvas></div>
+        <canvas id="board" width="780" height="672"></canvas>
         <div id="tutToast"></div>
         <div class="panel" style="padding:8px">
           <div class="row" style="align-items:center;justify-content:space-between">
@@ -766,12 +761,10 @@
               <b>⤡斜め</b>=十字で斜め移動　<b>🎴カード</b>=手札を開く<br>
               <span class="gold">▼NEXT階段</span>で次へ / <span style="color:#7befff">▲階段</span>で前の階へ（1Fなら入口脱出）
             </div>
-          </div>
-          <div class="row gamebtns" style="justify-content:flex-end;gap:8px;margin-top:10px;flex-wrap:wrap">
-            <button id="summonBtn" title="仲間モンスターを召喚">👹 召喚</button>
-            <button id="zoomBtn" title="ダンジョン表示を拡大/標準に切替">🔍 拡大</button>
-            <button id="sndBtn" title="効果音 ON/OFF">🔊 SE</button>
-            <button id="escapeMenuBtn" class="danger">🚪 脱出/撤退</button>
+            <div class="col">
+              <button id="escapeMenuBtn">脱出/撤退</button>
+              <button id="sndBtn" title="効果音 ON/OFF">🔊 SE</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1239,10 +1232,10 @@ function log(msg,cls){const d=document.getElementById('log');const e=document.cr
 function K(base){ return (G.slot && G.slot!==1) ? base+'_'+G.slot : base; }
 function saveGame(){ try{ localStorage.setItem(K("mg_save"),
   JSON.stringify({medals:G.medals, collection:G.collection, endless:!!G.endlessAvail, slot:!!G.slotUnlocked,
-    stats:G.stats||{}, cdun:G.clearedDuns||{}, monCards:G.monCards||{}})); }catch(e){} }
+    stats:G.stats||{}, cdun:G.clearedDuns||{}})); }catch(e){} }
 function loadGame(){ try{ const s=JSON.parse(localStorage.getItem(K("mg_save")));
   if(s && typeof s.medals==="number"){ G.medals=s.medals; G.collection=s.collection||{}; G.endlessAvail=!!s.endless; G.slotUnlocked=!!s.slot;
-    G.stats=s.stats||{}; G.clearedDuns=s.cdun||{}; G.monCards=s.monCards||{}; return true; } }catch(e){}
+    G.stats=s.stats||{}; G.clearedDuns=s.cdun||{}; return true; } }catch(e){}
   return false; }
 // ---- 記録（挑戦回数・クリア数・最短クリア時間） & フリープレイ進行解放 ----
 function statOf(k){ G.stats=G.stats||{}; return (G.stats[k]=G.stats[k]||{att:0,clr:0,best:0}); }
@@ -1595,7 +1588,7 @@ function startRun(){
   G.swordMul=1; G.equip={sword:null,shield:null,rings:[]}; G.rings={}; G._defFrac=0; // 剣盾は1スロット／指輪は複数重複可（このランのみ）
   G.reviveCharge=false; G.handMax=10;
   G.status={barrier:0,invis:0,combo:0,speed:0,regen:0,charmCount:0,bright:false,silent:false};
-  G.regenLeft=0; G.loot=0; G.over=false; G.allies=[]; G.summon=null; G.floorCache={}; if(!G.monCards)G.monCards={};
+  G.regenLeft=0; G.loot=0; G.over=false; G.allies=[]; G.floorCache={};
   // hand = the bag (cards are now at risk: lost on death, kept on escape/clear)
   const limit = d.bagLimit || 10;
   G.hand = G.bag.slice(0, limit);
@@ -1797,7 +1790,6 @@ function buildFloor(){
   computeVisibility();
   announceFloor();
   document.getElementById('floorNo').textContent=`${G.floor}F / ${d.floors}F`;
-  placeSummonOnFloor(); // 召喚仲間は階が変わってもついてくる
 }
 // 実効フロア数（ストーリー章の短縮 shortFloors を考慮）
 function effFloors(){ const ch=G.storyMode&&curChapter(); return (ch&&ch.shortFloors)||DUNGEONS[G.dungeon].floors; }
@@ -2693,19 +2685,12 @@ function drawMon(m,ox,oy,ally){
   drawShadow(ox+m._vx*TW, oy+m._vy*TILE, big);
   const ds=dirSprite(m.name,m); // 方向・状態別スプライト（あれば）
   const img= ds ? ds.path : (poseSprite(m.name,m) || SPRITES.mon[m.name]); // 攻撃/被弾差し替え
-  if(ally){ // 仲間は青く表示（オーラ＋青フィルタ）
-    const agr=ctx.createRadialGradient(px+TW/2,py+TILE*0.5,2,px+TW/2,py+TILE*0.5,TW*0.52);
-    agr.addColorStop(0,'rgba(70,150,255,.42)'); agr.addColorStop(1,'rgba(70,150,255,0)');
-    ctx.fillStyle=agr; ctx.beginPath(); ctx.arc(px+TW/2,py+TILE*0.5,TW*0.52,0,7); ctx.fill();
-    ctx.save(); ctx.filter='brightness(1.06) sepia(1) hue-rotate(178deg) saturate(2.6)';
-  }
   drawUnitSprite(img, m.emoji, px,py,
     big?1.38:1.2, ds?ds.flip:(m._face||1), fl, sqx, sqy, 0, hyaw); // 被弾=横ターン
-  if(ally){ ctx.restore(); ctx.filter='none'; }
   // hp bar
   const ratio=clamp(m.hp/m.maxhp,0,1);
   ctx.fillStyle="#000a"; ctx.fillRect(px+6,py+TILE-10,TW-12,7);
-  ctx.fillStyle= ally?"#5bb8ff": (ratio>.5?"#ff8c69":"#ff5b6e");
+  ctx.fillStyle= ally?"#5bf0a0": (ratio>.5?"#ff8c69":"#ff5b6e");
   ctx.fillRect(px+6,py+TILE-10,(TW-12)*ratio,7);
   // status icon
   let s=""; if(m.lock>0)s="🔒"; else if(m.sleep>0)s="💤"; else if(m.poison>0)s="☠️";
@@ -2959,7 +2944,6 @@ function killMonster(mon){
   sfxKill(mon._fxDelay||0);            // とどめ: ドンッ……ザクッ……
   sfxVanish(matOf(mon), mon._fxDelay||0); // 素材別の消滅音（シュン/プシュ/カララ…）
   log(`✔ ${mon.name} を倒した！`,"l-good");
-  tryRecruit(mon); // 一定確率で仲間（カード）化
   // level cap growth（モンスターゲート風: 格上ほど大きく成長・最大+5・上限到達で停止）
   const cap=mon.cap[JOBS[G.job].capIdx];
   if(cap>(G._cap||0)){ G._cap=cap; }
@@ -3116,8 +3100,8 @@ function enemyPhase(){
   maybeGenerator();
   tickWorld();
   // allies act first (attack nearest enemy / follow)
-  G.allies.forEach(a=>{ if(!a.summon){ a.charm--; if(a.charm<=0) return; } allyAct(a); });
-  G.allies=G.allies.filter(a=> a.hp>0 && (a.summon || a.charm>0));
+  G.allies.forEach(a=>{ a.charm--; if(a.charm<=0){return;} allyAct(a); });
+  G.allies=G.allies.filter(a=>a.charm>0 && a.hp>0);
 
   // プレイヤーが今いる部屋（その部屋のモンスターは以後ロックオン）／開けた場所にいるか
   const proom = G.rooms.find(r=>G.px>=r.x&&G.px<r.x+r.w&&G.py>=r.y&&G.py<r.y+r.h);
@@ -3193,9 +3177,6 @@ function enemyPhase(){
       if(spots.length){ const [x,y]=pick(spots); spawnMonster("キラービー",x,y);
         if(canSee)log(`${m.name} がキラービーを産んだ！`,"l-warn"); continue; }
     }
-    // 隣接する味方を攻撃（プレイヤーが隣でない時）
-    { const _aa=G.allies.find(al=>dist(al.x,al.y,m.x,m.y)===1);
-      if(_aa && d>1 && canStep(m.x,m.y,_aa.x,_aa.y)){ enemyAttackAlly(m,_aa); continue; } }
     if(d===1){
       // melee respects corners: no diagonal hits into a corridor
       if(canStep(m.x,m.y,G.px,G.py)){ enemyAttack(m,false); }
@@ -3211,75 +3192,6 @@ function enemyPhase(){
   G._baiting=false;
   // venom leaves a poison trail on tiles it occupies（床ギミックと統一）
   G.monsters.forEach(m=>{ if(m.role==="poison" && G.tfx && G.tfx[m.y] && !obstAt(m.x,m.y) && tfxAt(m.x,m.y)!=='ice') G.tfx[m.y][m.x]='poison'; });
-  // 召喚仲間の生存同期＋死亡判定
-  const _sa=G.allies.find(a=>a.summon);
-  if(G.summon){ if(_sa) G.summon.hp=_sa.hp; if(!_sa || G.summon.hp<=0) onSummonDeath(); }
-}
-/* ===================== 仲間モンスター（捕獲→召喚→同行→戦闘→再カード化） ===================== */
-function tryRecruit(mon){
-  if(!mon||mon.ally||mon.summon||mon.guardian||mon.boss||!MONSTERS[mon.name]) return;
-  const chance=0.12 + Math.max(0,(6-(mon.pay||1)))*0.012; // 弱い敵ほど少し仲間にしやすい
-  if(Math.random()<chance){
-    G.monCards[mon.name]=(G.monCards[mon.name]||0)+1;
-    log(`✨ ${mon.name} が仲間になりたそうにしている…カードにした！`,"l-gold");
-    sfxUIConfirm&&sfxUIConfirm(); saveGame();
-  }
-}
-function removeSummonEntity(){ G.allies=G.allies.filter(a=>!a.summon); }
-function placeSummonOnFloor(){
-  if(!G.summon || G.summon.hp<=0){ removeSummonEntity(); return; }
-  removeSummonEntity();
-  let cell=null;
-  for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]]){
-    const x=G.px+dx,y=G.py+dy; if(walkable(x,y)&&!occupied(x,y)){ cell=[x,y]; break; } }
-  if(!cell) cell=[G.px,G.py];
-  const b=MONSTERS[G.summon.name];
-  G.allies.push({name:G.summon.name, x:cell[0], y:cell[1], hp:G.summon.hp, maxhp:G.summon.maxhp,
-    atk:G.summon.atk, def:G.summon.def, role:b.role, emoji:b.emoji, color:b.color, pay:b.pay, cap:b.cap,
-    lock:0,sleep:0,charm:9e9,poison:0,slow:0,panic:0, ally:true, summon:true, _dirX:0,_dirY:1,_face:1,_vx:cell[0],_vy:cell[1]});
-}
-function summonAlly(name){
-  if(!MONSTERS[name]||(G.monCards[name]||0)<=0) return;
-  if(G.summon) dismissSummon();            // 既存はカードに戻してから
-  G.monCards[name]--; if(G.monCards[name]<=0) delete G.monCards[name];
-  const base=MONSTERS[name], sc=floorFactor();
-  const hp=Math.max(1,Math.round(base.hp*sc*1.15));
-  G.summon={name,hp,maxhp:hp,atk:Math.max(2,Math.round(base.atk*sc)),def:base.def};
-  placeSummonOnFloor(); log(`👹 ${name} を召喚！味方になった`,"l-good"); saveGame();
-}
-function dismissSummon(){ if(!G.summon){ removeSummonEntity(); return; }
-  const nm=G.summon.name; G.monCards[nm]=(G.monCards[nm]||0)+1; removeSummonEntity(); G.summon=null;
-  log(`${nm} をカードに戻した`,"l-sys"); saveGame(); }
-function onSummonDeath(){ if(!G.summon){ removeSummonEntity(); return; }
-  const nm=G.summon.name; const dead=G.allies.find(a=>a.summon); if(dead) fxDie(dead);
-  removeSummonEntity(); G.summon=null; log(`💔 ${nm}(味方) が倒れた…`,"l-warn");
-  if(Math.random()<0.5){ G.monCards[nm]=(G.monCards[nm]||0)+1; log(`✨ ${nm} は再びカードになった！(50%)`,"l-good"); }
-  else log(`${nm} は失われた…`,"l-dmg");
-  saveGame(); }
-function enemyAttackAlly(m,a){
-  const dmg=Math.max(1, Math.round((m.atk||1)-(a.def||0)) + rnd(3));
-  a.hp-=dmg;
-  const edx=Math.sign(a.x-m.x), edy=Math.sign(a.y-m.y);
-  if(edx) m._face=edx>0?1:-1; m._dirX=edx; m._dirY=edy;
-  m._lunge={dx:edx,dy:edy,t0:now()};
-  a._hit={t0:now(),dx:edx,dy:edy,mag:1};
-  if(G.lit[a.y]&&G.lit[a.y][a.x]){ popText(a.x,a.y,'-'+dmg,'#7cc8ff'); log(`${m.name} が ${a.name}(味方) に ${dmg}`,'l-dmg'); }
-}
-function summonMenu(){
-  const cards=Object.entries(G.monCards||{}).filter(([nm,c])=>c>0);
-  const list = cards.length ? cards.map(([nm,c])=>{ const sp=MON_SPRITE[nm];
-      const ic=sp?`<img src="${sp}" style="height:30px;width:30px;object-fit:contain;vertical-align:middle">`:(MONSTERS[nm]?MONSTERS[nm].emoji:'👹');
-      const M=MONSTERS[nm]||{hp:0,atk:0};
-      return `<button class="smpick" data-n="${nm}" style="display:block;width:100%;text-align:left;margin:3px 0">${ic} ${nm} ×${c} <span class="tag">HP${M.hp} ATK${M.atk}</span></button>`; }).join('')
-    : `<p class="muted" style="font-size:12px">まだ仲間がいません。ダンジョンで敵を倒すと一定確率で仲間（カード）になります。</p>`;
-  const cur = G.summon ? `<p style="font-size:13px">現在召喚中: <b class="gold">${G.summon.name}</b>（HP ${Math.max(0,Math.round(G.summon.hp))}/${G.summon.maxhp}）</p>` : '';
-  showModal(`<h2>👹 仲間を召喚（同時に1体まで）</h2>${cur}
-    <p class="muted" style="font-size:12px">召喚した仲間は青く表示され、階が変わってもついてきて敵を攻撃します。倒れると50%で再びカードに戻ります。</p>
-    <div class="scroll" style="max-height:240px">${list}</div>
-    <div class="grid2" style="margin-top:10px">${G.summon?'<button id="smDismiss" class="danger">送還（カードに戻す）</button>':'<span></span>'}<button id="smClose">閉じる</button></div>`);
-  document.querySelectorAll('.smpick').forEach(b=>b.onclick=()=>{ summonAlly(b.dataset.n); hideModal(); });
-  const dm=document.getElementById('smDismiss'); if(dm) dm.onclick=()=>{ dismissSummon(); hideModal(); };
-  document.getElementById('smClose').onclick=hideModal;
 }
 function allyAct(a){
   // attack adjacent enemy else move toward nearest
@@ -4700,18 +4612,6 @@ document.querySelectorAll('.controls button').forEach(b=>{
     log(G.diagMode?"⤡ 斜め移動モード ON（十字ボタンが斜めに）":"⤡ 斜め移動モード OFF","l-sys");
   };
 })();
-/* 🔍 ダンジョン拡大ボタン（モバイルで表示倍率を切替。操作ボタンは別領域なので操作性は不変） */
-(function wireZoomBtn(){
-  const zb=document.getElementById('zoomBtn'); if(!zb) return;
-  const lvls=[1,1.3,1.6]; let zi=0;
-  const apply=()=>{ const bw=document.getElementById('boardWrap'); if(bw) bw.style.setProperty('--bz', lvls[zi]);
-    zb.textContent = (lvls[zi]===1?'🔍 拡大':('🔍 '+Math.round(lvls[zi]*100)+'%')); };
-  zb.onclick=()=>{ zi=(zi+1)%lvls.length; apply(); sfxUISelect&&sfxUISelect(); };
-  apply();
-})();
-/* 👹 仲間召喚ボタン */
-(function wireSummonBtn(){ const b=document.getElementById('summonBtn'); if(!b) return;
-  b.onclick=()=>{ if(typeof summonMenu==='function'){ summonMenu(); sfxUISelect&&sfxUISelect(); } }; })();
 /* 🎴 カードを開くボタン（手札トグルと連動） */
 (function wireCardBtn(){
   const cb=document.getElementById('cardBtn'); if(!cb) return;
@@ -4762,26 +4662,23 @@ function heroName(){ return G.playerName||"主人公"; }
         ③ピコ＝門に封じられた“奪われた願い”の集まり ④「願った者の顔を、願いは忘れる」
    ヴェイル＝かつて娘を失い、門で“別の時間軸の娘”を取り戻そうとした、レンの未来の姿。 */
 const STORY=[
-  {key:'ch1', title:'第1章 願いのはじまり', dungeon:'hajimete', bossNm:'はじまりの願い',
-  intro:[['narr','＊ ミラージュゲートの中——そこは、誰かの“願い”が、そのまま形になってしまった世界だった。'],
-    ['pico','——おっと。そこの君。ぼくが、見えるんだね。……ひさしぶりだ、そんな目をした人は。','smile'],
-    ['pico','ぼくはピコ。この門に棲みついた、しゃべるカードさ。中へ入る“資格”のある人を、ずっと待っていた。','smile'],
+ {key:'ch1', title:'第1章 願いのはじまり', dungeon:'hajimete', bossNm:'はじまりの願い',
+  intro:[['narr','＊ ミラージュゲートの中——そこは、誰かの願いでできた世界だった。'],
+    ['pico','——おっと。そこの君、ぼくが見えるんだね。','smile'],
+    ['pico','ぼくはピコ。この門に棲む、しゃべるカードさ。中へ入れる人を、ずっと待ってた。','smile'],
     ['hero','カードが、しゃべるのか。','',null],
-    ['pico','この門ではね、強い“願い”ほど、形になる。だから——叶えたいものが大きい人ほど、危ない。君みたいに、ね。','neutral'],
-    ['hero','……俺の願いは、ひとつだけだ。妹を——ミアを、助ける。そのために、ここへ来た。','',null],
-    ['lily','妹、ねえ。——奇跡のカード、買う？　効果は本物。副作用は……あとで、わかる。ぜんぶ、あとでね。','smile'],
-    ['lily','あたしはリリィ。しがないカード商人。……あんたのその目、放っておくと高くつきそうだ。だから、付き合ってあげる。','smile'],
-    ['narr','＊ 通路の隅に、黒いカードホルダーが落ちている。——レンのものと、気味が悪いほど、よく似た形。'],
-    ['pico','先客がいるんだ。君より先に、最奥を目指してる“誰か”がね。……あの人もきっと、誰かを取り戻しに来た。','neutral',{star:true}],
-    ['mob','奥の「はじまりの願い」には、近づくな。あれは——この門で、いちばん最初に願った者の、成れの果てだ。','neutral',{classic:true}]],
-  boss:[['boss','願えば、叶う。たやすいことだ。……代償？　そんなもの、気づくのはいつだって、ぜんぶ済んだ“あと”さ。','',{effect:'shake'}],
-    ['lily','その“あと”で、何人が泣いたと思ってんの。——こいつは、その最初のひとり。だから、いちばん長く、忘れられてきた。','serious',{star:true}],
-    ['hero','願いには、必ず——誰かが払う。……覚えておく。','',null]],
+    ['pico','ここでは「強い願い」が形になる。叶えたいものがある人ほど——危ないよ。','neutral'],
+    ['lily','奇跡のカード、買う？　効果は本物。副作用は……あとで、わかる。','smile'],
+    ['lily','あたしはリリィ。カード商人。……あんた、その目、ほうっておけないな。','smile'],
+    ['narr','＊ 床に、黒いカードホルダーが落ちている。レンのものと、よく似た形。'],
+    ['pico','先客がいる。君より先に、最奥を目指してる“誰か”がね。','neutral',{star:true}],
+    ['mob','奥の「はじまりの願い」に近づくな。あれは——この門で、最初に願った者の、成れの果てだ。','neutral',{classic:true}]],
+  boss:[['boss','願えば、叶う。たやすいことだ。代償？　……気づくのは、いつも、あとさ。','',{effect:'shake'}],
+    ['lily','その“あと”で、何人泣いたと思ってんの。','serious',{star:true}]],
   outro:[['narr','＊ 願いの残響は　くだけ、一枚のカードに　なった。'],
-    ['lily','あたしも行くよ。あんたの旅の最後まで——その願いの“値札”を、見届けてやる。','smile',{star:true}],
+    ['lily','あたしも行く。あんたの旅の、最後まで——値札を、見届けるよ。','smile',{star:true}],
     ['narr','＊ リリィが　なかまに　なった！'],
-    ['narr','＊ くだけた願いの跡に、白い花が　ひとつ、咲いていた。'],
-    ['pico','その花、拾っておくね。……レン。この花を、君はこれから、何度も見ることになる。なぜ、なんて——今は、聞かないで。','worried',{star:true}]]},
+    ['pico','落ちてた白い花、拾っておくね。……この花、これから何度も見ることになる。','neutral',{star:true}]]},
  {key:'ch2', title:'第2章 泣けない街', dungeon:'kiraku', bossNm:'悲しみ売り',
   intro:[['narr','＊ 第二層。誰も泣いていない、しずかな街。'],
     ['mob','この街は平和です。昨日、父が死にました。とても、平和です。','neutral',{classic:true,star:true}],
@@ -5652,7 +5549,7 @@ function goHomeFromButton(){
     document.getElementById('ghY').onclick=()=>{ hideModal(); doIt(); };
   } else doIt();
 }
-function wireHomeBtn(){
+(function wireHomeBtn(){
   const hb=document.getElementById('homeBtn'); if(!hb) return;
   hb.addEventListener('click', goHomeFromButton);
   // 会話/ムービー/タイトル/モーダル表示中は隠す（重なり防止）
@@ -5664,8 +5561,7 @@ function wireHomeBtn(){
     hb.classList.toggle('hidden', hide);
   };
   setInterval(upd, 300); upd();
-}
-if(document.readyState!=='loading') wireHomeBtn(); else document.addEventListener('DOMContentLoaded', wireHomeBtn);
+})();
 // ---- カード図鑑（ボスカード＋収集状況） ----
 function showDex(){
   loadStory();
@@ -6244,8 +6140,7 @@ function selectSlot(n, fresh){
   G.flags=null; G.world=null; G.introduced={}; G.stats={}; G.clearedDuns={};
   G.storyChapter=0; G.storyCleared=false; G.story2Cleared=false; G.storyJob=null; G.story2Job=null;
   if(!loadGame()){ G.collection={pot20:2,pot40:2,pot80:1,fire:2,mfire:1,bright:1,power:1,escape:1,lock:1,mpot:1};
-    G.medals=2000; G.endlessAvail=false; G.slotUnlocked=false; G.stats={}; G.clearedDuns={}; G.monCards={}; saveGame(); }
-  if(!G.monCards) G.monCards={};
+    G.medals=2000; G.endlessAvail=false; G.slotUnlocked=false; G.stats={}; G.clearedDuns={}; saveGame(); }
   loadStory(); loadWorld(); refreshSlotBtn&&refreshSlotBtn();
 }
 function showSlotPicker(mode){
@@ -6412,7 +6307,6 @@ function castleAttackable(c){
   return c.adj.some(id=>wOwned(id));
 }
 function guardianStrength(id){ const k=G.world.guardians[id]; if(!k) return 0;
-  if(typeof MONSTERS!=='undefined' && MONSTERS[k]) return Math.max(1, Math.round((MONSTERS[k].pay||1)/3)+1); // 仲間モンスターカード
   return (RAR_ORDER[bossRarity(k)]||0)+1; }
 function showWorld(){
   if(!G.world) loadWorld();
@@ -6474,22 +6368,15 @@ function manageCastle(c){
   const owned=Object.keys(G.bossCards||{}).filter(k=>G.bossCards[k]);
   const used=new Set(Object.entries(G.world.guardians).filter(([k,v])=>k!==c.id).map(([k,v])=>v));
   const opts=owned.filter(k=>!used.has(k));
-  const monCards=Object.entries(G.monCards||{}).filter(([nm,c])=>c>0);
-  const monList = monCards.map(([nm,c])=>{ const sp=MON_SPRITE[nm];
-      const ic=sp?`<img src="${sp}" style="height:24px;width:24px;object-fit:contain;vertical-align:middle">`:(MONSTERS[nm]?MONSTERS[nm].emoji:'👹');
-      return `<button class="gpickm" data-n="${nm}" style="display:block;width:100%;text-align:left;margin:3px 0">${ic} ${nm} ×${c}（守備力+${Math.max(1,Math.round((MONSTERS[nm].pay||1)/3)+1)}）</button>`;}).join('');
-  const list = (opts.length? opts.map(k=>{ const b=BOSS_CARDS[k], r=bossRarity(k);
+  const list = opts.length? opts.map(k=>{ const b=BOSS_CARDS[k], r=bossRarity(k);
     return `<button class="gpick" data-k="${k}" style="display:block;width:100%;text-align:left;margin:3px 0">
-      ${b.ic} ${b.nm} <span class="crar r-${r}" style="display:inline-block">${r}</span>（守備力+${(RAR_ORDER[r]||0)+1}）</button>`;}).join('') : '')
-    + (monList ? `<div class="tag" style="margin-top:6px">仲間モンスター:</div>`+monList : '')
-    || `<p class="muted" style="font-size:12px">配置できるカードがありません。ボスカードを集めるか、ダンジョンでモンスターを仲間にしよう。</p>`;
+      ${b.ic} ${b.nm} <span class="crar r-${r}" style="display:inline-block">${r}</span>（守備力+${(RAR_ORDER[r]||0)+1}）</button>`;}).join('')
+    : `<p class="muted" style="font-size:12px">配置できるモンスターカードがありません。ストーリーでボスカードを集めよう。</p>`;
   showModal(`<h2>🏯 ${c.nm}（占領済み）</h2>
-    <p class="muted" style="font-size:12px">ガーディアンを配置すると奪還されにくくなる。現在: <b>${cur?(BOSS_CARDS[cur]?BOSS_CARDS[cur].nm:cur):'なし'}</b></p>
+    <p class="muted" style="font-size:12px">ガーディアンを配置すると奪還されにくくなる。現在: <b>${cur?BOSS_CARDS[cur].nm:'なし'}</b></p>
     <div class="scroll" style="max-height:220px">${list}</div>
     <div class="grid2" style="margin-top:10px">${cur?'<button id="gRemove" class="danger">外す</button>':'<span></span>'}<button id="gClose">閉じる</button></div>`);
   document.querySelectorAll('.gpick').forEach(b=>b.onclick=()=>{ G.world.guardians[c.id]=b.dataset.k; saveWorld();
-    sfxUIConfirm&&sfxUIConfirm(); hideModal(); renderWorld(); });
-  document.querySelectorAll('.gpickm').forEach(b=>b.onclick=()=>{ G.world.guardians[c.id]=b.dataset.n; saveWorld();
     sfxUIConfirm&&sfxUIConfirm(); hideModal(); renderWorld(); });
   const rm=document.getElementById('gRemove'); if(rm) rm.onclick=()=>{ delete G.world.guardians[c.id]; saveWorld(); hideModal(); renderWorld(); };
   document.getElementById('gClose').onclick=hideModal;
