@@ -379,6 +379,13 @@
   .actbar button.holding{border-color:#7cc8ff;background:#16314a;color:#cfeaff}
   /* タッチ操作の最適化（全ボタン共通） */
   button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  /* 画面下に常設：タイトルへ戻るボタン（オーバーレイ類より下のz=56。会話/ムービー/モーダル時は自然に隠れる） */
+  #homeBtn{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 6px);
+    z-index:56;font-size:12px;font-weight:800;letter-spacing:.08em;color:#e9e4ff;
+    background:rgba(18,14,34,.82);border:1px solid #6b5bb0;border-radius:18px;padding:7px 16px;cursor:pointer;
+    box-shadow:0 4px 14px rgba(0,0,0,.5);backdrop-filter:blur(3px)}
+  #homeBtn:hover{background:rgba(50,40,92,.92);border-color:#ffd24d}
+  #homeBtn.hidden{display:none}
   /* ===== モバイル（縦並び・大ボタン・キャンバス全幅） ===== */
   @media(max-width:860px){
     #app{padding:6px}
@@ -837,6 +844,7 @@ const MON_SPRITE = {
   "キングドラゴン":"assets/t_mon_kingdragon.png","カオス":"assets/t_mon_chaos.png",
   "ゴブリン":"assets/t_mon_goblin.png","バルチャー":"assets/t_mon_vulture.png","ターミネーター":"assets/t_mon_robot.png",
   "マッドブル":"assets/t_mon_madbull.png","デーモン":"assets/t_mon_demon.png",
+  "ミミック":"assets/t_mon_mimic.png","レイス":"assets/t_mon_wraith.png","クリスタルゴーレム":"assets/t_mon_crystalgolem.png",
 };
 /* ---- 8方向・状態別スプライト ----
    正面(front)/背面(back)/横(side) × 待機(idle)/攻撃(attack)/被弾(hit) の9枚セット。
@@ -861,6 +869,7 @@ const DIR_SPRITES={
   "死神":dset('reaper'), "マッドブル":dset('madbull'), "ベノム":dset('venom'),
   "エビルアイ":dset('evileye'), "リスタドラゴン":dset('darkdragon'),
   "キングドラゴン":dset('kingdragon'), "デーモン":dset('demon'), "カオス":dset('chaos'),
+  "ミミック":dset('mimic'), "レイス":dset('wraith'), "クリスタルゴーレム":dset('crystalgolem'),
 };
 function dirSprite(key,e){
   const set=DIR_SPRITES[key]; if(!set) return null;
@@ -982,6 +991,9 @@ const MONSTERS = {
   "リスタドラゴン":{hp:218,atk:35,def:20,emoji:"🐲", role:"magicimmune",cap:[140,140,140],pay:20,color:"#c0392b"},
   "キングドラゴン":{hp:248,atk:50,def:20,emoji:"🐉", role:"ranged", cap:[148,148,148],pay:25,color:"#ffd24d"},
   "カオス":      {hp:260,atk:52, def:20,emoji:"🌀", role:"melee",  cap:[150,150,150],pay:28,color:"#b079ff"},
+  "ミミック":      {hp:115,atk:20, def:7, emoji:"🧰", role:"melee",       cap:[95,95,95],   pay:7, color:"#c89a4a"},
+  "レイス":        {hp:122,atk:27, def:6, emoji:"👻", role:"knock",       cap:[112,112,112],pay:9, color:"#9fb8ff"},
+  "クリスタルゴーレム":{hp:205,atk:24,def:16,emoji:"🔷", role:"magicimmune", cap:[136,136,136],pay:12,color:"#6fe0d0"},
 };
 
 /* ---------------------------- DATA: jobs ------------------------------- */
@@ -1020,7 +1032,7 @@ const DUNGEONS = {
   fun:    {jp:"うれしい森", star:3, floors:4, bet:12,  win:140, size:13, rooms:5, dense:0.13, spawn:0.06,
            desc:"中盤前の稼ぎ・カード集め用。後半に投資する資産形成ステージ。",
            bands:[["キラービー","スケルトン","ケムンパ"],["スケルトン","ケムンパ","キラーホッピー","スピット"],
-                  ["ゴブリン","魔道士","プリースト","バルチャー"],["魔道士","キラービー群","ベノム","グランシャーク"]]},
+                  ["ゴブリン","魔道士","プリースト","バルチャー"],["魔道士","キラービー群","ベノム","グランシャーク","ミミック"]]},
   fierce: {jp:"はげしい洞窟", star:5, floors:4, bet:18, win:260, size:13, rooms:6, dense:0.18, spawn:0.16,
            desc:"浅いが敵ランク上昇が速い。ジェネレーター多発。全探索は危険、階段優先。",
            bands:[["プーニャ黄","キラービー","スケルトン","キラーホッピー"],["ケムンパ","ゴブリン","魔道士","プリースト"],
@@ -1029,14 +1041,14 @@ const DUNGEONS = {
            desc:"階層は浅いが部屋が多く、敵ランクの上昇が急。5Fには死神。モンスターカード級の準備を。",
            bands:[["スケルトン","ケムンパ","キラーホッピー"],["ゴブリン","魔道士","スピット"],
                   ["キラービー群","プリースト","ベノム","バルチャー"],["グランシャーク","ターミネーター","魔道士"],
-                  ["死神","ドラゴン","リスタール","ビショップ"]]},
+                  ["死神","ドラゴン","リスタール","ビショップ","レイス"]]},
   hard:   {jp:"難しい遺跡", star:6, floors:7, bet:25, win:400, size:15, rooms:7, dense:0.16, spawn:0.10,
            desc:"7F・広大・敵多数。終盤は最上位級。装備かパワーアップ大量投入が鍵。",
            bands:[["スケルトン","ケムンパ","ゴブリン"],["ゴブリン","魔道士","スピット","バルチャー"],
                   ["魔道士","キラービー群","ベノム","プリースト"],["グランシャーク","ターミネーター","リスタール","ドラゴン"],
                   ["ドラゴン","死神","ビショップ","エビルアイ"],["死神","マッドブル","デーモン","エビルアイ"],
-                  ["マッドブル","デーモン","リスタドラゴン","キングドラゴン"]]},
-  maboroshi:{jp:"幻", star:7, floors:8, bet:0, win:1200, size:15, rooms:8, dense:0.16, spawn:0.14, hidden:true, bagLimit:5,
+                  ["マッドブル","デーモン","リスタドラゴン","キングドラゴン","クリスタルゴーレム"]]},
+  maboroshi:{jp:"幻", star:7, floors:8, bet:0, win:1200, size:15, rooms:8, dense:0.16, spawn:0.14, hidden:true, bagLimit:5, tex:'space',
            desc:"ごく稀に現れる隠しダンジョン。BET0・配当特大・カードもよく落ちる。ただし持ち込みは5枚まで。一度潜ると消える。",
            bands:[["スケルトン","ホッピー","キラービー","スピット"],
                   ["ゴブリン","魔道士","ケムンパ","キラーホッピー"],
@@ -1044,7 +1056,7 @@ const DUNGEONS = {
                   ["グランシャーク","リスタール","魔道士","マザービー"],
                   ["ターミネーター","ドラゴン","ビショップ","スピット"],
                   ["死神","マッドブル","エビルアイ","プリースト"],
-                  ["デーモン","リスタドラゴン","エビルアイ","ビショップ"],
+                  ["デーモン","リスタドラゴン","エビルアイ","ビショップ","ミミック","レイス","クリスタルゴーレム"],
                   ["キングドラゴン","カオス","デーモン","死神"]]},
   ultimate:{jp:"究極の門", star:8, floors:9, bet:40, win:800, size:15, rooms:7, dense:0.18, spawn:0.13,
            desc:"長丁場・高難度・総合力チェック。カード設計そのものが攻略。",
@@ -1592,6 +1604,7 @@ function startRun(){
   document.getElementById('jobName').textContent=j.emoji+' '+j.jp;
   const _tex=(DUNGEONS[G.dungeon]&&DUNGEONS[G.dungeon].tex)||G.dungeon;
   ['room','corr','wall'].forEach(k=>getImg(`assets/floor_${_tex}_${k}.png`)); // 床テクスチャ先読み
+  ['rock','pillar','mstone','crystal'].forEach(o=>getImg(`assets/obst_${_tex}_${o}.png`)); // テーマ別障害物先読み（無ければ共通にフォールバック）
   log(`【${d.jp}】に潜った。BET ${d.bet} を支払った。`,"l-sys");
   buildFloor();
   // チュートリアル状態の初期化（ヒントの基準値）
@@ -1785,7 +1798,11 @@ function effFloors(){ const ch=G.storyMode&&curChapter(); return (ch&&ch.shortFl
 // いきなり倒せない敵に当たる事故を防ぎつつ、潜るほど徐々に強くなる。
 function floorFactor(){
   const f=Math.max(1,G.floor||1), fl=Math.max(1,effFloors());
-  return 0.70 + 0.30 * ((f-1)/Math.max(1,fl-1));
+  const p=(fl<=1)?1:(f-1)/(fl-1);                  // 0..1 進行度
+  const star=(DUNGEONS[G.dungeon]||{}).star||1;    // 難易度（強いダンジョンほど大）
+  const startF=0.80;                                // 1F は少し弱め＝倒して成長できる
+  const endF  =1.10 + 0.085*Math.min(star,9);       // 最終Fは難易度に応じて大きく上昇
+  return startF + (endF-startF)*Math.pow(p,0.85);   // 深層へ向けて加速（奥ほど急に強く）
 }
 /* ===================== 床ギミック & 障害物 ===================== */
 // テーマ別の床ギミック出現傾向（texから判定。world城は色→texで反映済み）
@@ -1848,28 +1865,30 @@ function scatterGimmicks(d){
       [[x+1,y],[x-1,y],[x,y+1],[x,y-1]].forEach(([nx,ny])=>{
         if(nx>=0&&ny>=0&&nx<G.w&&ny<G.h&&!seen[ny][nx]&&G.map[ny][nx]!==0&&!obstAt(nx,ny)){ seen[ny][nx]=true; st.push([nx,ny]); } }); }
     return n; };
-  const obstCount=Math.min(rooms.length*2, Math.round(2+star*0.8));
+  const obstCount=Math.min(rooms.length*2, Math.round(2+star*1.0));
   let oc=0,guard=0;
   while(oc<obstCount && guard<400){ guard++;
     const r=pick(rooms); const x=r.x+rnd(r.w), y=r.y+rnd(r.h);
     if(!interior(x,y)||!free(x,y)||dist(x,y,G.px,G.py)<3) continue;
     let t='rock'; const roll=Math.random();
-    if(star>=6 && roll<0.25) t='mstone'; else if(star>=3 && roll<0.5) t='pillar';
+    if(star>=7 && roll<0.22) t='crystal';            // 高難度: 華やかなクリスタル群
+    else if(star>=6 && roll<0.42) t='mstone';
+    else if(star>=3 && roll<0.62) t='pillar';
     G.obst[y][x]=t;
     // 置いた結果、全床マスが到達可能でなければ撤回（詰み防止）
     if(reachCount()!==totalFloor()){ G.obst[y][x]=0; continue; }
     oc++;
   }
 }
-// 床ダメージ（毒沼5 / 溶岩10 / 呪印=最大HP5%）。氷結はダメージ無し。
+// 床ダメージ（毒沼1 / 溶岩2 / 呪印2）。最もポピュラーな床=1、最大でも2。氷結はダメージ無し。
 function applyTileDamage(){
   const t=tfxAt(G.px,G.py); if(!t||t==='ice') return;
-  if(t==='poison'){ G.hp-=5; popText(G.px,G.py,'-5','#9bff6a'); log('毒沼を踏んだ！ 5ダメージ','l-dmg');
+  if(t==='poison'){ G.hp-=1; popText(G.px,G.py,'-1','#9bff6a'); log('毒沼を踏んだ！ 1ダメージ','l-dmg');
     sfxFloor('poison'); G._floorFlash={color:'rgba(80,220,90,ALPHA)',t0:now(),dur:240}; }
-  else if(t==='fire'){ G.hp-=10; popText(G.px,G.py,'-10','#ff9a3c'); log('溶岩床！ 10ダメージ','l-dmg');
+  else if(t==='fire'){ G.hp-=2; popText(G.px,G.py,'-2','#ff9a3c'); log('溶岩床！ 2ダメージ','l-dmg');
     sfxFloor('fire'); G._floorFlash={color:'rgba(255,90,30,ALPHA)',t0:now(),dur:240}; }
-  else if(t==='curse'){ const dmg=Math.max(4,Math.round(G.maxhp*0.05)); G.hp-=dmg;
-    popText(G.px,G.py,'-'+dmg,'#c9a0ff'); log('呪印床… 最大HPの5%が削られた','l-dmg');
+  else if(t==='curse'){ const dmg=2; G.hp-=dmg;
+    popText(G.px,G.py,'-'+dmg,'#c9a0ff'); log('呪印床… 2ダメージ','l-dmg');
     sfxFloor('curse'); G._curseDim=now()+520; G._floorFlash={color:'rgba(80,0,120,ALPHA)',t0:now(),dur:300}; }
   if(G.hp<=0) gameOver();
 }
@@ -1892,7 +1911,24 @@ function doIceSlide(dx,dy){
   if(slid>0){ sfxSlideStop(); G._shake={t0:now()}; }
 }
 // 描画: 床ギミック
+const _tpat={}; // 床ギミックの生成テクスチャ（repeatパターン）キャッシュ
+function tfxPat(t){
+  if(_tpat[t]) return _tpat[t];
+  const im=getImg('assets/tfx_'+t+'.png');
+  if(im&&im._ok){ try{ _tpat[t]=ctx.createPattern(im._img||im,'repeat'); }catch(e){ _tpat[t]=null; } return _tpat[t]; }
+  return null; // 未ロード時は手描きフォールバック（ロード後に切替）
+}
 function drawTfxTile(px,py,t,x,y,tN){
+  // 生成テクスチャがあれば優先（毒/溶岩/氷/呪印）。読みやすさ用に種別色の脈動縁取りを重ねる。
+  const pat=tfxPat(t);
+  if(pat){
+    ctx.save(); ctx.globalAlpha=0.92; ctx.fillStyle=pat; ctx.fillRect(px,py,TW,TILE); ctx.restore();
+    const tint={ice:'150,225,255',poison:'120,255,120',fire:'255,150,40',curse:'190,120,255'}[t]||'255,255,255';
+    const pulse=0.5+0.5*Math.sin(tN/300 + x + y);
+    ctx.strokeStyle='rgba('+tint+','+(0.35+0.30*pulse).toFixed(2)+')'; ctx.lineWidth=2;
+    ctx.strokeRect(px+1.5,py+1.5,TW-3,TILE-3); ctx.lineWidth=1;
+    return;
+  }
   if(t==='ice'){
     ctx.fillStyle='rgba(150,225,255,.34)'; ctx.fillRect(px,py,TW,TILE);
     ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=2;
@@ -1922,6 +1958,19 @@ function drawTfxTile(px,py,t,x,y,tN){
 // 描画: 障害物（本格的な陰影・立体感）
 function drawObstTile(px,py,o,tN,lit){
   const cx=px+TW/2, cy=py+TILE/2;
+  // 生成スプライト（透過PNG）があれば優先。テーマ別(obst_<tex>_<o>)→共通(obst_<o>)→手描き の順。
+  const themed=getImg('assets/obst_'+curTex()+'_'+o+'.png');
+  const oim=(themed&&themed._ok)?themed:getImg('assets/obst_'+o+'.png');
+  if(oim&&oim._ok){
+    ctx.fillStyle='rgba(0,0,0,.30)'; ctx.beginPath(); ctx.ellipse(cx+2,py+TILE*0.85,TW*0.32,TILE*0.12,0,0,7); ctx.fill(); // 接地影
+    if(o==='mstone'||o==='crystal'){ const fl=0.5+0.5*Math.sin(tN/260);   // 魔石/クリスタルは淡いグロー
+      const col=o==='crystal'?'120,210,255':'170,140,255';
+      const gr=ctx.createRadialGradient(cx,cy,2,cx,cy,TW*0.52);
+      gr.addColorStop(0,'rgba('+col+','+(0.28+0.22*fl).toFixed(2)+')'); gr.addColorStop(1,'rgba('+col+',0)');
+      ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(cx,cy,TW*0.52,0,7); ctx.fill(); }
+    const sz=TW*1.16; ctx.drawImage(oim._img||oim, cx-sz/2, py+TILE-sz*0.94, sz, sz);
+    return;
+  }
   // 接地影（共通）
   ctx.fillStyle='rgba(0,0,0,.32)';
   ctx.beginPath(); ctx.ellipse(cx+3,py+TILE*0.82,TW*0.34,TILE*0.13,0,0,7); ctx.fill();
@@ -1985,6 +2034,27 @@ function drawObstTile(px,py,o,tN,lit){
     ctx.strokeStyle='rgba(220,200,255,'+(0.5+0.4*flk)+')'; ctx.lineWidth=1.2; ctx.stroke(); ctx.lineWidth=1;
     // きらめき
     ctx.fillStyle='rgba(255,255,255,'+(0.5+0.4*flk)+')'; ctx.beginPath(); ctx.arc(cx-w*0.3,cy-TILE*0.12,1.6,0,7); ctx.fill();
+  } else if(o==='crystal'){
+    // 巨大クリスタル群：複数シャード＋強グロー＋きらめき（高難度の華やかな障害物）
+    const fl=0.5+0.5*Math.sin(tN/240);
+    ctx.fillStyle='rgba(18,14,32,.92)'; ctx.beginPath(); ctx.ellipse(cx,cy+TILE*0.28,TW*0.30,TILE*0.13,0,0,7); ctx.fill();
+    const gr=ctx.createRadialGradient(cx,cy-TILE*0.04,2,cx,cy-TILE*0.02,TW*0.52);
+    gr.addColorStop(0,'rgba(120,210,255,'+(0.40+0.30*fl)+')'); gr.addColorStop(1,'rgba(120,210,255,0)');
+    ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(cx,cy-TILE*0.02,TW*0.52,0,7); ctx.fill();
+    const shard=(ux,base,h,wd,c1,c2,c3)=>{
+      const bx=cx+ux*TW, topY=cy-TILE*h, bY=cy+TILE*base, w=TW*wd;
+      ctx.beginPath(); ctx.moveTo(bx,topY); ctx.lineTo(bx+w,bY-TILE*0.10); ctx.lineTo(bx+w*0.5,bY); ctx.lineTo(bx-w*0.5,bY); ctx.lineTo(bx-w,bY-TILE*0.10); ctx.closePath();
+      ctx.fillStyle=c1; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(bx,topY); ctx.lineTo(bx+w,bY-TILE*0.10); ctx.lineTo(bx,bY-TILE*0.04); ctx.closePath(); ctx.fillStyle=c2; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(bx,topY); ctx.lineTo(bx-w,bY-TILE*0.10); ctx.lineTo(bx,bY-TILE*0.04); ctx.closePath(); ctx.fillStyle=c3; ctx.fill();
+      ctx.strokeStyle='rgba(225,245,255,'+(0.40+0.40*fl)+')'; ctx.lineWidth=1; ctx.stroke(); ctx.lineWidth=1;
+    };
+    shard(-0.18,0.16,0.20,0.10,'#3aa0d8','#7fd6ff','#2a6f9e');
+    shard( 0.18,0.18,0.24,0.11,'#3aa0d8','#7fd6ff','#2a6f9e');
+    shard( 0.00,0.20,0.40,0.13,'#4ab6e6','#a8ecff','#2f7fae');
+    ctx.fillStyle='rgba(255,255,255,'+(0.5+0.45*fl)+')';
+    ctx.beginPath(); ctx.arc(cx-TW*0.06,cy-TILE*0.22,1.7,0,7); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx+TW*0.10,cy-TILE*0.10,1.2,0,7); ctx.fill();
   }
 }
 // SE: 滑り「シュッ/スーッ」、停止「キュッ」、床ダメージ各種
@@ -3909,7 +3979,7 @@ const DEATH_SLUG={
   "スケルトン":'skeleton',"ケムンパ":'caterpillar',"ゴブリン":'goblin',"魔道士":'mage',"ベノム":'venom',
   "グランシャーク":'shark',"マザービー":'queenbee',"ターミネーター":'robot',"リスタール":'golem',
   "ドラゴン":'dragon',"死神":'reaper',"プリースト":'priest',"ビショップ":'priest',"マッドブル":'madbull',
-  "エビルアイ":'evileye',"デーモン":'demon',"リスタドラゴン":'darkdragon',"キングドラゴン":'kingdragon',"カオス":'chaos'};
+  "エビルアイ":'evileye',"デーモン":'demon',"リスタドラゴン":'darkdragon',"キングドラゴン":'kingdragon',"カオス":'chaos',"ミミック":'mimic',"レイス":'wraith',"クリスタルゴーレム":'crystalgolem'};
 function deathSheet(name){ const s=DEATH_SLUG[name]; if(!s) return null;
   const im=getImg('assets/death_'+s+'.png'); return (im&&im._ok)?im:null; }
 function fxDie(m){
@@ -4489,7 +4559,9 @@ window.addEventListener('keydown',(ev)=>{
     return;
   }
   const dir=KEYMAP[ev.key];
-  if(dir){ ev.preventDefault(); tryAct(dir); }
+  if(dir){ ev.preventDefault();
+    if(ev.shiftKey && dir!==5){ setFacing(dir); }   // Shift+方向＝向きだけ変更（移動しない）
+    else tryAct(dir); }
 });
 /* 向きだけ変更（移動・ターン消費なし） */
 function setFacing(dir){
@@ -4510,18 +4582,24 @@ function applyDir(dir){
   tryAct(dir);
 }
 document.querySelectorAll('.controls button').forEach(b=>{
-  b.onclick=()=>applyDir(+b.dataset.d);
+  // pointerdownで即時発火 → 🧭向きボタンを別の指で長押し中でも十字で向き変更が効く
+  let used=false;
+  b.addEventListener('pointerdown',(e)=>{ used=true; if(e&&e.cancelable)e.preventDefault();
+    applyDir(+b.dataset.d); setTimeout(()=>{used=false;},450); });
+  b.addEventListener('click',()=>{ if(used){used=false;return;} applyDir(+b.dataset.d); }); // マウス/キーボード保険
 });
 /* 🧭 向きボタン: 押している間だけ faceMode（長押しで向き設定・移動しない） */
 (function wireFaceBtn(){
   const fb=document.getElementById('faceBtn'); if(!fb) return;
   const cc=document.querySelector('.controls');
-  const on =e=>{ G.faceMode=true;  fb.classList.add('holding'); if(cc)cc.classList.add('facing'); draw&&draw(); if(e&&e.preventDefault)e.preventDefault(); };
+  const on =e=>{ G.faceMode=true;  fb.classList.add('holding'); if(cc)cc.classList.add('facing');
+    try{ if(e&&e.pointerId!=null) fb.setPointerCapture(e.pointerId); }catch(_){}  // 指がズレてもfaceMode維持
+    draw&&draw(); if(e&&e.preventDefault)e.preventDefault(); };
   const off=()=>{ G.faceMode=false; fb.classList.remove('holding'); if(cc)cc.classList.remove('facing'); draw&&draw(); };
   fb.addEventListener('pointerdown',on);
   fb.addEventListener('pointerup',off);
-  fb.addEventListener('pointerleave',off);
   fb.addEventListener('pointercancel',off);
+  // ※pointerleaveでは切らない（小さなボタン上の指のわずかなズレでfaceModeが落ちるのを防ぐ）
 })();
 /* ⤡ 斜めモード トグル */
 (function wireDiagBtn(){
@@ -5451,6 +5529,39 @@ function returnToTitle(){
   document.getElementById('worldWrap').classList.remove('show');
   if(typeof titleBgmStart==='function') titleBgmStart();
 }
+/* 常設「タイトルへ」ボタン: ダンジョン進行中は確認してからタイトル画面へ */
+function goHomeFromButton(){
+  const gameVisible=!document.getElementById('game').classList.contains('hidden');
+  const inRun = gameVisible && G.map && !G.over;
+  const doIt=()=>{
+    try{ titleBgmStop&&titleBgmStop(); }catch(e){}
+    try{ bgmStop&&bgmStop(); }catch(e){}
+    G.over=true; G.aimMode=null;
+    ['game','setup','worldWrap'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.classList.add('hidden'); el.classList.remove('show'); } });
+    document.body.classList.remove('setupbg');
+    if(typeof showTitleMenu==='function') showTitleMenu();
+  };
+  if(inRun){
+    showModal(`<h2>タイトルに戻りますか？</h2>
+      <p class="muted" style="font-size:13px">いまの冒険の進行は失われます（セーブ済みデータは残ります）。</p>
+      <div class="grid2" style="margin-top:12px"><button class="danger" id="ghY">タイトルへ戻る</button><button id="ghN">つづける</button></div>`);
+    document.getElementById('ghN').onclick=hideModal;
+    document.getElementById('ghY').onclick=()=>{ hideModal(); doIt(); };
+  } else doIt();
+}
+(function wireHomeBtn(){
+  const hb=document.getElementById('homeBtn'); if(!hb) return;
+  hb.addEventListener('click', goHomeFromButton);
+  // 会話/ムービー/タイトル/モーダル表示中は隠す（重なり防止）
+  const upd=()=>{
+    const hide = !document.getElementById('opening').classList.contains('hidden')
+      || !document.getElementById('cutscene').classList.contains('hidden')
+      || !document.getElementById('titleMenu').classList.contains('hidden')
+      || !document.getElementById('overlay').classList.contains('hidden');
+    hb.classList.toggle('hidden', hide);
+  };
+  setInterval(upd, 300); upd();
+})();
 // ---- カード図鑑（ボスカード＋収集状況） ----
 function showDex(){
   loadStory();
@@ -5744,7 +5855,9 @@ function opPrelude(start){
   try{
     if(!start){ opPre.on=false; if(opPre.timer){clearInterval(opPre.timer);opPre.timer=null;}
       if(opPre.master){ const m=opPre.master; opPre.master=null;
-        m.gain.setTargetAtTime(0.0001,AC.currentTime,0.5); setTimeout(()=>{try{m.disconnect();}catch(e){}},900); }
+        m.gain.cancelScheduledValues(AC.currentTime);
+        m.gain.setTargetAtTime(0.0001,AC.currentTime,0.18); // 素早くフェードしてメインBGMと衝突させない
+        setTimeout(()=>{try{m.disconnect();}catch(e){}},600); }
       return; }
     if(G.muted||!audio()||opPre.on) return;
     const M=AC.createGain(); M.gain.value=0.0001; opPre.master=M;
@@ -5863,13 +5976,14 @@ function showOptions(){
   document.getElementById('optHelp').onclick=()=>{ if(typeof showHelp==='function'){ showHelp(); } else alert('移動: 矢印キー / WASD\n攻撃: 敵の方へ移動\nカード: クリックで使用\nゴール: 祭壇のオーブを取って脱出'); };
   document.getElementById('optMute').onclick=()=>{ const sb=document.getElementById('sndBtn'); if(sb) sb.click(); hideModal(); showOptions(); };
   document.getElementById('optWipe').onclick=()=>{
-    showModal(`<h2 class="danger">⚠ 全データを消去しますか？</h2>
-      <p class="muted" style="font-size:13px">メダル・コレクション・ストーリー進行・ワールド進行・設定がすべて消えます。元に戻せません。</p>
-      <div class="grid2" style="margin-top:12px"><button class="danger" id="wipeYes">消去する</button><button id="wipeNo">やめる</button></div>`);
-    document.getElementById('wipeNo').onclick=showOptions;
-    document.getElementById('wipeYes').onclick=()=>{ let ks=['mg_opt','mg_slot'];
+    confirmMulti([
+      {title:'⚠ 全データを消去しますか？', body:'メダル・コレクション・ストーリー進行・ワールド進行・設定がすべて消えます。', yes:'消去する'},
+      {title:'本当にすべて消去しますか？', body:'3つのスロットを含むすべてのデータが対象です。元に戻せません。', yes:'はい、消去する'},
+      {title:'最終確認：全データを完全消去', body:'この操作は取り消せません。最後の確認です。', yes:'完全に消去する'},
+    ], ()=>{ let ks=['mg_opt','mg_slot'];
       [1,2,3].forEach(n=>{ const sk=(b)=> n===1?b:b+'_'+n; ['mg_save','mg_story','mg_world','mg_log','mg_flags'].forEach(b=>ks.push(sk(b))); });
-      ks.forEach(k=>{try{localStorage.removeItem(k);}catch(e){}}); location.reload(); };
+      ks.forEach(k=>{try{localStorage.removeItem(k);}catch(e){}}); location.reload(); },
+      showOptions);
   };
   document.getElementById('optClose').onclick=()=>{ saveOpt(); hideModal(); };
 }
@@ -5989,7 +6103,10 @@ function showTitleMenu(){
 (function wireTitleMenu(){
   const push=document.getElementById('pushStart');
   const menu=document.getElementById('mainMenu');
-  if(push){ push.onclick=()=>{ audio(); titleBgmStart(); sfxUIConfirm&&sfxUIConfirm();
+  if(push){ push.onclick=()=>{ audio();
+    if(typeof opPrelude==='function') opPrelude(false); // オープニングのプレリュードを止めてから
+    titleBgmStart();                                    // メインテーマを開始（重複・テンポ衝突を防ぐ）
+    sfxUIConfirm&&sfxUIConfirm();
     push.style.display='none'; menu.classList.add('show'); }; }
   document.querySelectorAll('#mainMenu .mmbtn').forEach(b=>b.onclick=()=>{
     sfxUIConfirm&&sfxUIConfirm(); const act=b.dataset.act;
@@ -6057,11 +6174,27 @@ function showSlotPicker(mode){
     } else { selectSlot(n, mode==='new'); hideModal(); enterModeSelect(); }
   });
 }
+// 連続(複数回)確認ダイアログ。stepsの全てに「消去する」を押したときだけonYes。
+function confirmMulti(steps, onYes, onNo){
+  let i=0;
+  const step=()=>{ const sObj=steps[i];
+    showModal(`<h2 class="danger">${sObj.title}</h2>`+
+      (sObj.body?`<p class="muted" style="font-size:13px">${sObj.body}</p>`:'')+
+      `<p class="muted" style="font-size:12px;letter-spacing:.1em">確認 ${i+1} / ${steps.length}</p>`+
+      `<div class="grid2" style="margin-top:12px">
+        <button class="danger" id="cmY">${sObj.yes||'消去する'}</button>
+        <button id="cmN">やめる</button></div>`);
+    document.getElementById('cmN').onclick=()=>{ if(onNo) onNo(); else hideModal(); };
+    document.getElementById('cmY').onclick=()=>{ i++; if(i>=steps.length){ onYes(); } else step(); };
+  };
+  step();
+}
 function confirmDeleteSlot(n, back){
-  showModal(`<h2 class="danger">スロット${n} を消去しますか？</h2><p class="muted" style="font-size:13px">元に戻せません。</p>
-    <div class="grid2" style="margin-top:12px"><button class="danger" id="dsY">消去する</button><button id="dsN">やめる</button></div>`);
-  document.getElementById('dsN').onclick=back;
-  document.getElementById('dsY').onclick=()=>{ slotKeys(n).forEach(k=>{try{localStorage.removeItem(k);}catch(e){}}); back(); };
+  confirmMulti([
+    {title:`スロット${n} を消去しますか？`, body:'このスロットの冒険・メダル・進行がすべて消えます。', yes:'消去する'},
+    {title:'本当に消去しますか？', body:'元に戻せません。', yes:'はい、消去する'},
+    {title:`最終確認：スロット${n} を完全に消去`, body:'この操作は取り消せません。', yes:'完全に消去する'},
+  ], ()=>{ slotKeys(n).forEach(k=>{try{localStorage.removeItem(k);}catch(e){}}); back(); }, back);
 }
 
 /* ===================== ワールドモード ===================== */
@@ -6293,9 +6426,9 @@ function castleTex(c){
   if(c.fort) return 'hajimete';                 // 砦＝素朴な暖色石床
   switch(c.type){
     case 'boss':    return 'ultimate';          // ボス城＝溶岩・赤黒
-    case 'great':   return 'maboroshi';         // 巨大城＝星空・魔法床
-    case 'special': return 'maboroshi';
-    case 'prime':   return 'maboroshi';
+    case 'great':   return 'space';             // 巨大城＝宇宙空間
+    case 'special': return 'space';             // 特別城＝宇宙空間
+    case 'prime':   return 'space';             // 至高城＝宇宙空間
     case 'island':  return 'maboroshi';
     case 'deep':    return 'hard';              // 深淵＝紫遺跡
     case 'dead': case 'heavy': return 'ultimate';
@@ -6303,7 +6436,7 @@ function castleTex(c){
     case 'pure': case 'rare': return 'fierce';  // 希少＝青灰の洞窟
     case 'dear': case 'fine': return 'kiraku';
   }
-  return ({yellow:'easy',green:'kiraku',blue:'fierce',red:'tegowai',gold:'maboroshi'})[c.color]||'easy';
+  return ({yellow:'easy',green:'kiraku',blue:'fierce',red:'tegowai',gold:'space'})[c.color]||'easy';
 }
 // 城→合成ダンジョン設定（ワールド出撃／フリープレイ再挑戦で共用）
 function castleDungeonCfg(c){
@@ -6480,6 +6613,8 @@ Object.values(DIR_SPRITES).forEach(s=>Object.values(s).forEach(v=>Object.values(
 Object.values(MON_POSE).forEach(p=>{getImg(p.attack);getImg(p.hit);});
 Object.values(PORT).forEach(p=>{ if(p.img) getImg(p.img); });
 ['assets/ui_bg.png','assets/ui_story.png','assets/ui_free.png'].forEach(p=>getImg(p)); // UI画像先読み
+['rock','pillar','mstone','crystal'].forEach(o=>getImg('assets/obst_'+o+'.png')); // 障害物スプライト先読み
+['ice','poison','fire','curse'].forEach(t=>getImg('assets/tfx_'+t+'.png')); // 床ギミックテクスチャ先読み
 [...new Set(Object.values(DEATH_SLUG))].forEach(s=>getImg('assets/death_'+s+'.png')); // 死亡アニメ先読み
 OP_SCENES.forEach(s=>{ const im=new Image(); im.src='assets/'+s.img+'.png'; }); // オープニング画像先読み
 STORY2.forEach(s=>{ if(s.scene){ const im=new Image(); im.src='assets/'+s.scene+'.png'; } }); // 第2部章画像の先読み
@@ -6492,5 +6627,7 @@ document.getElementById('setup').classList.add('hidden'); // タイトルメニ�
 log("PUSH START でゲーム開始。","l-sys");
 playOpening(); // オープニング → PUSH START → メニュー
 </script>
+  <!-- 常設: タイトルへ戻る -->
+  <button id="homeBtn" title="タイトル画面に戻る">🏠 タイトルへ</button>
 </body>
 </html>
