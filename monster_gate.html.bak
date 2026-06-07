@@ -134,34 +134,16 @@
   @keyframes csShake{ 0%,100%{transform:translateX(-50%)} 25%{transform:translate(calc(-50% - 6px),2px)} 75%{transform:translate(calc(-50% + 6px),-2px)} }
   /* ===== スマホ: VN立ち絵・メッセージ枠・モーダルを画面内に収める ===== */
   @media(max-width:860px){
-    /* 縦型背景に透過立ち絵を大きく配置。メッセージ枠の上に足元が来るよう底上げ */
-    .csSide{ width:60%; height:58%; max-width:none; bottom:13%; }
-    .csSide.left{ left:-5%; } .csSide.right{ right:-5%; }
-    .csSide img{ -webkit-mask-image:linear-gradient(180deg,#000 88%,transparent);
-      mask-image:linear-gradient(180deg,#000 88%,transparent); }
-    .csSide.dim{ transform:translateY(4px) scale(.96); }
+    .csSide{ width:48%; height:56%; max-width:none; }
+    .csSide.left{ left:0; } .csSide.right{ right:0; }
     .csEmo{ font-size:58px; }
     #csBox{ width:97%; bottom:2%; padding:10px 12px; gap:9px; border-width:2px; }
     #csFaceWrap{ width:54px; height:54px; }
     #csFaceEmo{ font-size:30px; }
     #csName{ font-size:13.5px; margin-bottom:3px; }
     #csText{ font-size:14px; line-height:1.55; min-height:42px; }
-    /* 縦型ムービー: 黒帯を細くして縦長アートを大きく見せる */
-    #opening::before,#opening::after{ height:4vh; }
-    #opCap{ bottom:11vh; padding:0 6%; }
-    #opCap .ln{ font-size:clamp(16px,4.3vw,26px); margin:5px 0; }
-    #opCap .ln.title{ font-size:clamp(30px,9vw,58px); }
-    #opCap .ln.sub{ font-size:clamp(13px,3.6vw,20px); letter-spacing:.3em; }
-    #opSkip{ top:calc(4vh + 10px); right:12px; padding:6px 13px; font-size:12px; }
-    #opHintC{ bottom:5.2vh; }
-    #chapCard .bg{ opacity:.72; }
+    #opCap{ bottom:17vh; }
     .overlay .modal{ max-width:94vw; max-height:88vh; overflow:auto; }
-  }
-  /* 縦長画面ではムービー/カットシーン背景を必ず全面カバー（縦型アート前提） */
-  @media(max-aspect-ratio:3/4){
-    .opImg{ background-size:cover; background-position:center 40%; }
-    #csBg{ background-position:center 38%; }
-    #chapCard .bg{ background-position:center 42%; }
   }
   #csArrow{ position:absolute; right:14px; bottom:8px; color:#fff; font-size:14px; opacity:0; }
   #csArrow.on{ animation:csBlink 1s steps(2,start) infinite; }
