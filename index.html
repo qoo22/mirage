@@ -206,6 +206,10 @@
   #boardWrap{position:relative;max-width:100%;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
   /* 脱出ボタンは下部・誤タップ防止のため十字から離して配置 */
   .gamebtns #escapeMenuBtn{font-weight:800}
+  /* 脱出/撤退・SEは画面最下部の独立バーに（誤タップ防止） */
+  .bottombar{border-top:1px solid var(--line);padding-top:8px;margin-top:10px}
+  .bottombar button{font-size:14px;padding:11px 16px;font-weight:700}
+  .bottombar #escapeMenuBtn{min-width:150px}
   .stat{display:flex;justify-content:space-between;font-size:13px;margin:2px 0}
   .bar{height:12px;background:#241c3f;border-radius:7px;overflow:hidden;border:1px solid var(--line)}
   .bar > i{display:block;height:100%}
@@ -770,8 +774,6 @@
           <div class="row gamebtns" style="justify-content:flex-end;gap:8px;margin-top:10px;flex-wrap:wrap">
             <button id="summonBtn" title="仲間モンスターを召喚">👹 召喚</button>
             <button id="zoomBtn" title="ダンジョン表示を拡大/標準に切替">🔍 拡大</button>
-            <button id="sndBtn" title="効果音 ON/OFF">🔊 SE</button>
-            <button id="escapeMenuBtn" class="danger">🚪 脱出/撤退</button>
           </div>
         </div>
       </div>
@@ -815,6 +817,10 @@
           <div id="log"></div>
         </div>
       </div>
+    </div>
+    <div class="row bottombar" style="justify-content:center;gap:12px;margin-top:8px;padding-bottom:6px">
+      <button id="sndBtn" title="効果音 ON/OFF">🔊 SE</button>
+      <button id="escapeMenuBtn" class="danger">🚪 脱出 / 撤退</button>
     </div>
   </div>
 </div>
@@ -2209,29 +2215,20 @@ function shade(hex,f){ if(!hex||hex[0]!=='#') return hex; const n=parseInt(hex.s
 // シームレス生成テクスチャがあれば連続パターンで描画（無ければ手描き）。
 function floorPat(kind){ const key=curTex()+'_'+kind; return _pat[key]||null; }
 function drawFloorTile(px,py,T,corridor,alt){
-  // ① 生成テクスチャ（部屋=room / 通路=corr）。translate(ox,oy)済みなので世界基準で連続。
-  const pat=floorPat(corridor?'corr':'room');
+  // 通路も部屋と同じ床テクスチャ・同じ色味で描く（暗くしない＝壁と同化して見にくくならないように）。
+  const pat=floorPat('room') || floorPat('corr');
   if(pat){
     ctx.fillStyle=pat; ctx.fillRect(px,py,TW,TILE);
-    if(corridor){ ctx.fillStyle="rgba(0,0,0,.12)"; ctx.fillRect(px,py,TW,TILE); } // 通路は少し暗く=道が分かる
     ctx.strokeStyle="rgba(0,0,0,.10)"; ctx.lineWidth=1; ctx.strokeRect(px+.5,py+.5,TW-1,TILE-1); // うっすら目地
     return;
   }
-  // ② フォールバック: ダンジョン色の手描きタイル
-  const base = corridor ? shade(T.corr,1.06) : (alt? shade(T.fA,1.04) : shade(T.fA,0.97));
+  // フォールバック: ダンジョン色の手描きタイル（通路も部屋と同じ床色）
+  const base = alt? shade(T.fA,1.04) : shade(T.fA,0.97);
   ctx.fillStyle=base; ctx.fillRect(px,py,TW,TILE);
-  // やわらかいタイル目地（細い格子）
   ctx.strokeStyle=shade(T.fA,0.82); ctx.lineWidth=1;
   ctx.strokeRect(px+.5,py+.5,TW-1,TILE-1);
-  if(corridor){
-    // 通路は中央のすじで「道」だと分かるように（控えめ）
-    ctx.strokeStyle=shade(T.corr,0.86); ctx.beginPath();
-    ctx.moveTo(px+TW*0.5,py+2); ctx.lineTo(px+TW*0.5,py+TILE-2); ctx.stroke();
-  } else {
-    // 部屋はさりげない市松＋上側ハイライトで質感（うるさくしない）
-    if(alt){ ctx.fillStyle=shade(T.fA,1.10); ctx.fillRect(px+TW*0.5,py,TW*0.5,TILE*0.5); ctx.fillRect(px,py+TILE*0.5,TW*0.5,TILE*0.5); }
-    ctx.fillStyle="rgba(255,255,255,.05)"; ctx.fillRect(px+1,py+1,TW-2,3);
-  }
+  if(alt){ ctx.fillStyle=shade(T.fA,1.10); ctx.fillRect(px+TW*0.5,py,TW*0.5,TILE*0.5); ctx.fillRect(px,py+TILE*0.5,TW*0.5,TILE*0.5); }
+  ctx.fillStyle="rgba(255,255,255,.05)"; ctx.fillRect(px+1,py+1,TW-2,3);
 }
 function drawWallTile(px,py,x,y,T){
   const p=floorPat('wall');
