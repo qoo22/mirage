@@ -1656,11 +1656,7 @@ function startRun(){
   const tt=document.getElementById('tutToast'); if(tt){ tt.classList.remove('show'); tt.innerHTML=''; }
   if(d.tutorial){ G.tut={sx:G.px, sy:G.py, mon0:G.monsters.length, shown:{}, cool:0}; }
   else { G.tut=null; }
-  // 最終フロアに章ボスがいればボステーマに切替（アンダーテール式キャラ曲）
-  G._bossTheme = (G.storyMode && (G.floor>=effFloors()) && (typeof curChapter==='function') && curChapter()
-                  && typeof BOSS_BGM!=='undefined' && BOSS_BGM[curChapter().key] && (typeof CH_BOSS!=='undefined' && CH_BOSS[curChapter().key]))
-                 ? curChapter().key : null;
-  bgmStart(); // ボス階=ボステーマ / 通常=ダンジョンBGM
+  bgmStart(); // ダンジョンBGM（深層ほど音量が上がる）
   refreshUI(); draw();
 };
 
@@ -3012,7 +3008,6 @@ function killMonster(mon){
   if(mon._orbBoss){ const c=mon._orbCell||{x:mon.x,y:mon.y}; G.gem={x:c.x,y:c.y};
     log('✨ 幻影のオーブが砕けた——クリアのクリスタルが現れた！','l-gold');
     sfxGem&&sfxGem(); G._shake={t0:now()}; }
-  if(mon._orbBoss && G._bossTheme){ G._bossTheme=null; if(bgm.on) bgmStart(); } // ボス撃破→通常BGMへ
   tryRecruit(mon); // 一定確率で仲間（カード）化
   // level cap growth（モンスターゲート風: 格上ほど大きく成長・最大+5・上限到達で停止）
   const cap=mon.cap[JOBS[G.job].capIdx];
@@ -3921,37 +3916,6 @@ const BGM_CFG={ // ダンジョン別の調性・テンポ・質感
   ultimate:{bpm:74, root:58.27, name:"封印の底",  mood:'mystic', cut:1900, verb:0.52, pad:0.16, lead:0.09},
 };
 const MAJOR=[0,2,4,5,7,9,11,12]; // メジャースケール
-/* ===== ボステーマBGM（アンダーテール式：敵の感情・人格を音で語る／共通ライトモチーフ「願い」=[12,10,7,5]）=====
-   prog=4和音(8stepごと交代) / mel=16音(boss=キー基準の主旋律) / drum=リズム型 / fast=16分主体。*/
-const WISH=[12,10,7,5]; // 共通ライトモチーフ（白い花・願いの動機）
-const _BT={
- sad:    {boss:true,mood:'mystic',cut:2200,verb:0.50,pad:0.14,lead:0.115,drum:'sparse',
-   prog:[0,-4,-9,-5], mel:[...WISH, 7,8,7,5, 8,7,5,3, 5,3,2,0]},
- grand:  {boss:true,mood:'dark',cut:2200,verb:0.46,pad:0.14,lead:0.125,drum:'heavy',
-   prog:[0,-4,-7,-2], mel:[...WISH, 12,14,15,14, 12,10,8,7, 7,5,3,0]},
- heroic: {boss:true,mood:'bright',cut:3200,verb:0.30,pad:0.10,lead:0.13,drum:'driving',fast:true,
-   prog:[0,7,9,5], mel:[0,4,7,12, 11,9,7,9, 12,9,7,4, 5,7,9,11]},
- comical:{boss:true,mood:'bright',cut:3400,verb:0.28,pad:0.09,lead:0.13,drum:'march',
-   prog:[0,5,7,5], mel:[12,12,7,9, 12,7,5,7, 9,9,5,7, 9,7,5,0]},
- eerie:  {boss:true,mood:'mystic',cut:2000,verb:0.56,pad:0.16,lead:0.10,drum:'sparse',
-   prog:[0,6,3,8], mel:[12,11,12,15, 14,12,11,12, 8,9,12,15, 14,12,11,8]},
- show:   {boss:true,mood:'dark',cut:3000,verb:0.32,pad:0.10,lead:0.12,drum:'show',fast:true,
-   prog:[0,3,5,8], mel:[7,7,10,7, 12,10,7,5, 7,10,12,15, 14,12,10,7]},
- intense:{boss:true,mood:'dark',cut:2600,verb:0.34,pad:0.11,lead:0.13,drum:'driving',fast:true,
-   prog:[0,0,-4,-5], mel:[...WISH, 0,12,11,12, 10,8,7,8, 7,5,3,0]},
- hope:   {boss:true,mood:'bright',cut:3400,verb:0.36,pad:0.11,lead:0.13,drum:'driving',fast:true,
-   prog:[0,7,9,5], mel:[0,4,7,9, 12,9,7,9, 11,12,16,12, 9,7,4,7]},
-};
-function _bt(arch,root,bpm){ return Object.assign({root:root,bpm:bpm}, _BT[arch]); }
-const BOSS_BGM={
- ch1:_bt('sad',65.41,76),  ch2:_bt('sad',61.74,80),  ch3:_bt('eerie',69.30,84),
- ch4:_bt('eerie',58.27,80),ch5:_bt('eerie',73.42,76),ch6:_bt('grand',65.41,88),
- ch7:_bt('grand',61.74,92),ch8:_bt('sad',58.27,74),  final:_bt('intense',61.74,150),
- e1:_bt('comical',87.31,128), e2:_bt('eerie',73.42,88), e3:_bt('show',65.41,116),
- e4:_bt('heroic',73.42,140),  e5:_bt('eerie',82.41,80), e6:_bt('show',65.41,122),
- e7:_bt('grand',69.30,100),   e8:_bt('heroic',65.41,132), e9:_bt('intense',82.41,148),
- e10:_bt('grand',58.27,96),   efinal:_bt('intense',61.74,150),
-};
 let bgm={on:false,timer:null,next:0,step:0,gain:null,bus:null,lp:null,verb:null,cfg:null};
 // --- 手作り畳み込みリバーブ（指数減衰ノイズIR）。これだけで一気に空間感が出て安っぽさが消える ---
 let _verbBuf=null;
@@ -4027,31 +3991,23 @@ function bgmStep(s,t){
   const semi=(n)=>R*Math.pow(2,n/12);
   const spb=60/cfg.bpm/2;                       // 8分音符の長さ
   const calm=cfg.mood==='calm', mystic=cfg.mood==='mystic', dark=cfg.mood==='dark';
-  const boss=!!cfg.boss;
-  // 和音進行（4和音・8ステップで交代）。ボスはキャラ別progを使用。
-  const progArr=cfg.prog||[0,7,9,5];
-  const prog=progArr[(s>>3)&3];
+  // I→V→vi→IV（明るく前向き）。8ステップで和音交代。
+  const prog=[0,7,9,5][(s>>3)&3];
+  // パッド和音（和音の頭で1回・8ステップ伸ばす）— 土台の厚み
   if(s%8===0){ bgmPad(t,[semi(prog-12),semi(prog-12+3+(dark||mystic?0:1)),semi(prog-12+7)], spb*8.4, cfg.pad||0.11); }
-  // ベース
-  const bassPat=cfg.bass||[0,7,12,7];
-  if(!( (calm||mystic) && !boss && s%2===1 ))
-    bgmNote(t,semi(prog-12+bassPat[s%4]),0.18, boss?0.34:0.30,'triangle');
-  // リード（通常=コード基準の上行フック／ボス=キー基準の主旋律＝覚えやすいテーマ）
-  const defLead=[12,16,19,16, 19,21,24,21, 19,16,14,12, 14,16,19,23,
+  // ベース：三角の刻み。calm/mysticは音数を減らして落ち着かせる
+  const bassPat=[0,7,12,7];
+  if(!( (calm||mystic) && s%2===1 ))
+    bgmNote(t,semi(prog-12+bassPat[s%4]),0.18,0.30,'triangle');
+  // リード：上行フック。calmは4ステップ毎、それ以外は2ステップ毎
+  const lead=[12,16,19,16, 19,21,24,21, 19,16,14,12, 14,16,19,23,
               24,23,19,16, 14,16,19,21, 23,21,19,16, 12,14,16,19];
-  const mel=cfg.mel||defLead;
-  const leadEvery = cfg.fast?1 : (calm?4:2);
-  if(s%leadEvery===0){ const n=mel[s%mel.length]; bgmLead(t, boss?semi(n):semi(prog+n), calm?0.34:0.28, cfg.lead||0.11); }
-  // ベル
-  if(s%4===2 && !cfg.fast){ [4,7].forEach(iv=>bgmNote(t,semi(prog+iv+12),0.5,0.028,'sine')); }
-  // ドラム（ボスはキャラ別リズム型）
-  const drum=cfg.drum;
-  if(drum==='driving'){ if(s%2===0)bgmDrum(t,'kick'); if(s%4===2)bgmDrum(t,'snare'); if(s%2===1)bgmDrum(t,'hat'); }
-  else if(drum==='march'){ if(s%2===0)bgmDrum(t,'kick'); if(s%4===2)bgmDrum(t,'snare'); }
-  else if(drum==='heavy'){ if(s%4===0)bgmDrum(t,'kick'); if(s%8===4)bgmDrum(t,'snare'); if(s%2===0)bgmDrum(t,'hat'); }
-  else if(drum==='show'){ if(s%2===0)bgmDrum(t,'kick'); if(s%2===1)bgmDrum(t,'hat'); if(s%8===4)bgmDrum(t,'snare'); }
-  else if(drum==='sparse'){ if(s%8===0) bgmDrum(t,'kick'); if(s%16===8) bgmDrum(t,'snare'); }
-  else if(mystic){ if(s%8===0) bgmDrum(t,'kick'); }
+  const leadEvery = calm?4:2;
+  if(s%leadEvery===0){ const n=lead[s%lead.length]; bgmLead(t,semi(prog+n),calm?0.34:0.28,cfg.lead||0.11); }
+  // 小さなベル（和音の3度/5度を裏で）— きらめき
+  if(s%4===2){ [4,7].forEach(iv=>bgmNote(t,semi(prog+iv+12),0.5,0.028,'sine')); }
+  // ドラム：mystic/calmは打楽器を薄く（環境曲寄り）、それ以外は軽快に
+  if(mystic){ if(s%8===0) bgmDrum(t,'kick'); }
   else if(calm){ if(s%4===0) bgmDrum(t,'kick'); if(s%8===4) bgmDrum(t,'snare'); }
   else { if(s%4===0) bgmDrum(t,'kick'); if(s%8===4) bgmDrum(t,'snare'); if(s%2===1) bgmDrum(t,'hat'); }
 }
@@ -4077,7 +4033,7 @@ function bgmSetDepth(){ // 潜るほど音量が上がる（層が増えた分�
 function bgmStart(){
   if(G.muted||!audio()) return;
   bgmStop();
-  const cfg=(G._bossTheme && typeof BOSS_BGM!=='undefined' && BOSS_BGM[G._bossTheme]) || BGM_CFG[G.dungeon] || BGM_CFG.easy; bgm.cfg=cfg;
+  const cfg=BGM_CFG[G.dungeon]||BGM_CFG.easy; bgm.cfg=cfg;
   // バス: 楽器→bus→master(gain)→[LPF→出力] と [畳み込みリバーブ→wet→出力]
   bgm.bus=AC.createGain(); bgm.bus.gain.value=1.0;
   bgm.gain=AC.createGain(); bgm.gain.gain.value=0.07;      // 深度で変化するマスター
@@ -6871,7 +6827,6 @@ Object.values(PORT).forEach(p=>{ if(p.img) getImg(p.img); });
 OP_SCENES.forEach(s=>{ const im=new Image(); im.src='assets/'+s.img+'.png'; }); // オープニング画像先読み
 STORY2.forEach(s=>{ if(s.scene){ const im=new Image(); im.src='assets/'+s.scene+'.png'; } }); // 第2部章画像の先読み
 Object.values(BOSS_IMG).forEach(k=>getImg('assets/'+k+'.png')); // 章ボス立ち絵の先読み
-Object.values(CH_BOSS).forEach(b=>getImg('assets/'+b.spr+'.png')); // 章ボス盤面スプライトの先読み
 document.body.classList.add('setupbg'); // 起動時は選択画面の背景を表示
 loadOpt();   // 設定（音量・文字送り・画面）
 loadWorld(); // ワールド進行データ
