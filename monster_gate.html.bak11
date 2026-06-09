@@ -858,7 +858,6 @@ const MON_SPRITE = {
   "ゴブリン":"assets/t_mon_goblin.png","バルチャー":"assets/t_mon_vulture.png","ターミネーター":"assets/t_mon_robot.png",
   "マッドブル":"assets/t_mon_madbull.png","デーモン":"assets/t_mon_demon.png",
   "ミミック":"assets/t_mon_mimic.png","レイス":"assets/t_mon_wraith.png","クリスタルゴーレム":"assets/t_mon_crystalgolem.png",
-  "幻影のオーブ":"assets/t_mon_orb.png",
 };
 /* ---- 8方向・状態別スプライト ----
    正面(front)/背面(back)/横(side) × 待機(idle)/攻撃(attack)/被弾(hit) の9枚セット。
@@ -967,32 +966,6 @@ const CARD_ART = {
 };
 const cardArtPath = (id)=> CARD_ART[id] ? "assets/"+CARD_ART[id]+".png" : null;
 Object.assign(SPRITES.mon, MON_SPRITE);
-// 各章のボス（最深部に出現する実ボス）。spr=立ち絵/盤面スプライト。撃破でクリアのクリスタルが出る。
-const CH_BOSS={
- ch1:{nm:'はじまりの願い',spr:'boss_ch1',hp:110,atk:12,def:6,role:'ranged',emoji:'🕯️'},
- ch2:{nm:'悲しみ売り',spr:'boss_ch2',hp:150,atk:16,def:7,role:'melee',emoji:'💧'},
- ch3:{nm:'明日を手放した子',spr:'boss_ch3',hp:220,atk:20,def:8,role:'ranged',emoji:'⏳'},
- ch4:{nm:'白紙の騎士',spr:'boss_ch4',hp:320,atk:26,def:12,role:'melee',emoji:'⚔️'},
- ch5:{nm:'まどろみの聖女',spr:'boss_ch5',hp:420,atk:28,def:11,role:'ranged',emoji:'🌙'},
- ch6:{nm:'閉じられぬ門',spr:'boss_ch6',hp:560,atk:26,def:16,role:'melee',emoji:'🚪'},
- ch7:{nm:'奪われた未来',spr:'boss_ch7',hp:760,atk:38,def:14,role:'ranged',emoji:'🩸'},
- ch8:{nm:'喪失の幻影',spr:'boss_ch8',hp:950,atk:44,def:16,role:'melee',emoji:'🥀'},
- final:{nm:'幻影のオーブ',spr:'t_mon_orb',hp:2500,atk:55,def:22,role:'ranged',emoji:'🔮'},
- e1:{nm:'試験番のゴブリン',spr:'boss_e1',hp:120,atk:13,def:6,role:'melee',emoji:'👺'},
- e2:{nm:'霧の毒蟲',spr:'boss_e2',hp:180,atk:18,def:8,role:'poison',emoji:'🐛'},
- e3:{nm:'シグマ',spr:'s2_sigma',hp:270,atk:22,def:10,role:'ranged',emoji:'🃏'},
- e4:{nm:'カイル',spr:'s2_kyle',hp:370,atk:30,def:12,role:'melee',emoji:'⚔️'},
- e5:{nm:'風詠みのセイレーン',spr:'boss_e5',hp:470,atk:30,def:11,role:'ranged',emoji:'🧜'},
- e6:{nm:'ジャックポットデーモン',spr:'boss_e6',hp:620,atk:38,def:14,role:'melee',emoji:'🎰'},
- e7:{nm:'副団長イリス',spr:'s2_iris',hp:820,atk:40,def:14,role:'ranged',emoji:'🌹'},
- e8:{nm:'封印騎士アルゼン',spr:'t_char_arzen',hp:1000,atk:42,def:20,role:'melee',emoji:'🛡️'},
- e9:{nm:'戦狂いグラム',spr:'s2_gram',hp:1200,atk:50,def:16,role:'charge',emoji:'🗡️'},
- e10:{nm:'黒札団団長レオン',spr:'s2_leon',hp:1500,atk:48,def:18,role:'melee',emoji:'🎴'},
- efinal:{nm:'幻影のオーブ',spr:'t_mon_orb',hp:2500,atk:55,def:22,role:'ranged',emoji:'🔮'},
-};
-Object.values(CH_BOSS).forEach(b=>{ if(!MONSTERS[b.nm]){
-  MONSTERS[b.nm]={hp:b.hp,atk:b.atk,def:b.def,emoji:b.emoji,role:b.role,cap:[155,155,155],pay:Math.max(8,Math.round(b.hp/30)),color:'#b079ff'}; }
-  MON_SPRITE[b.nm]='assets/'+b.spr+'.png'; SPRITES.mon[b.nm]='assets/'+b.spr+'.png'; });
 const _imgCache = {};
 function getImg(path){
   if(!path) return null;
@@ -1034,7 +1007,6 @@ const MONSTERS = {
   "リスタドラゴン":{hp:218,atk:35,def:20,emoji:"🐲", role:"magicimmune",cap:[140,140,140],pay:20,color:"#c0392b"},
   "キングドラゴン":{hp:248,atk:50,def:20,emoji:"🐉", role:"ranged", cap:[148,148,148],pay:25,color:"#ffd24d"},
   "カオス":      {hp:260,atk:52, def:20,emoji:"🌀", role:"melee",  cap:[150,150,150],pay:28,color:"#b079ff"},
-  "幻影のオーブ":{hp:2500,atk:55,def:22,emoji:"🔮", role:"ranged", cap:[160,160,160],pay:60,color:"#b079ff"},
   "ミミック":      {hp:115,atk:20, def:7, emoji:"🧰", role:"melee",       cap:[95,95,95],   pay:7, color:"#c89a4a"},
   "レイス":        {hp:122,atk:27, def:6, emoji:"👻", role:"knock",       cap:[112,112,112],pay:9, color:"#9fb8ff"},
   "クリスタルゴーレム":{hp:205,atk:24,def:16,emoji:"🔷", role:"magicimmune", cap:[136,136,136],pay:12,color:"#6fe0d0"},
@@ -1710,8 +1682,6 @@ function buildFloor(){
   // stairs in far room (or gem if final floor)
   const last=rooms[rooms.length-1];
   const isFinal = (G.floor>=effFloors());
-  const _ch = G.storyMode && (typeof curChapter==='function') && curChapter();
-  const _chBossDef = (isFinal && _ch && typeof CH_BOSS!=='undefined') ? CH_BOSS[_ch.key] : null; // 各章のボス
   if(isFinal){
     G.stairs=null;
     G.gem={x:last.cx,y:last.cy}; // クリアの証
@@ -1728,8 +1698,6 @@ function buildFloor(){
     return alt? {x:alt[0],y:alt[1]} : pt;
   };
   G.stairs=bump(G.stairs); G.gem=bump(G.gem);
-  let _bossCell=null;
-  if(_chBossDef && G.gem){ _bossCell={x:G.gem.x,y:G.gem.y}; G.gem=null; } // ボス撃破までクリスタルは出さない
   // items (gem cards / pickups) scattered
   G.items=[];
   const itemCount=1+rnd(3);
@@ -1775,8 +1743,8 @@ function buildFloor(){
       if(b){ b.guardian=true; b.maxhp=Math.round(b.maxhp*1.5); b.hp=b.maxhp; b.pay=b.pay*3; }
     }
   }
-  // final floor: place a guardian near gem（チュートリアル・オーブ戦では置かない）
-  if(isFinal && !d.tutorial && !_chBossDef){
+  // final floor: place a guardian near gem（チュートリアルでは置かない）
+  if(isFinal && !d.tutorial){
     const gband = band;
     const strong = gband[gband.length-1];
     let gx=last.cx, gy=last.cy-1;
@@ -1784,13 +1752,6 @@ function buildFloor(){
     if(map[gy] && map[gy][gx] && !(gx===G.px&&gy===G.py)){
       const g=spawnMonster(strong,gx,gy); if(g)g.guardian=true;
     }
-  }
-  // 各章: 章ボスを最深部に配置。倒すとクリアのクリスタルが出現（最終章=幻影のオーブはHP2500）。
-  if(_bossCell && _chBossDef){
-    G.monsters=G.monsters.filter(m=>!(m.x===_bossCell.x&&m.y===_bossCell.y));
-    const b=spawnMonster(_chBossDef.nm,_bossCell.x,_bossCell.y);
-    if(b){ b.guardian=true; b.boss=true; b._orbBoss=true; b._orbCell=_bossCell;
-      b.maxhp=b.hp=_chBossDef.hp; b.atk=_chBossDef.atk; b.def=_chBossDef.def; }
   }
   // チュートリアル: 練習用に「ポーション」カードと宝石を必ず1つずつ落とす
   if(d.tutorial){
@@ -3004,9 +2965,6 @@ function killMonster(mon){
   sfxKill(mon._fxDelay||0);            // とどめ: ドンッ……ザクッ……
   sfxVanish(matOf(mon), mon._fxDelay||0); // 素材別の消滅音（シュン/プシュ/カララ…）
   log(`✔ ${mon.name} を倒した！`,"l-good");
-  if(mon._orbBoss){ const c=mon._orbCell||{x:mon.x,y:mon.y}; G.gem={x:c.x,y:c.y};
-    log('✨ 幻影のオーブが砕けた——クリアのクリスタルが現れた！','l-gold');
-    sfxGem&&sfxGem(); G._shake={t0:now()}; }
   tryRecruit(mon); // 一定確率で仲間（カード）化
   // level cap growth（モンスターゲート風: 格上ほど大きく成長・最大+5・上限到達で停止）
   const cap=mon.cap[JOBS[G.job].capIdx];
@@ -4785,7 +4743,7 @@ const PORT={ // 立ち絵（無ければ絵文字フォールバック）
   garm:{img:"assets/garm_neutral.png",e:"🛡️",nm:"ガルム"},
   pico:{img:"assets/pico_neutral.png",e:"🃏",nm:"ピコ"},
   vail:{img:"assets/vail_neutral.png",e:"👤",nm:"ヴェイル"},
-  mob:{img:"assets/mob_villager.png",e:"🗨️",nm:"町の人"},    // 町人・NPC（汎用・クラシック枠でも顔表示）
+  mob:{img:null,e:"🗨️",nm:""},    // 町人・NPC（汎用・クラシック枠で表示）
   doc:{img:"assets/doc_neutral.png",e:"🩺",nm:"医者"},
   mom:{img:"assets/mom_neutral.png",e:"🧣",nm:"母"},
   elder:{img:"assets/elder_neutral.png",e:"👴",nm:"村の老人"},
@@ -5166,7 +5124,7 @@ function heroPortrait(expr){
 const EXALIAS={ mia:'mina' }; // 表情セットの流用（ミア＝ミアの表情）
 // 章ごとのボス立ち絵（汎用bossキーの台詞を、章のボス画像で表示）。e8はアルゼンの立ち絵に接続。
 const BOSS_IMG={ ch1:'boss_ch1',ch2:'boss_ch2',ch3:'boss_ch3',ch4:'boss_ch4',ch5:'boss_ch5',ch7:'boss_ch7',ch8:'boss_ch8',
-  e1:'boss_e1',e2:'boss_e2',e5:'boss_e5',e6:'boss_e6',e8:'t_char_arzen', final:'boss_final',efinal:'boss_final' };
+  e1:'boss_e1',e2:'boss_e2',e5:'boss_e5',e6:'boss_e6',e8:'t_char_arzen' };
 function bossPortraitList(){ const ch=(typeof curChapter==='function')&&curChapter(); const k=ch&&BOSS_IMG[ch.key];
   return k?['assets/'+k+'.png']:(PORT.boss.img?[PORT.boss.img]:[]); }
 function partnerPortrait(who,expr){
@@ -5316,12 +5274,8 @@ function showEntry(i){
   const heroSide=document.getElementById('csHeroSide'), partSide=document.getElementById('csPartnerSide');
   box.classList.toggle('classic', _cs.classic);
   if(_cs.classic){
+    faceWrap.classList.add('hide');
     heroSide.classList.add('hide'); partSide.classList.add('hide');
-    const cimg=(PORT[whoKey]||{}).img; // クラシック枠でも画像があれば顔チップを出す
-    if(cimg){ faceWrap.classList.remove('hide');
-      setSide(document.getElementById('csFace'), document.getElementById('csFaceEmo'),
-        whoKey==='boss'?bossPortraitList():partnerPortrait(whoKey,expr), (PORT[whoKey]||{}).e||'🗨️'); }
-    else faceWrap.classList.add('hide');
   } else {
     faceWrap.classList.remove('hide');
     // 立ち絵（主人公=左 / 相手=右）
