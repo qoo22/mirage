@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>聖騎士プレビュー</title>
+<style>
+  :root{ --bg:#15161c; --tile:#2a2c3a; --tile2:#232533; --gold:#ffd24a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:#eee; font-family:system-ui,"Hiragino Sans",sans-serif; text-align:center; padding:16px 10px 40px; }
+  h1{ font-size:18px; margin:6px 0 2px; }
+  p.sub{ color:#9aa; font-size:12px; margin:0 0 14px; }
+  .row{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .card{ background:#1d1f28; border:1px solid #333; border-radius:14px; padding:14px 12px 18px; width:300px; max-width:46vw; }
+  .card h2{ font-size:15px; margin:2px 0 10px; }
+  .stage{ width:100%; aspect-ratio:1/1; border-radius:10px; position:relative;
+    background:
+      linear-gradient(135deg, var(--tile) 25%, transparent 25%) 0 0/40px 40px,
+      linear-gradient(225deg, var(--tile) 25%, transparent 25%) 0 0/40px 40px,
+      linear-gradient(45deg, var(--tile) 25%, transparent 25%) 0 0/40px 40px,
+      linear-gradient(315deg, var(--tile) 25%, var(--tile2) 25%) 0 0/40px 40px;
+    display:flex; align-items:flex-end; justify-content:center; overflow:hidden; }
+  .stage img{ width:78%; filter:drop-shadow(0 6px 6px rgba(0,0,0,.5)); transform:translateY(-6%); }
+  .dir{ margin-top:8px; font-size:12px; color:var(--gold); letter-spacing:1px; }
+  .controls{ margin:18px auto 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  button{ background:#2b2e3c; color:#fff; border:1px solid #444; border-radius:9px; padding:9px 14px; font-size:13px; cursor:pointer; }
+  button.on{ background:var(--gold); color:#222; border-color:var(--gold); font-weight:700; }
+  .note{ color:#889; font-size:11px; margin-top:18px; }
+</style>
+</head>
+<body>
+<h1>聖騎士 プレビュー</h1>
+<p class="sub">3頭身 vs 4頭身（ゲーム内の足元接地イメージ）</p>
+<div class="row">
+  <div class="card">
+    <h2>3頭身（コンパクト）</h2>
+    <div class="stage"><img id="img3" alt="3head"></div>
+    <div class="dir" id="dir3">front</div>
+  </div>
+  <div class="card">
+    <h2>4頭身（高頭身）</h2>
+    <div class="stage"><img id="img4" alt="4head"></div>
+    <div class="dir" id="dir4">front</div>
+  </div>
+</div>
+<div class="controls">
+  <button id="bIdle" class="on">待機</button>
+  <button id="bAtk">攻撃</button>
+  <span style="width:14px"></span>
+  <button id="bAuto" class="on">自動回転</button>
+  <button id="bPrev">◀ 向き</button>
+  <button id="bNext">向き ▶</button>
+</div>
+<p class="note">向き順: front → fdiag → side → bdiag → back（横向きはflipで左右両用）</p>
+<script>
+  const views=["front","fdiag","side","bdiag","back"];
+  let vi=0, state="idle", auto=true;
+  const img3=document.getElementById('img3'), img4=document.getElementById('img4');
+  const dir3=document.getElementById('dir3'), dir4=document.getElementById('dir4');
+  function render(){
+    const v=views[vi];
+    img3.src=`_preview_paladin/h3/t_d_paladin_${v}_${state}.png`;
+    img4.src=`_preview_paladin/h4/t_d_paladin_${v}_${state}.png`;
+    dir3.textContent=v; dir4.textContent=v;
+  }
+  function setState(s){ state=s; document.getElementById('bIdle').classList.toggle('on',s==='idle');
+    document.getElementById('bAtk').classList.toggle('on',s==='attack'); render(); }
+  document.getElementById('bIdle').onclick=()=>setState('idle');
+  document.getElementById('bAtk').onclick=()=>setState('attack');
+  document.getElementById('bPrev').onclick=()=>{ auto=false; document.getElementById('bAuto').classList.remove('on'); vi=(vi+views.length-1)%views.length; render(); };
+  document.getElementById('bNext').onclick=()=>{ auto=false; document.getElementById('bAuto').classList.remove('on'); vi=(vi+1)%views.length; render(); };
+  document.getElementById('bAuto').onclick=function(){ auto=!auto; this.classList.toggle('on',auto); };
+  setInterval(()=>{ if(auto){ vi=(vi+1)%views.length; render(); } }, 900);
+  render();
+</script>
+</body>
+</html>

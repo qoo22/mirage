@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>悪役 プレビュー</title>
+<style>
+  :root{ --bg:#15161c; --tile:#2a2c3a; --tile2:#232533; --gold:#ffd24a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:#eee; font-family:system-ui,"Hiragino Sans",sans-serif; text-align:center; padding:14px 8px 40px; }
+  h1{ font-size:18px; margin:4px 0 2px; }
+  p.sub{ color:#9aa; font-size:12px; margin:0 0 12px; }
+  .head{ font-size:13px; color:var(--gold); margin:14px 0 6px; font-weight:700; }
+  .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; max-width:720px; margin:0 auto; }
+  @media(max-width:520px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+  .card{ background:#1d1f28; border:1px solid #333; border-radius:12px; padding:7px 5px 9px; }
+  .card h2{ font-size:12px; margin:1px 0 5px; color:#ccd; }
+  .stage{ width:100%; aspect-ratio:1/1; border-radius:8px; position:relative;
+    background:
+      linear-gradient(135deg, var(--tile) 25%, transparent 25%) 0 0/30px 30px,
+      linear-gradient(225deg, var(--tile) 25%, transparent 25%) 0 0/30px 30px,
+      linear-gradient(45deg, var(--tile) 25%, transparent 25%) 0 0/30px 30px,
+      linear-gradient(315deg, var(--tile) 25%, var(--tile2) 25%) 0 0/30px 30px;
+    display:flex; align-items:flex-end; justify-content:center; overflow:hidden; }
+  .stage img{ width:84%; filter:drop-shadow(0 5px 5px rgba(0,0,0,.5)); transform:translateY(-4%); }
+  .controls{ margin:16px auto 0; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  button{ background:#2b2e3c; color:#fff; border:1px solid #444; border-radius:9px; padding:8px 13px; font-size:13px; cursor:pointer; }
+  button.on{ background:var(--gold); color:#222; border-color:var(--gold); font-weight:700; }
+  .dir{ font-size:11px; color:#aab; margin-top:8px; }
+</style>
+</head>
+<body>
+<h1>悪役4体 プレビュー（3頭身 / 4頭身）</h1>
+<p class="sub">闇騎士・魔人・堕天使・死霊王</p>
+<div class="head">▼ 3頭身</div>
+<div class="grid" id="g3"></div>
+<div class="head">▼ 4頭身</div>
+<div class="grid" id="g4"></div>
+<div class="dir" id="dir">front</div>
+<div class="controls">
+  <button id="bIdle" class="on">待機</button>
+  <button id="bAtk">攻撃</button>
+  <span style="width:12px"></span>
+  <button id="bAuto" class="on">自動回転</button>
+  <button id="bPrev">◀ 向き</button>
+  <button id="bNext">向き ▶</button>
+</div>
+<script>
+  const chars=[["darkknight","闇騎士"],["fiend","魔人"],["fallen","堕天使"],["lich","死霊王"]];
+  const views=["front","fdiag","side","bdiag","back"];
+  let vi=0, state="idle", auto=true;
+  function build(gid,sub){
+    const g=document.getElementById(gid);
+    chars.forEach(([k,jp])=>{
+      const c=document.createElement('div'); c.className='card';
+      c.innerHTML=`<h2>${jp}</h2><div class="stage"><img id="img_${sub}_${k}"></div>`;
+      g.appendChild(c);
+    });
+  }
+  build('g3','h3'); build('g4','h4');
+  function render(){
+    const v=views[vi];
+    chars.forEach(([k])=>{
+      document.getElementById('img_h3_'+k).src=`_preview_villains/h3/t_d_${k}_${v}_${state}.png`;
+      document.getElementById('img_h4_'+k).src=`_preview_villains/h4/t_d_${k}_${v}_${state}.png`;
+    });
+    document.getElementById('dir').textContent=v+' / '+(state==='idle'?'待機':'攻撃');
+  }
+  function setState(s){ state=s; document.getElementById('bIdle').classList.toggle('on',s==='idle');
+    document.getElementById('bAtk').classList.toggle('on',s==='attack'); render(); }
+  document.getElementById('bIdle').onclick=()=>setState('idle');
+  document.getElementById('bAtk').onclick=()=>setState('attack');
+  document.getElementById('bPrev').onclick=()=>{ auto=false; document.getElementById('bAuto').classList.remove('on'); vi=(vi+views.length-1)%views.length; render(); };
+  document.getElementById('bNext').onclick=()=>{ auto=false; document.getElementById('bAuto').classList.remove('on'); vi=(vi+1)%views.length; render(); };
+  document.getElementById('bAuto').onclick=function(){ auto=!auto; this.classList.toggle('on',auto); };
+  setInterval(()=>{ if(auto){ vi=(vi+1)%views.length; render(); } }, 850);
+  render();
+</script>
+</body>
+</html>
