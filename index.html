@@ -842,7 +842,7 @@
 ----------------------------------------------------------------------- */
 const SPRITES = { player:null, stairs:null, gem:null, mon:{} };
 // Hero portraits per job (AI-generated, background removed)
-const HERO_SPRITE = { warrior:"assets/t_hero_warrior.png", mage:"assets/t_hero_wizard.png", gambler:"assets/t_hero_gambler.png" };
+const HERO_SPRITE = { warrior:"assets/t_hero_warrior.png", mage:"assets/t_hero_wizard.png", gambler:"assets/t_hero_gambler.png", ren:"assets/t_hero_ren.png", samurai:"assets/t_hero_samurai.png", dragoon:"assets/t_hero_dragoon.png", gunner:"assets/t_hero_gunner.png", kensei:"assets/t_hero_kensei.png", spellblade:"assets/t_hero_spellblade.png", yuusha:"assets/t_hero_yuusha.png", paladin:"assets/t_hero_paladin.png", sorcerer:"assets/t_hero_sorcerer.png", darkknight:"assets/t_hero_darkknight.png", fallen:"assets/t_hero_fallen.png" };
 // Each monster now has its own dedicated generated sprite.
 const MON_SPRITE = {
   "プーニャ緑":"assets/t_mon_slime.png","プーニャ黄":"assets/t_mon_slime.png",
@@ -871,7 +871,7 @@ function dset(p){
           fdiag:mk('fdiag'),bdiag:mk('bdiag')}; // 斜め前/斜め後ろ(右向き基準・左は反転)
 }
 const DIR_SPRITES={
-  hero_warrior:dset('warrior'), hero_mage:dset('wizard'), hero_gambler:dset('gambler'),
+  hero_warrior:dset('warrior'), hero_mage:dset('wizard'), hero_gambler:dset('gambler'), hero_ren:dset('ren'), hero_samurai:dset('samurai'), hero_dragoon:dset('dragoon'), hero_gunner:dset('gunner'), hero_kensei:dset('kensei'), hero_spellblade:dset('spellblade'), hero_yuusha:dset('yuusha'), hero_paladin:dset('paladin'), hero_sorcerer:dset('sorcerer'), hero_darkknight:dset('darkknight'), hero_fallen:dset('fallen'),
   "プーニャ緑":dset('slime'), "プーニャ黄":dset('slime'),
   "スケルトン":dset('skeleton'), "ゴブリン":dset('goblin'), "ドラゴン":dset('dragon'),
   // 全モンスター方向対応（正面/背面/横の待機を生成済み。攻撃/被弾はm2ポーズ、斜めは前後にフォールバック）
@@ -1052,6 +1052,41 @@ const JOBS = {
   gambler:{key:"gambler",jp:"ギャンブラー", emoji:"🎲", hp:34, mp:26, atk:9, def:3, sight:3, capIdx:2,
     potBonus:1.0, magBonus:1.0, luck:true,
     desc:"低耐久だが宝石/配当が見えやすく、稼ぎ倍率UP。上級者向け。MP26。"},
+  // ---- 追加職業（フリープレイ用・固有のかっこいい武器） ----
+  samurai:{key:"samurai",jp:"侍", emoji:"⚔️", hp:44, mp:22, atk:14, def:5, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.0, crit:0.22,
+    desc:"妖刀の一閃。攻撃力と会心率が高い手数型。視界3。"},
+  dragoon:{key:"dragoon",jp:"竜騎士", emoji:"🐉", hp:58, mp:24, atk:11, def:9, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.1,
+    desc:"竜槍の重撃。HPと防御が高く前線で粘る。視界3。"},
+  gunner:{key:"gunner",jp:"ガンナー", emoji:"🔫", hp:38, mp:32, atk:10, def:4, sight:4, capIdx:1,
+    potBonus:1.1, magBonus:1.35,
+    desc:"魔銃の遠見。視界が広くMP・魔法が高い遊撃型。視界4。"},
+  kensei:{key:"kensei",jp:"剣聖", emoji:"🗡️", hp:60, mp:26, atk:15, def:8, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.1, crit:0.16,
+    desc:"戦士の極み。聖剣の大剣でHP・攻撃・防御すべてが高い王道強化型。視界3。"},
+  spellblade:{key:"spellblade",jp:"魔法剣士", emoji:"✨", hp:48, mp:34, atk:12, def:6, sight:3, capIdx:0,
+    potBonus:1.1, magBonus:1.4,
+    desc:"剣技と魔法の両刀。攻守そこそこにMP・魔法が高い。視界3。"},
+  yuusha:{key:"yuusha",jp:"勇者", emoji:"⚔️", hp:56, mp:28, atk:16, def:8, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.15, crit:0.18,
+    desc:"伝説の剣を継ぐ者。攻防に優れ会心も高い最上位の剣士。視界3。"},
+  paladin:{key:"paladin",jp:"聖騎士", emoji:"🛡️", hp:54, mp:22, atk:14, def:7, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.0, crit:0.14,
+    desc:"戦士の正統。宝剣を帯びた誇り高き騎士。攻撃力が高い。視界3。"},
+  sorcerer:{key:"sorcerer",jp:"魔導士", emoji:"🔮", hp:36, mp:38, atk:9, def:4, sight:3, capIdx:1,
+    potBonus:1.15, magBonus:1.5,
+    desc:"紫紺の魔力を操る魔導士。MPと魔法が非常に高い後衛。視界3。"},
+  darkknight:{key:"darkknight",jp:"闇騎士", emoji:"🗡️", hp:56, mp:24, atk:16, def:7, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.15, crit:0.16,
+    desc:"呪われた漆黒の大剣を振るう堕ちた騎士。HP・攻撃が高い前衛。視界3。"},
+  fallen:{key:"fallen",jp:"堕天使", emoji:"🖤", hp:48, mp:32, atk:14, def:6, sight:4, capIdx:1,
+    potBonus:1.1, magBonus:1.35, crit:0.16,
+    desc:"漆黒の翼と三日月刃の槍を持つ堕天使。魔法と視界に優れる遊撃型。視界4。"},
+  // 第1部の主人公レン（戦士と魔法使いの中間／MP=HP半分）。職業選択には出さない(hidden)。
+  ren:{key:"ren",jp:"主人公レン", emoji:"🗡️", hp:46, mp:23, atk:10, def:5, sight:3, capIdx:0,
+    potBonus:1.1, magBonus:1.25, mpHalf:true, hidden:true,
+    desc:"剣も魔も少しずつ扱う、折れない心の少年。MPはHPの半分。"},
 };
 
 /* ---------------------------- DATA: dungeons --------------------------- */
@@ -1223,6 +1258,14 @@ function bossRarity(key){
   return 'SSR';
 }
 const RAR_ORDER={R:0,SR:1,SSR:2,UR:3,LR:4};
+// カードの統一並び順: カテゴリ(回復→攻撃→補助→強化→装備)→同系統内はレアリティ低→高(右ほどレア)→コスト
+const CAT_ORDER={heal:0,atk:1,sup:2,buff:3,equip:4};
+function cardOrder(a,b){ const ca=CARDS[a],cb=CARDS[b];
+  const oa=(CAT_ORDER[ca.cat]!==undefined?CAT_ORDER[ca.cat]:9), ob=(CAT_ORDER[cb.cat]!==undefined?CAT_ORDER[cb.cat]:9);
+  if(oa!==ob) return oa-ob;
+  const ra=(RAR_ORDER[cardRarity(a)]||0), rb=(RAR_ORDER[cardRarity(b)]||0);
+  if(ra!==rb) return ra-rb;
+  return (ca.cost||0)-(cb.cost||0); }
 // MP gained when converting an unwanted card into fuel (stronger card => more MP)
 const mpValue=(id)=>Math.max(2,Math.round(CARDS[id].cost*0.5));
 // 排出率: 弱い(安い)カードほど高排出、ポーション系はさらに高め。
@@ -1304,7 +1347,7 @@ function refreshSlotBtn(){ const b=document.getElementById('slotBtn'); if(b) b.c
 function renderSetup(){
   // jobs
   const jp=document.getElementById('jobpick'); jp.innerHTML='';
-  Object.values(JOBS).forEach(j=>{
+  Object.values(JOBS).filter(j=>!j.hidden).forEach(j=>{
     const el=document.createElement('div'); el.className='jobcard'+(G.job===j.key?' sel':'');
     const portrait=HERO_SPRITE[j.key];
     el.innerHTML=`<div style="text-align:center"><img src="${portrait}" alt="${j.jp}"
@@ -1551,7 +1594,7 @@ function showSlot(opts){
 function renderBag(){
   // collection
   const col=document.getElementById('collection'); col.innerHTML='';
-  const owned=Object.entries(G.collection).filter(([id,n])=>n>0);
+  const owned=Object.entries(G.collection).filter(([id,n])=>n>0).sort((x,y)=>cardOrder(x[0],y[0]));
   if(owned.length===0) col.innerHTML='<span class="tag">なし — ショップで購入しよう</span>';
   owned.forEach(([id,n])=>{
     const c=CARDS[id];
@@ -1566,6 +1609,7 @@ function renderBag(){
   // bag
   const b=document.getElementById('bag'); b.innerHTML='';
   if(G.bag.length===0) b.innerHTML='<span class="tag">空</span>';
+  G.bag.sort(cardOrder);
   G.bag.forEach((id,i)=>{
     const el=cardEl(CARDS[id],id,()=>{
       G.bag.splice(i,1); G.collection[id]=(G.collection[id]||0)+1; renderBag();
@@ -2491,8 +2535,8 @@ function draw(){
   const ppx=ox+(G._vx+plx)*TW+phx, ppy=oy+(G._vy+ply)*TILE+pbob+phy;
   drawShadow(ox+G._vx*TW, oy+G._vy*TILE, true);
   const pds=dirSprite('hero_'+G.job, G); // 8方向・攻撃/被弾ポーズ
-  drawUnitSprite(pds?pds.path:SPRITES.player, j.emoji, ppx, ppy, 1.2,
-    pds?pds.flip:(G._face||1), pfl, 1, 1, atkSpinOff(G), pyaw); // 被弾=横ターン/回転斬りのみ平面回転
+  drawUnitSprite(pds?pds.path:SPRITES.player, j.emoji, ppx, ppy, 1.5,
+    pds?pds.flip:(G._face||1), pfl, 1, 1, atkSpinOff(G), pyaw); // レンは大きめ表示 / 被弾=横ターン
   if(G.faceMode||G.diagMode) drawFacingArrow(ppx+TW/2, ppy+TILE/2); // 🧭/⤡ 向き矢印
   if(G.status.invis>0){ ctx.fillStyle="rgba(120,160,255,.25)";
     ctx.fillRect(ppx,ppy,TW,TILE); }
@@ -2688,7 +2732,7 @@ function drawUnitSprite(imgPath,emoji,px,py,scale,flip,flashA,sqx,sqy,rot,yaw){
     const box=TILE*scale, r=Math.min(box/im.width,box/im.height);
     const w0=im.width*r, h0=im.height*r;
     const w=w0*sqx, h=h0*sqy;
-    const dx=px+(TW-w)/2, dy=py+(TILE-h0)/2-TILE*0.08+(h0-h); // bottom-anchored squash
+    const dx=px+(TW-w)/2, dy=py+TILE*0.97-h; // 足元接地（大きくしても足が床マス内に収まる／頭は上にはみ出てOK）
     if(flip===-1){ ctx.save(); ctx.translate(dx+w/2,0); ctx.scale(-1,1); ctx.translate(-(dx+w/2),0);
       ctx.drawImage(im,dx,dy,w,h); ctx.restore(); }
     else ctx.drawImage(im,dx,dy,w,h);
@@ -2838,6 +2882,7 @@ function renderHand(){
   if(!open){ h.innerHTML=''; return; } // 閉じている間はカードDOM/ホロ演出を生成しない＝CPU節約
   h.innerHTML='';
   if(G.hand.length===0){ h.innerHTML='<span class="tag">手札なし</span>'; return; }
+  G.hand.sort(cardOrder); // 手札も同じ並び
   G.hand.forEach((id,i)=>{
     const c=CARDS[id];
     const el=cardEl(c,id,()=>useCard(i));
@@ -2891,10 +2936,13 @@ function playerTurn(action){
   G.busy=true;
   let extraTurn=false;
   if(action===null){
-    // その場で剣を振る（空振り待ち）: 向いている方向に素振り斬撃
-    const fdx=G._face||1;
-    G._lunge={dx:fdx*0.6,dy:0,t0:now()};
-    if(walkable(G.px+fdx,G.py)) fxSlash(G.px+fdx,G.py, fdx>0?0:Math.PI);
+    // その場で剣を振る（空振り待ち）: 向いている“実際の方向”へ素振り斬撃（上下・斜めも対応）
+    let fdx=G._dirX||0, fdy=G._dirY||0;
+    if(!fdx && !fdy){ fdx=G._face||1; } // 既定は向いている横
+    G._lunge={dx:fdx*0.6, dy:fdy*0.6, t0:now()};
+    const ang=Math.atan2(fdy,fdx);
+    const tx=G.px+fdx, ty=G.py+fdy;
+    fxSlash(walkable(tx,ty)?tx:(G.px+fdx*0.5), walkable(tx,ty)?ty:(G.py+fdy*0.5), ang);
     sfxSwing(); // ブォッ……（切断音なしの風切りだけ＝空振り感）
     G._baiting=true; // 空振り＝敵を引き寄せるターン（敵は基本1マス寄ってくる）
     log("その場で剣を振った（空振り待ち・敵が寄ってくる）。","l-sys");
@@ -2959,7 +3007,7 @@ function doPlayerAttack(mon){
   // 通常攻撃 = 攻撃力 - 守備力 + ランダム(-2〜+2)（モンスターゲート式）
   let dmg=Math.max(1, Math.round(power - mon.def) + (rnd(5)-2));
   // 会心の一撃: 1.5倍 + 金斬撃 + 大数字 + 画面揺れ + 長ヒットストップ
-  const crit = Math.random() < (JOBS[G.job].luck ? 0.18 : 0.12);
+  const crit = Math.random() < (JOBS[G.job].crit || (JOBS[G.job].luck ? 0.18 : 0.12));
   if(crit) dmg=Math.round(dmg*1.5);
   // 格下撃破補正: 育成上限を超えた通常敵は1撃（ボス/ガーディアン/カオス/シャドーは除く）
   const ecap=mon.cap?mon.cap[JOBS[G.job].capIdx]:999;
@@ -3064,6 +3112,7 @@ function levelUp(n){
     G.lvl++; G.maxhp+=1; G.atk+=1; G.maxmp+=1;            // HP≈+0.97/ATK≈+0.94（仕様の緩やかな成長曲線）
     G._defFrac=(G._defFrac||0)+0.45; if(G._defFrac>=1){ G.def+=1; G._defFrac-=1; } // DEF≈+0.45/Lv
   }
+  if(JOBS[G.job] && JOBS[G.job].mpHalf){ G.maxmp=Math.max(1,Math.round(G.maxhp/2)); } // レン: MPは常にHPの半分
   G.hp=Math.min(G.maxhp,G.hp+n*2);
   G.mp=Math.min(G.maxmp,G.mp+n*2);
   const head = n>=4?'格上の敵を倒し、レベルが一気に上がった！' : n>=3?'強敵を倒し、大きな経験を得た！' : n>=2?'レベルが大きくあがった！' : 'レベルがあがった！';
@@ -5158,6 +5207,10 @@ function curStory(){ return G.campaign===2 ? STORY2 : STORY; }
 function curChapter(){ return curStory()[G.storyChapter]; }
 // 第1部：職業ごとの目的とプロローグ（最初に選んだ職業で固定）
 const JOB_LORE={
+ ren:{purpose:'剣と願いの力で、妹ミアを救う',
+  prologue:[['pico','きみ、面白いね。剣も握れて、カードの“理”も少し読める。どっちつかず——でも、それがいい。','neutral'],
+   ['narr','＊ レン——剣も魔も、少しずつ。器用貧乏だが、けっして折れない心の持ち主。'],
+   ['pico','ミアのために、門の奥へ。……いいよ、ぼくも、ついていく。','smile']]},
  warrior:{purpose:'剣で、妹ミアを救う道をこじ開ける',
   prologue:[['pico','きみ、剣を握ると手が迷わないね。守る形を、体が覚えてる。','neutral'],
    ['narr','＊ レン——剣の探索者。守りたいもののために、まっすぐ前へ出る者。'],
@@ -5531,13 +5584,17 @@ function updateStoryProg(){
 }
 function startStory(){
   const prev=loadStory();
-  let name = prompt('主人公（少年）の名前を入力してください', prev&&prev.name || 'レン');
-  if(name===null) return; name=(name||'レン').slice(0,8);
+  // 名前は最初の一回だけ入力。以後はセーブされた名前でずっと続く。
+  let name;
+  if(prev && prev.name && (prev.ver|0)===STORY_VER){ name=prev.name; }
+  else { name=prompt('主人公（レン）の名前を入力してください', (prev&&prev.name)||'レン'); if(name===null) return; }
+  name=(name||'レン').slice(0,8);
   G.playerName=name; G.storyMode=true; G.campaign=1;
   // 同名かつ同シナリオ版のセーブのみ続きから。旧シナリオのセーブは序章からやり直し。
-  if(prev && prev.name===name && (prev.ver|0)===STORY_VER){ G.storyChapter=prev.chapter||0; G.storyCleared=prev.cleared; G.storyJob=prev.storyJob||G.storyJob; if(prev.job)G.job=prev.job; }
-  else { G.storyChapter=0; G.storyCleared=false; G.storyJob=null; }
-  if(G.storyJob) G.job=G.storyJob;
+  if(prev && prev.name===name && (prev.ver|0)===STORY_VER){ G.storyChapter=prev.chapter||0; G.storyCleared=prev.cleared; }
+  else { G.storyChapter=0; G.storyCleared=false; }
+  // 第1部は職業選択なし：主人公レン固定（戦士と魔法使いの中間／MP=HP半分）
+  G.job='ren'; G.storyJob='ren';
   saveStory();
   // 序章「妹の眠る部屋」——最初は、レンと妹ミアの二人だけの場面。
   const intro=[
@@ -5556,26 +5613,20 @@ function startStory(){
     ['hero','何があっても、連れて帰る。','determined'],
     ['narr','＊ レンは、たったひとり、門へと歩きだした。'],
   ];
-  if(G.storyChapter===0 && !G.storyJob){
-    // 序章 → 職業選択（1回限り・以後固定）→ 職業別プロローグ → 第1章
-    playCutscene(intro, ()=> jobSelect(()=>{
-      setJobLock(G.job); saveStory();
-      playCutscene(JOB_LORE[G.job].prologue, ()=>enterChapter(0), 'bg_home');
-    }), 'bg_home');
-  } else if(G.storyChapter===0){
-    playCutscene(intro, ()=>enterChapter(0), 'bg_home');
+  if(G.storyChapter===0){
+    // 序章 → レンのプロローグ → 第1章（職業選択なし）
+    playCutscene(intro, ()=> playCutscene(JOB_LORE.ren.prologue, ()=>enterChapter(0), 'bg_home'), 'bg_home');
   } else enterChapter(G.storyChapter);
 }
 // 第2部：探索者試験編（第1部クリア後に解放）
 function startStory2(){
   if(!part1Cleared()){ log("第2部は第1部クリア後に解放されます","l-warn"); return; }
   const prev=loadStory();
-  let name = prompt('探索者の名前を入力してください', prev&&prev.name || 'アレン');
-  if(name===null) return; name=(name||'アレン').slice(0,8);
+  // 名前は第1部と同じ（最初に設定した名前を継続）。第2部もレン固定で職業選択なし。
+  let name = (prev && prev.name) ? prev.name : prompt('主人公（レン）の名前を入力してください','レン');
+  if(name===null) return; name=(name||'レン').slice(0,8);
   G.playerName=name; G.storyMode=true; G.campaign=2;
-  if(prev && prev.job) G.job=prev.job;
-  G.story2Job = (prev && prev.story2Job) || G.story2Job || null;
-  if(G.story2Job) G.job=G.story2Job;
+  G.job='ren'; G.story2Job='ren';
   G.storyChapter = (prev && prev.chapter2) || 0;
   G.story2Cleared = !!(prev && prev.cleared2);
   saveStory();
@@ -5587,9 +5638,7 @@ function startStory2(){
     ['narr','唯一の手がかりは、古いカードホルダーと、「ミア」と刻まれた壊れたカード。'],
     ['lily','……ねえ、君。探索者に、なってみる気はない？','smile'],
   ];
-  if(G.storyChapter===0 && !G.story2Job){
-    playCutscene(intro, ()=> jobSelect(()=>{ setJobLock(G.job); saveStory(); enterChapter(0); }));
-  } else if(G.storyChapter===0){
+  if(G.storyChapter===0){
     playCutscene(intro, ()=>enterChapter(0));
   } else enterChapter(G.storyChapter);
 }
