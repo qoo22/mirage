@@ -1821,7 +1821,7 @@ function buildFloor(){
   }
   // monsters by floor band
   G.monsters=[]; G.allies=[];
-  const band = d.bands[Math.min(G.floor-1, d.bands.length-1)];
+  const band = floorBand();
   // density scales with actual room area (not whole map) to avoid overcrowding
   const roomArea=rooms.reduce((s,r)=>s+r.w*r.h,0);
   const target=Math.max(2,Math.round(roomArea*d.dense*0.9));
@@ -1933,6 +1933,21 @@ function floorFactor(){
   const startF=0.85;                                // 1F は少し弱め＝倒して成長できる
   const endF  =1.30 + 0.11*Math.min(star,9);        // 最終Fは難易度に応じて大きく上昇（強化）
   return startF + (endF-startF)*Math.pow(p,0.78);   // 深層へ向けて加速（奥ほど急に強く）
+}
+// このフロアで実際に湧くモンスター帯。深層では「弱い種」を自動的に除外し、
+// 低層で出る雑魚が高層に居残らないようにする（pay=強さの目安でフィルタ）。
+function floorBand(raw){
+  const d=DUNGEONS[G.dungeon];
+  if(!raw) raw=d.bands[Math.min(G.floor-1,d.bands.length-1)]||[];
+  if(raw.length<=1) return raw;
+  const fl=Math.max(1,effFloors());
+  const prog=(fl<=1)?1:Math.min(1,(G.floor-1)/(fl-1)); // 0(浅)→1(最深)
+  const pays=raw.map(n=>MONSTERS[n]?MONSTERS[n].pay:1);
+  const maxPay=Math.max.apply(null,pays);
+  // しきい値: 浅い階は全種、深い階ほど最強種のpayの最大45%未満を切り捨て
+  const cutoff=maxPay*(0.12+0.48*prog);
+  const kept=raw.filter(n=>(MONSTERS[n]?MONSTERS[n].pay:1)>=cutoff);
+  return kept.length?kept:raw;
 }
 /* ===================== 床ギミック & 障害物 ===================== */
 // テーマ別の床ギミック出現傾向（texから判定。world城は色→texで反映済み）
@@ -2215,7 +2230,7 @@ function spawnMonster(name,x,y){
 // このフロアの推奨レベル（帯の平均攻撃力×係数から概算）。怠けて成長しないと足りなくなる。
 function recommendedLevel(){
   const d=DUNGEONS[G.dungeon];
-  const band=d.bands[Math.min(G.floor-1,d.bands.length-1)]||[];
+  const band=floorBand();
   if(!band.length) return 1;
   const sc=floorFactor();
   const avgAtk=band.reduce((s,n)=>s+(MONSTERS[n]?MONSTERS[n].atk:0),0)/band.length*sc;
@@ -3555,7 +3570,7 @@ function tickWorld(){
       G.omens.splice(G.omens.indexOf(o),1);
       if(walkable(o.x,o.y)&&!occupied(o.x,o.y)){
         const d=DUNGEONS[G.dungeon];
-        const band=d.bands[Math.min(G.floor-1,d.bands.length-1)];
+        const band=floorBand();
         spawnMonster(pick(band),o.x,o.y);
         if(G.lit[o.y]&&G.lit[o.y][o.x]) log("🌫️ 煙からモンスターが現れた！","l-warn");
       }
