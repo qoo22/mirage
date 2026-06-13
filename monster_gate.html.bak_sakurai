@@ -163,11 +163,6 @@
     #csBg{ background-position:center 38%; }
     #chapCard .bg{ background-position:center 42%; }
   }
-  #csCtl{ position:absolute; right:12px; top:10px; z-index:6; display:flex; gap:8px; }
-  #csCtl button{ font-size:12px; padding:5px 11px; border-radius:8px; border:1px solid rgba(255,255,255,.35);
-    background:rgba(20,18,30,.66); color:#fff; cursor:pointer; backdrop-filter:blur(2px); }
-  #csCtl button:hover{ background:rgba(40,36,60,.85); }
-  #csFfBtn.on{ background:#ffcf4d; color:#1a1530; border-color:#ffcf4d; font-weight:bold; }
   #csArrow{ position:absolute; right:14px; bottom:8px; color:#fff; font-size:14px; opacity:0; }
   #csArrow.on{ animation:csBlink 1s steps(2,start) infinite; }
   @keyframes csBlink{ 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
@@ -289,23 +284,11 @@
     box-shadow:0 2px 4px rgba(0,0,0,.5);
   }
   /* カテゴリ別フレーム（MTGの色対応: 回復=緑/攻撃=赤/補助=青/強化=白金/装備=アーティファクト紫灰） */
-  .card.cat-heal{ --f1:#1f5c3c; --f2:#4fae74; --cc:#5fd089; }
-  .card.cat-atk{  --f1:#6e241c; --f2:#c45040; --cc:#ff7a5e; }
-  .card.cat-sup{  --f1:#1d4368; --f2:#4d8cc8; --cc:#6fb6ff; }
-  .card.cat-buff{ --f1:#8a7430; --f2:#e6c45a; --cc:#ffd860; }
-  .card.cat-equip{--f1:#4a3c5c; --f2:#9c8ab8; --cc:#c9aaf0; }
-  /* カテゴリ色をタイプ行に徹底（色分けで一目で役割が分かる） */
-  .card .ctype{ border-left:5px solid var(--cc, #888); }
-  .card.cat-heal .ctype{ background:linear-gradient(180deg,#d4f0dd,#b6e0c4); color:#10331f; }
-  .card.cat-atk  .ctype{ background:linear-gradient(180deg,#f6d6cd,#eebbb0); color:#3a140d; }
-  .card.cat-sup  .ctype{ background:linear-gradient(180deg,#d2e6f6,#bcd4ee); color:#0d2538; }
-  .card.cat-buff .ctype{ background:linear-gradient(180deg,#f6efcd,#e6d8a8); color:#3a2c10; }
-  .card.cat-equip .ctype{ background:linear-gradient(180deg,#e7ddf2,#d2c2e8); color:#241a3a; }
-  /* MP不足＝使用不可: グレーアウト＋MPジェムを赤く＋使えないと一目で分かる */
-  .card.noMp{ filter:grayscale(.75) brightness(.62); cursor:not-allowed; }
-  .card.noMp:hover{ transform:none; box-shadow:0 3px 8px rgba(0,0,0,.55); }
-  .card.noMp .cmp{ background:radial-gradient(circle at 35% 30%,#ffb0a0,#c0392b 60%,#3a1010); }
-  .card.noMp .cname::after{ content:"MP不足"; margin-left:auto; font-size:8px; color:#c0392b; font-weight:900; }
+  .card.cat-heal{ --f1:#1f5c3c; --f2:#4fae74; }
+  .card.cat-atk{  --f1:#6e241c; --f2:#c45040; }
+  .card.cat-sup{  --f1:#1d4368; --f2:#4d8cc8; }
+  .card.cat-buff{ --f1:#8a7430; --f2:#e6c45a; }
+  .card.cat-equip{--f1:#4a3c5c; --f2:#9c8ab8; }
   .card.cat-gem{  --f1:#7a6b2f; --f2:#e6d45a; }
   /* ===== レアカード・ホログラム（5レイヤー） ===== */
   /* 1.ベースフレーム=レア度別の金属/宝石枠 2.イラスト枠 3.ホログラム層(虹スイープ)
@@ -691,10 +674,6 @@
   <div id="cutscene" class="hidden">
     <div id="csBg"></div>
     <div id="csVeil"></div>
-    <div id="csCtl">
-      <button id="csFfBtn" title="早送り（タップでON/OFF）">早送り ▶▶</button>
-      <button id="csSkipBtn" title="このイベントをスキップ">スキップ ⏭</button>
-    </div>
     <div class="csSide left" id="csHeroSide"><span class="csEmo" id="csHeroEmo"></span><img id="csHero" alt=""></div>
     <div class="csSide right" id="csPartnerSide"><span class="csEmo" id="csPartnerEmo"></span><img id="csPartner" alt=""></div>
     <div id="csBox">
@@ -1100,9 +1079,9 @@ const JOBS = {
   sorcerer:{key:"sorcerer",jp:"魔導士", emoji:"🔮", hp:36, mp:38, atk:9, def:4, sight:3, capIdx:1,
     potBonus:1.15, magBonus:1.5,
     desc:"紫紺の魔力を操る魔導士。MPと魔法が非常に高い後衛。視界3。"},
-  darkknight:{key:"darkknight",jp:"闇騎士", emoji:"🗡️", hp:56, mp:24, atk:16, def:5, sight:3, capIdx:0,
+  darkknight:{key:"darkknight",jp:"闇騎士", emoji:"🗡️", hp:56, mp:24, atk:16, def:7, sight:3, capIdx:0,
     potBonus:1.0, magBonus:1.15, crit:0.16,
-    desc:"呪われた漆黒の大剣の高火力前衛。HPは高いが呪いで守備が薄く、被弾は痛い諸刃型。視界3。"},
+    desc:"呪われた漆黒の大剣を振るう堕ちた騎士。HP・攻撃が高い前衛。視界3。"},
   fallen:{key:"fallen",jp:"ゼラート", emoji:"🖤", hp:48, mp:32, atk:14, def:6, sight:4, capIdx:1,
     potBonus:1.1, magBonus:1.35, crit:0.16,
     desc:"漆黒の翼と三日月刃を携えた堕天の遊撃手。魔法と視界に優れる遊撃型。視界4。"},
@@ -1114,12 +1093,12 @@ const JOBS = {
     potBonus:1.1, magBonus:1.45, crit:0.18,
     desc:"紫紺の魔力を帯びた細剣の姫。剣技と魔法の二刀で会心も高い両刀型。視界3。"},
   // ---- 神話英雄シリーズ（豪華装備・AI生成） ----
-  reddragoon:{key:"reddragoon",jp:"紅竜騎士", emoji:"🐲", hp:60, mp:24, atk:13, def:9, sight:2, capIdx:0,
+  reddragoon:{key:"reddragoon",jp:"紅竜騎士", emoji:"🐲", hp:60, mp:24, atk:13, def:9, sight:3, capIdx:0,
     potBonus:1.0, magBonus:1.1,
-    desc:"最高のHPと防御を誇る重装の前線役。だが鈍重で視界が狭く、不意打ちに弱い。視界2。"},
-  gilgamesh:{key:"gilgamesh",jp:"ギルガメシュ", emoji:"👑", hp:52, mp:26, atk:17, def:5, sight:3, capIdx:0,
-    potBonus:0.85, magBonus:1.0, crit:0.18, luck:true,
-    desc:"黄金鎧の英雄王。ATK・会心が最高で配当も得る。だが守りを知らず防御が薄く回復も苦手＝ガラスの大砲。視界3。"},
+    desc:"緋色の竜鱗鎧と黄金の竜槍。HPと防御に優れた重装の前衛。視界3。"},
+  gilgamesh:{key:"gilgamesh",jp:"ギルガメシュ", emoji:"👑", hp:58, mp:26, atk:17, def:8, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.15, crit:0.18, luck:true,
+    desc:"黄金鎧の英雄王。攻撃・会心が高く、財宝の配当も得る傲岸不遜の最強格。視界3。"},
   lucifer:{key:"lucifer",jp:"ルシファー", emoji:"🌑", hp:50, mp:34, atk:14, def:6, sight:4, capIdx:1,
     potBonus:1.1, magBonus:1.4, crit:0.14,
     desc:"光に背いた元・最高位天使。黒翼と欠けた光輪。魔法と視界に優れる。視界4。"},
@@ -1730,8 +1709,6 @@ function startRun(){
   // 持ち込み制限超過分はコレクションへ返す（幻は5枚まで）
   G.bag.slice(limit).forEach(id=>{ G.collection[id]=(G.collection[id]||0)+1; });
   if(G.bag.length>limit) log(`⚠ ${d.jp}の持ち込みは${limit}枚まで。超過分はコレクションへ戻した。`,"l-warn");
-  // 「同じ条件でもう一度」用に出撃条件を記録（職業・ダンジョン・持ち込みカード）
-  if(!G.storyMode && !G.worldMode){ G._lastRun={job:G.job, dungeon:G.dungeon, bag:G.hand.slice()}; }
   G.bag=[]; saveGame();
   if(d.hidden){ G.maboroshiAvail=false; log("✨ 幻のダンジョンは一度きり……","l-warn"); }
   document.body.classList.remove('setupbg');
@@ -2956,9 +2933,8 @@ function renderHand(){
   G.hand.sort(cardOrder); // 手札も同じ並び
   G.hand.forEach((id,i)=>{
     const c=CARDS[id];
-    const noMp=(c.cat!=='equip') && (mpCost(c)>G.mp); // 装備はMP不要
-    const el=cardEl(c,id, noMp ? (()=>{ sfxUIBack&&sfxUIBack(); log(`MPが足りない（必要${mpCost(c)} / 現在${Math.round(G.mp)}）`,'l-warn'); }) : (()=>useCard(i)));
-    if(noMp) el.classList.add('noMp'); // MP不足は使用不可表示（グレーアウト）
+    const el=cardEl(c,id,()=>useCard(i));
+    if(mpCost(c)>G.mp) el.style.opacity=.45; // MP不足は半透明
     const btn=document.createElement('button');
     btn.className='mpbtn'; btn.textContent='→MP+'+mpValue(id);
     btn.title='このカードをMPに変換する（行動を消費しない）';
@@ -4840,8 +4816,7 @@ function endScreen(title,body,color){
   showModal(`<div class="big center" style="color:${color}">${title}</div>
    <p class="center" style="margin:14px 0">${body}</p>
    <div class="center muted">所持メダル: <b class="gold">${G.medals}</b></div>
-   <div class="center" style="margin-top:16px">${(!G.storyMode&&!G.worldMode&&G._lastRun)?'<button class="primary" id="mRetry" style="margin-bottom:8px">🔄 同じ条件でもう一度 ▶</button><br>':''}<button class="${(!G.storyMode&&!G.worldMode&&G._lastRun)?'':'primary'}" id="mAgain">タイトルへ戻る</button></div>`);
-  const _rb=document.getElementById('mRetry'); if(_rb) _rb.onclick=()=>{ hideModal(); retrySameRun(); };
+   <div class="center" style="margin-top:16px"><button class="primary" id="mAgain">タイトルへ戻る</button></div>`);
   document.getElementById('mAgain').onclick=()=>{ hideModal();
     document.getElementById('game').classList.add('hidden');
     document.getElementById('setup').classList.remove('hidden');
@@ -4855,26 +4830,6 @@ function endScreen(title,body,color){
     }
     renderSetup();
   };
-}
-// 爆速リトライ: 前回と同じ職業・ダンジョン・持ち込みカードで即出撃（桜井流「リトライを速く」）
-function retrySameRun(){
-  const lr=G._lastRun;
-  const toSetup=()=>{ document.getElementById('game').classList.add('hidden');
-    document.getElementById('setup').classList.remove('hidden'); renderSetup(); };
-  if(!lr){ toSetup(); return; }
-  const d=DUNGEONS[lr.dungeon];
-  if(!d){ toSetup(); return; }
-  if(d.bet>G.medals){ alert('メダルが足りないので再挑戦できません。BET:'+d.bet+' / 所持:'+G.medals); toSetup(); return; }
-  G.job=lr.job; G.dungeon=lr.dungeon;
-  // 所持しているカードのみ袋に積み直す（死亡で失った分は持てない）
-  const limit=d.bagLimit||10; G.bag=[];
-  for(const id of lr.bag){ if(G.bag.length>=limit) break;
-    if((G.collection[id]||0)>0){ G.collection[id]--; G.bag.push(id); } }
-  G._cap=null; saveGame();
-  document.body.classList.remove('setupbg');
-  document.getElementById('setup').classList.add('hidden');
-  document.getElementById('game').classList.remove('hidden');
-  startRun();
 }
 
 /* ---------------------------- MODAL ------------------------------------ */
@@ -5534,7 +5489,6 @@ function playCutscene(lines, onDone, bgKey){
     ? {who:l[0], text:l[1], expr:l[2]||null, opts:l[3]||{}}
     : {who:l.speaker||l.who||'narr', text:l.text||'', expr:l.face||l.expr||null, opts:l});
   _cs={entries, i:0, onDone, pages:[], pi:0, typing:false, choosing:false, timer:null, sel:0};
-  _csFF=false; const _ff=document.getElementById('csFfBtn'); if(_ff) _ff.classList.remove('on');
   G._vnPartner=null;
   document.getElementById('csBg').style.backgroundImage =
     opBg(bgKey||vnBgKey(), 'linear-gradient(180deg,#1a1530,#0a0712)');
@@ -5624,8 +5578,8 @@ function dlgTick(){
   if(_cs.shown>=_cs.raw.length){ doneTyping(); return; }
   _cs.shown++; renderTyped();
   const ch=_cs.raw[_cs.shown-1];
-  if(!_csFF && !_cs.silent && /\S/.test(ch) && _cs.shown%2===0) dlgVoice(_cs.voice);
-  let d=_csFF?0:_cs.speed;
+  if(!_cs.silent && /\S/.test(ch) && _cs.shown%2===0) dlgVoice(_cs.voice);
+  let d=_cs.speed;
   if(d>0){ if(/[、，]/.test(ch)) d+=170; if(/[。！？…]/.test(ch)) d+=240; }
   _cs.timer=setTimeout(dlgTick,d);
 }
@@ -5633,7 +5587,6 @@ function doneTyping(){
   _cs.typing=false;
   if(_cs.choices){ renderChoices(); return; }
   if(!_cs.meta.noflow) document.getElementById('csArrow').classList.add('on');
-  if(_csFF){ clearTimeout(_cs.timer); _cs.timer=setTimeout(csAdvance,260); } // 早送り中は自動で次へ
 }
 function renderChoices(){
   _cs.choosing=true; _cs.sel=0;
@@ -5677,16 +5630,6 @@ function csAdvance(){ // 進行: タイプ中→全文 / ページ→次ペー�
   nextEntry();
 }
 document.getElementById('cutscene').onclick=csAdvance;
-// 早送り（タップでON/OFF）とスキップ（イベントを即終了）
-let _csFF=false;
-(function(){
-  const ff=document.getElementById('csFfBtn'), sk=document.getElementById('csSkipBtn');
-  if(ff) ff.onclick=(ev)=>{ ev.stopPropagation(); _csFF=!_csFF; ff.classList.toggle('on',_csFF);
-    if(_csFF && _cs && !_cs.choosing){ if(_cs.typing){ clearTimeout(_cs.timer); dlgTick(); } else csAdvance(); } };
-  if(sk) sk.onclick=(ev)=>{ ev.stopPropagation();
-    if(!_cs) return; if(_cs.choosing) return; // 選択待ちはスキップしない
-    const cb=_cs.onDone; closeCutscene(); if(cb) cb(); };
-})();
 // 会話ログUI
 let _logOrderNew=true;
 function openDlgLog(){
