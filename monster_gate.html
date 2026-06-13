@@ -676,6 +676,55 @@
   .jstat .jbar{ flex:1; height:6px; background:#241c3f; border-radius:4px; overflow:hidden; border:1px solid #3a2f5c; }
   .jstat .jbar>i{ display:block; height:100%; border-radius:4px; }
 
+  /* ===== ダンジョンクリア祝福演出 ===== */
+  #clearCeleb{ position:fixed; inset:0; z-index:200; display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-end; overflow:hidden; }
+  #clearCeleb.hidden{ display:none; }
+  .ccBg{ position:absolute; inset:0; background-size:cover; background-position:center; filter:brightness(.5) saturate(.9); }
+  .ccVeil{ position:absolute; inset:0; background:radial-gradient(90% 80% at 50% 70%, rgba(255,200,90,.16), rgba(6,4,12,.86) 78%); }
+  .ccRays{ position:absolute; left:50%; top:58%; width:160vmax; height:160vmax; transform:translate(-50%,-50%) scale(.4);
+    background:repeating-conic-gradient(from 0deg, rgba(255,215,120,.0) 0deg 7deg, rgba(255,215,120,.12) 7deg 14deg);
+    opacity:0; transition:opacity .5s ease; pointer-events:none; animation:ccSpin 18s linear infinite; }
+  .ccRays.on{ opacity:1; }
+  @keyframes ccSpin{ to{ transform:translate(-50%,-50%) scale(.4) rotate(360deg); } }
+  .ccTitle{ position:absolute; top:11%; left:0; right:0; text-align:center; z-index:3;
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif; font-weight:900; letter-spacing:.12em;
+    font-size:clamp(26px,6vw,52px); color:#ffe7a6;
+    text-shadow:0 2px 0 #6b3f00, 0 0 22px rgba(255,207,77,.6), 0 6px 30px rgba(0,0,0,.7);
+    opacity:0; transform:translateY(-12px) scale(.9); }
+  .ccTitle.show{ animation:ccTitleIn .5s cubic-bezier(.2,1.4,.4,1) both; }
+  @keyframes ccTitleIn{ to{ opacity:1; transform:translateY(0) scale(1); } }
+  .ccHero{ position:absolute; left:50%; bottom:24%; transform:translateX(-50%); z-index:3;
+    height:42%; max-height:420px; width:auto; object-fit:contain;
+    filter:drop-shadow(0 10px 26px rgba(0,0,0,.7)) drop-shadow(0 0 18px rgba(255,207,77,.35)); }
+  .ccHero.cheer{ filter:drop-shadow(0 10px 26px rgba(0,0,0,.7)) drop-shadow(0 0 30px rgba(255,221,120,.85)); }
+  @keyframes ccWalk{
+    0%{ transform:translateX(calc(-50% - 74vw)) translateY(0); }
+    20%{ transform:translateX(calc(-50% - 56vw)) translateY(-7px); }
+    40%{ transform:translateX(calc(-50% - 38vw)) translateY(0); }
+    60%{ transform:translateX(calc(-50% - 20vw)) translateY(-7px); }
+    100%{ transform:translateX(-50%) translateY(0); } }
+  @keyframes ccHop{ 0%{ transform:translateX(-50%) translateY(0) scale(1); }
+    30%{ transform:translateX(-50%) translateY(-34px) scale(1.10); }
+    55%{ transform:translateX(-50%) translateY(-6px) scale(1.03); }
+    75%{ transform:translateX(-50%) translateY(-16px) scale(1.06); }
+    100%{ transform:translateX(-50%) translateY(0) scale(1); } }
+  .ccHero.cheer{ animation:ccVicGlow 1.2s ease-in-out infinite alternate; }
+  @keyframes ccVicGlow{ from{ filter:drop-shadow(0 10px 26px rgba(0,0,0,.7)) drop-shadow(0 0 18px rgba(255,221,120,.5)); }
+    to{ filter:drop-shadow(0 10px 26px rgba(0,0,0,.7)) drop-shadow(0 0 36px rgba(255,231,150,.95)); } }
+  .ccPanel{ position:relative; z-index:3; width:min(440px,92vw); margin-bottom:7%;
+    background:linear-gradient(180deg,#1d1836,#120e22); border:1px solid var(--gtrim); border-radius:14px;
+    padding:12px 16px; box-shadow:0 0 0 4px rgba(18,14,34,.92), 0 18px 50px rgba(0,0,0,.7), inset 0 0 30px rgba(123,77,255,.12); }
+  .ccPanel:empty{ display:none; }
+  .ccRow{ display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:7px 4px; border-bottom:1px solid #2a2342; font-size:15px; }
+  .ccRow:last-child{ border-bottom:0; }
+  .ccRow span{ color:#cfc8ef; }
+  .ccRow.ccTotal{ font-size:18px; } .ccRow.ccTotal b{ font-size:22px; }
+  @keyframes ccRowIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+  .ccBtn{ position:relative; z-index:4; margin-bottom:6%; font-size:16px; padding:12px 28px; }
+  .ccBtn.hidden{ display:none; }
+
   /* ============ 画面別の作り込み: 商館 / 魔物図鑑 / 征服の地図 ============ */
   /* --- ショップ: 封印商館 --- */
   .shopModal .shopHead{ display:flex; align-items:center; gap:12px; margin:-4px 0 12px;
@@ -992,7 +1041,18 @@
 </div>
 
 <!-- ===== modal mount ===== -->
-<div id="overlay" class="overlay hidden"><div class="modal" id="modal"></div></div>
+<!-- ===== ダンジョンクリア祝福演出 ===== -->
+  <div id="clearCeleb" class="hidden">
+    <div class="ccBg" id="ccBg"></div>
+    <div class="ccVeil"></div>
+    <div class="ccRays" id="ccRays"></div>
+    <div class="ccTitle" id="ccTitle">CONGRATULATIONS!</div>
+    <img class="ccHero" id="ccHero" alt="">
+    <div class="ccPanel" id="ccPanel"></div>
+    <button class="primary ccBtn hidden" id="ccBtn">つづける ▶</button>
+  </div>
+
+  <div id="overlay" class="overlay hidden"><div class="modal" id="modal"></div></div>
 
 <script>
 /* =========================================================================
@@ -5171,18 +5231,80 @@ function escapeDungeon(){
   endScreen("撤退成功 / 勝ち逃げ", `配当 <b class="gold">${payout}</b> メダルを持ち帰った。<br>未使用カード <b>${kept}</b> 枚をコレクションに戻した。`,
     "#5bf0a0");
 }
+// ===== 勝利ファンファーレ（ド・ミ・ソ・ド↑ のメジャー分散和音＝勇者の帰還） =====
+function sfxVictoryFanfare(rank){
+  if(!audio())return; const t=AC.currentTime; const r=Math.max(1,Math.min(9,rank||1));
+  // テレレレーン！: ド→ミ→ソ→高いド（C4 E4 G4 C5）
+  const arp=[523.25,659.25,783.99,1046.50];
+  arp.forEach((f,i)=>{ tone(t+i*0.12, f, 0.55, 0.12, 'triangle'); tone(t+i*0.12, f*2, 0.30, 0.04); });
+  nzHit(t+0.02,{dur:0.05,f:9000,q:1,g:0.05}); // きらめき
+  // 勇者の帰還ファンファーレ本体（メジャーコードを伸ばす）
+  const t2=t+0.55;
+  [1046.50,1318.51,1567.98].forEach(f=>tone(t2,f,1.5,0.10,'triangle')); // C-E-G
+  tone(t2+0.18,2093.00,1.3,0.08);                                        // 高いド
+  thump(t2,{f0:130.81,f1:130.81,dur:1.3,g:0.5+0.03*r,type:'triangle'});  // 低音ド（土台）
+  if(r>=4) tone(t2+0.6,2637,0.8,0.07);
+  if(r>=7){ tone(t2+0.85,3136,0.9,0.06); nzHit(t2+0.6,{dur:0.05,f:10000,q:1,g:0.05}); }
+}
+// ===== ダンジョンクリアの祝福演出（勇者が歩いてきて武器を掲げ、報酬を1つずつ表示） =====
+function playClearCeleb(o){
+  const ov=document.getElementById('clearCeleb'); if(!ov){ if(o.onDone)o.onDone(); return; }
+  bgmStop&&bgmStop();
+  document.getElementById('ccBg').style.backgroundImage=`url('assets/floor_${o.bgTex}_room.png')`;
+  const hero=document.getElementById('ccHero'); hero.src=(HERO_SPRITE[o.jobKey]||'');
+  hero.classList.remove('cheer'); document.getElementById('ccRays').classList.remove('on');
+  const title=document.getElementById('ccTitle'); title.classList.remove('show');
+  const panel=document.getElementById('ccPanel'); panel.innerHTML='';
+  const btn=document.getElementById('ccBtn'); btn.classList.add('hidden');
+  ov.classList.remove('hidden');
+  // 勇者が歩いてくる→中央で武器を掲げて喜ぶ
+  hero.classList.remove('cheer');
+  hero.style.animation='none'; void hero.offsetWidth; hero.style.animation='ccWalk 1.35s ease-in-out both';
+  sfxVictoryFanfare(o.rank);
+  setTimeout(()=>{
+    // 中央に到着 → 武器を天に掲げる勝利ポーズへ滑らかに切替＋跳ねる
+    const vic='assets/t_vic_'+o.jobKey+'.png';
+    const pr=new Image(); pr.onload=()=>{ hero.src=vic; }; pr.src=vic; // 勝利ポーズ画像があれば差し替え
+    hero.style.transition='transform .12s'; hero.style.animation='ccHop .8s cubic-bezier(.2,1.3,.4,1) both';
+    hero.classList.add('cheer');
+    document.getElementById('ccRays').classList.add('on'); title.classList.add('show'); sfxGem&&sfxGem();
+  }, 1350);
+  // 報酬を1つずつ（宝石の音とともに）表示
+  const rows=[];
+  rows.push(['🏆 クリアボーナス','+'+o.win]);
+  if(o.loot>0) rows.push(['💎 拾った配当','+'+o.loot]);
+  rows.push(['💰 合計メダル', String(o.total), true]);
+  if(o.cardCount>0) rows.push(['🎴 持ち帰ったカード', o.cardCount+' 枚']);
+  let k=0; const reveal=()=>{
+    if(k>=rows.length){ btn.classList.remove('hidden'); btn.style.animation='ccRowIn .3s ease both'; return; }
+    const [lab,val,big]=rows[k];
+    panel.insertAdjacentHTML('beforeend',
+      `<div class="ccRow${big?' ccTotal':''}"><span>${lab}</span><b class="gold">${val}</b></div>`);
+    const el=panel.lastElementChild; el.style.animation='ccRowIn .34s ease both';
+    sfxGem&&sfxGem(); k++; setTimeout(reveal, 430);
+  };
+  setTimeout(reveal, 1750);
+  btn.onclick=()=>{ ov.classList.add('hidden'); hero.classList.remove('cheer');
+    document.getElementById('ccRays').classList.remove('on'); if(o.onDone)o.onDone(); };
+}
 function clearDungeon(){
   G.over=true;
-  if(G.worldMode){ const dw=DUNGEONS[G.dungeon]; G.medals+=(dw.win||0)+G.loot; bankHand(); worldOnClear(); return; }
+  if(G.worldMode){ const dw=DUNGEONS[G.dungeon]; const wWin=(dw.win||0)+G.loot; G.medals+=wWin;
+    const _wkn=G.hand.length; bankHand(); const _wc=(typeof castleById==='function')?castleById(G.worldCastle):null;
+    document.getElementById('game').classList.add('hidden');
+    playClearCeleb({ jobKey:G.job, bgTex:(dw.tex||'ultimate'), rank:(_wc&&_wc.star)||(dw.star||4),
+      win:wWin, loot:0, total:G.medals, cardCount:_wkn, onDone:()=>worldOnClear() });
+    return; }
   const d=DUNGEONS[G.dungeon];
   const win=d.win + G.loot;
   G.medals+=win;
   // 最高難度「究極の門」クリアで、フリープレイにスロットが出現
   if(G.dungeon==='ultimate' && !G.slotUnlocked){ G.slotUnlocked=true;
     log("🎰 究極の門を制覇！ フリープレイに「スロット」が出現した！","l-gold"); }
-  const kept=bankHand(); saveGame();
+  const _keptN=G.hand.length; const kept=bankHand(); saveGame();
   if(d.tutorial){ // チュートリアル修了 → モード選択へ戻す
     bgmStop();
+    sfxVictoryFanfare&&sfxVictoryFanfare(1);
     showModal(`<div class="big center" style="color:#7cffa0">チュートリアル修了！ 🎓</div>
      <p class="center" style="margin:14px 0">基本はバッチリ！<br>
      <b>移動 → 攻撃 → カード → ゴール</b>の流れを覚えたね。<br>
@@ -5221,8 +5343,10 @@ function clearDungeon(){
   statClear(G.dungeon, ct); G.clearedDuns=G.clearedDuns||{}; G.clearedDuns[G.dungeon]=true; saveGame();
   const best=(G.stats&&G.stats[G.dungeon])?G.stats[G.dungeon].best:0;
   const newRec = best && Math.abs(best-ct)<1500 ? '　🏅最短記録更新！' : '';
-  endScreen("DUNGEON CLEAR! 🎉", `WIN <b class="gold">${d.win}</b> + 拾った配当 <b class="gold">${G.loot}</b> = <b class="gold">${win}</b> メダル<br>未使用カード <b>${kept}</b> 枚を持ち帰った。<br><span class="muted">クリア時間 ${fmtTime(ct)}${newRec}</span>`,
-    "#ffcf4d");
+  // 盛大な勇者の帰還演出 → つづけるで通常のクリア画面（同じ条件でもう一度ボタンつき）へ
+  playClearCeleb({ jobKey:G.job, bgTex:(d.tex||G.dungeon), rank:(d.star||1),
+    win:d.win, loot:G.loot, total:G.medals, cardCount:_keptN,
+    onDone:()=>{ endScreen("DUNGEON CLEAR! 🎉", `WIN <b class="gold">${d.win}</b> + 拾った配当 <b class="gold">${G.loot}</b> = <b class="gold">${win}</b> メダル<br>未使用カード <b>${kept}</b> 枚を持ち帰った。<br><span class="muted">クリア時間 ${fmtTime(ct)}${newRec}</span>`, "#ffcf4d"); } });
 }
 function gameOver(){
   if(G.over)return;
