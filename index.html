@@ -163,6 +163,18 @@
     #csBg{ background-position:center 38%; }
     #chapCard .bg{ background-position:center 42%; }
   }
+  #csLord{ position:absolute; left:50%; bottom:30%; transform:translateX(-50%);
+    height:62%; max-height:520px; width:auto; object-fit:contain; z-index:3;
+    filter:drop-shadow(0 8px 22px rgba(0,0,0,.65)); pointer-events:none;
+    animation:csLordIn .5s ease both; }
+  #csLord.hide{ display:none; }
+  @keyframes csLordIn{ from{ opacity:0; transform:translateX(-50%) translateY(14px) scale(.97); }
+    to{ opacity:1; transform:translateX(-50%) translateY(0) scale(1); } }
+  #csCtl{ position:absolute; right:12px; top:10px; z-index:6; display:flex; gap:8px; }
+  #csCtl button{ font-size:12px; padding:5px 11px; border-radius:8px; border:1px solid rgba(255,255,255,.35);
+    background:rgba(20,18,30,.66); color:#fff; cursor:pointer; backdrop-filter:blur(2px); }
+  #csCtl button:hover{ background:rgba(40,36,60,.85); }
+  #csFfBtn.on{ background:#ffcf4d; color:#1a1530; border-color:#ffcf4d; font-weight:bold; }
   #csArrow{ position:absolute; right:14px; bottom:8px; color:#fff; font-size:14px; opacity:0; }
   #csArrow.on{ animation:csBlink 1s steps(2,start) infinite; }
   @keyframes csBlink{ 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
@@ -284,11 +296,23 @@
     box-shadow:0 2px 4px rgba(0,0,0,.5);
   }
   /* カテゴリ別フレーム（MTGの色対応: 回復=緑/攻撃=赤/補助=青/強化=白金/装備=アーティファクト紫灰） */
-  .card.cat-heal{ --f1:#1f5c3c; --f2:#4fae74; }
-  .card.cat-atk{  --f1:#6e241c; --f2:#c45040; }
-  .card.cat-sup{  --f1:#1d4368; --f2:#4d8cc8; }
-  .card.cat-buff{ --f1:#8a7430; --f2:#e6c45a; }
-  .card.cat-equip{--f1:#4a3c5c; --f2:#9c8ab8; }
+  .card.cat-heal{ --f1:#1f5c3c; --f2:#4fae74; --cc:#5fd089; }
+  .card.cat-atk{  --f1:#6e241c; --f2:#c45040; --cc:#ff7a5e; }
+  .card.cat-sup{  --f1:#1d4368; --f2:#4d8cc8; --cc:#6fb6ff; }
+  .card.cat-buff{ --f1:#8a7430; --f2:#e6c45a; --cc:#ffd860; }
+  .card.cat-equip{--f1:#4a3c5c; --f2:#9c8ab8; --cc:#c9aaf0; }
+  /* カテゴリ色をタイプ行に徹底（色分けで一目で役割が分かる） */
+  .card .ctype{ border-left:5px solid var(--cc, #888); }
+  .card.cat-heal .ctype{ background:linear-gradient(180deg,#d4f0dd,#b6e0c4); color:#10331f; }
+  .card.cat-atk  .ctype{ background:linear-gradient(180deg,#f6d6cd,#eebbb0); color:#3a140d; }
+  .card.cat-sup  .ctype{ background:linear-gradient(180deg,#d2e6f6,#bcd4ee); color:#0d2538; }
+  .card.cat-buff .ctype{ background:linear-gradient(180deg,#f6efcd,#e6d8a8); color:#3a2c10; }
+  .card.cat-equip .ctype{ background:linear-gradient(180deg,#e7ddf2,#d2c2e8); color:#241a3a; }
+  /* MP不足＝使用不可: グレーアウト＋MPジェムを赤く＋使えないと一目で分かる */
+  .card.noMp{ filter:grayscale(.75) brightness(.62); cursor:not-allowed; }
+  .card.noMp:hover{ transform:none; box-shadow:0 3px 8px rgba(0,0,0,.55); }
+  .card.noMp .cmp{ background:radial-gradient(circle at 35% 30%,#ffb0a0,#c0392b 60%,#3a1010); }
+  .card.noMp .cname::after{ content:"MP不足"; margin-left:auto; font-size:8px; color:#c0392b; font-weight:900; }
   .card.cat-gem{  --f1:#7a6b2f; --f2:#e6d45a; }
   /* ===== レアカード・ホログラム（5レイヤー） ===== */
   /* 1.ベースフレーム=レア度別の金属/宝石枠 2.イラスト枠 3.ホログラム層(虹スイープ)
@@ -569,6 +593,111 @@
     box-shadow:inset 0 3px 6px rgba(0,0,0,.8); }
   .slcoin{ display:inline-block; padding:2px 10px; border-radius:14px; font-weight:900; color:#3a2604;
     background:radial-gradient(circle at 35% 30%,#fff3b0,#d8a432 72%); border:1px solid #5a3c08; }
+
+  /* =====================================================================
+     「メニューは世界を語る」— 封印の祭壇 / 魔導書テーマのUI上書き（CSSのみ）
+     ===================================================================== */
+  :root{ --gtrim:#d9b25a; --gglow:rgba(255,207,77,.45); --rune:#b079ff; }
+  /* ボタン: 古の刻印を帯びた石板。押すと沈む */
+  button{
+    background:linear-gradient(180deg,#272040,#181226);
+    border:1px solid #3c3160; border-radius:9px; color:var(--ink); letter-spacing:.03em; position:relative;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 2px 7px rgba(0,0,0,.45);
+    transition:transform .1s ease, box-shadow .16s ease, border-color .16s ease; }
+  button:hover{ border-color:var(--gtrim);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 0 13px var(--gglow), 0 3px 9px rgba(0,0,0,.5);
+    transform:translateY(-1px); }
+  button:active{ transform:translateY(1px); box-shadow:inset 0 2px 6px rgba(0,0,0,.55); }
+  button.primary{ background:linear-gradient(180deg,#8a5cff,#5a2fd6);
+    border:1px solid #c3acff; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.5);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 0 17px rgba(123,77,255,.5), 0 3px 9px rgba(0,0,0,.5); }
+  button.primary:hover{ border-color:#ffe6a0;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 0 24px rgba(123,77,255,.65), 0 0 10px var(--gglow), 0 3px 11px rgba(0,0,0,.55); }
+  button.danger{ border-color:#7a3340; }
+  button.danger:hover{ border-color:#ff6e7e;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 0 13px rgba(255,91,110,.4), 0 3px 9px rgba(0,0,0,.5); }
+  /* パネル: 魔導書の頁。淡い内なる輝き */
+  .panel{ background:linear-gradient(180deg, rgba(33,27,58,.97), rgba(19,15,36,.97));
+    border:1px solid #352a52; box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 0 34px rgba(96,60,168,.10); }
+  /* モーダル: 封印の祭壇。金の二重枠＋魔力の残光 */
+  .modal{ background:linear-gradient(180deg,#1d1836,#120e22); border:1px solid var(--gtrim);
+    box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 0 0 5px rgba(18,14,34,.92),
+      0 20px 54px rgba(0,0,0,.7), inset 0 0 40px rgba(123,77,255,.13); }
+  .overlay{ background:radial-gradient(125% 95% at 50% 28%, rgba(26,12,48,.62), rgba(4,3,9,.92));
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
+  .overlay:not(.hidden) .modal{ animation:modalIn .22s ease both; }
+  @keyframes modalIn{ from{ opacity:0; transform:translateY(10px) scale(.985); } to{ opacity:1; transform:none; } }
+  /* 見出し: 写本の章題。金字＋光の罫 */
+  h1, h2{ font-family:"Hiragino Mincho ProN","Yu Mincho",serif; }
+  .toprow h1{ color:#ffe7a6; letter-spacing:.06em; text-shadow:0 1px 0 #000, 0 0 16px rgba(255,207,77,.28); }
+  .modal h2, .panel > h2{ color:#ffe7a6; text-align:center; margin-top:0; padding-bottom:6px;
+    letter-spacing:.05em; text-shadow:0 1px 0 #000, 0 0 12px rgba(255,207,77,.22); }
+  .modal h2::after, .panel > h2::after{ content:""; display:block; height:2px; width:66%;
+    margin:7px auto 0; background:linear-gradient(90deg,transparent,var(--gtrim),transparent); opacity:.62; }
+  /* ピル/タグ: 刻印チップ */
+  .pill{ background:linear-gradient(180deg,#241c3f,#1a1430); border-color:#4a3c6e; }
+  /* スクロールバー: 金と紫の細枠 */
+  *::-webkit-scrollbar{ width:10px; height:10px; }
+  *::-webkit-scrollbar-track{ background:#0e0b1a; border-radius:6px; }
+  *::-webkit-scrollbar-thumb{ background:linear-gradient(180deg,#4a3c6e,#2c2547); border-radius:6px; border:2px solid #0e0b1a; }
+  *::-webkit-scrollbar-thumb:hover{ background:linear-gradient(180deg,#6a4fae,#3a2f5c); }
+  /* ステータスバー枠を僅かに金縁に */
+  .bar{ border-color:#4a3c6e; box-shadow:inset 0 0 8px rgba(0,0,0,.5); }
+
+  /* ============ 画面別の作り込み: 商館 / 魔物図鑑 / 征服の地図 ============ */
+  /* --- ショップ: 封印商館 --- */
+  .shopModal .shopHead{ display:flex; align-items:center; gap:12px; margin:-4px 0 12px;
+    padding:10px 14px; border-radius:12px;
+    background:linear-gradient(180deg,#2a2140,#1a1430);
+    border:1px solid var(--gtrim); box-shadow:inset 0 0 22px rgba(123,77,255,.14); }
+  .shopModal .shopIcon{ font-size:30px; filter:drop-shadow(0 2px 4px #000); }
+  .shopModal .shopTitle{ font-family:"Hiragino Mincho ProN","Yu Mincho",serif; font-size:18px;
+    color:#ffe7a6; letter-spacing:.05em; text-shadow:0 1px 0 #000,0 0 12px rgba(255,207,77,.25); }
+  .shopModal .shopNote{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .shopModal .shopPouch{ margin-left:auto; white-space:nowrap; font-size:15px; font-weight:900;
+    color:#3a2604; padding:6px 14px; border-radius:20px;
+    background:radial-gradient(circle at 35% 30%,#ffe9a6,#d8a432 75%); border:1px solid #5a3c08;
+    box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.5); }
+  .shopModal .shopShelf{ padding:12px 10px; border-radius:12px; justify-content:center;
+    background:
+      repeating-linear-gradient(180deg, rgba(70,46,18,.0) 0 96px, rgba(0,0,0,.25) 96px 100px),
+      linear-gradient(180deg,#241a10,#17110a);
+    border:1px solid #4a3a22; box-shadow:inset 0 0 26px rgba(0,0,0,.55);
+    max-height:340px; overflow:auto; }
+
+  /* --- 魔物図鑑: 古文書の台帳 --- */
+  .dexModal .dexSub{ font-size:12px; color:var(--muted); text-align:center; margin:0 0 10px; }
+  .dexModal .scroll{ border:1px solid var(--gtrim); border-radius:10px;
+    background:linear-gradient(180deg,#171022,#120d1c); box-shadow:inset 0 0 24px rgba(0,0,0,.5); padding:2px; }
+  table.dexTable{ border-collapse:separate; border-spacing:0; }
+  table.dexTable th{ position:sticky; top:0; z-index:1;
+    background:linear-gradient(180deg,#3a2e16,#2a2010); color:#ffe7a6;
+    border:0; border-bottom:2px solid var(--gtrim); padding:6px 5px; letter-spacing:.04em;
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif; }
+  table.dexTable td{ border:0; border-bottom:1px solid #2a2342; padding:5px 6px; }
+  table.dexTable tr:nth-child(even) td{ background:rgba(123,77,255,.06); }
+  table.dexTable tr:hover td{ background:rgba(255,207,77,.10); }
+  table.dexTable td:first-child{ color:#f0ecff; font-weight:700; }
+  table.dexTable img{ filter:drop-shadow(0 1px 2px #000); border-radius:4px; }
+
+  /* --- ワールド地図: 征服の羊皮紙 --- */
+  .wmboard{ border:2px solid var(--gtrim) !important;
+    box-shadow:0 0 0 4px #15101f, 0 14px 40px rgba(0,0,0,.6), inset 0 0 60px rgba(0,0,0,.6); }
+  .wmboard::after{ content:""; position:absolute; inset:0; pointer-events:none; z-index:3;
+    box-shadow:inset 0 0 70px rgba(8,4,16,.85);
+    background:
+      radial-gradient(circle at 6% 8%, rgba(255,220,140,.10), transparent 7%),
+      radial-gradient(circle at 94% 8%, rgba(255,220,140,.10), transparent 7%),
+      radial-gradient(circle at 6% 92%, rgba(255,220,140,.10), transparent 7%),
+      radial-gradient(circle at 94% 92%, rgba(255,220,140,.10), transparent 7%); }
+  .wmboard .wmbg{ opacity:.42 !important; filter:sepia(.25) saturate(.9); }
+  #wmAreaName{ display:inline-block; font-family:"Hiragino Mincho ProN","Yu Mincho",serif !important;
+    color:#ffe7a6 !important; font-size:12.5px !important; letter-spacing:.06em; margin-top:3px;
+    padding:2px 16px; border-radius:4px; position:relative;
+    background:linear-gradient(180deg,#2a2140,#1a1430); border:1px solid #4a3c6e;
+    box-shadow:0 2px 8px rgba(0,0,0,.45); }
+  .wmlegend{ background:linear-gradient(180deg,rgba(30,24,52,.7),rgba(18,14,34,.7));
+    border:1px solid #352a52; border-radius:8px; padding:6px 10px; color:#c8bdf0 !important; }
 </style>
 </head>
 <body>
@@ -674,6 +803,11 @@
   <div id="cutscene" class="hidden">
     <div id="csBg"></div>
     <div id="csVeil"></div>
+    <img id="csLord" class="hide" alt="">
+    <div id="csCtl">
+      <button id="csFfBtn" title="早送り（タップでON/OFF）">早送り ▶▶</button>
+      <button id="csSkipBtn" title="このイベントをスキップ">スキップ ⏭</button>
+    </div>
     <div class="csSide left" id="csHeroSide"><span class="csEmo" id="csHeroEmo"></span><img id="csHero" alt=""></div>
     <div class="csSide right" id="csPartnerSide"><span class="csEmo" id="csPartnerEmo"></span><img id="csPartner" alt=""></div>
     <div id="csBox">
@@ -842,7 +976,7 @@
 ----------------------------------------------------------------------- */
 const SPRITES = { player:null, stairs:null, gem:null, mon:{} };
 // Hero portraits per job (AI-generated, background removed)
-const HERO_SPRITE = { warrior:"assets/t_hero_warrior.png", mage:"assets/t_hero_wizard.png", gambler:"assets/t_hero_gambler.png", ren:"assets/t_hero_ren.png", samurai:"assets/t_hero_samurai.png", dragoon:"assets/t_hero_dragoon.png", gunner:"assets/t_hero_gunner.png", kensei:"assets/t_hero_kensei.png", spellblade:"assets/t_hero_spellblade.png", yuusha:"assets/t_hero_yuusha.png", paladin:"assets/t_hero_paladin.png", sorcerer:"assets/t_hero_sorcerer.png", darkknight:"assets/t_hero_darkknight.png", fallen:"assets/t_hero_fallen.png" };
+const HERO_SPRITE = { warrior:"assets/t_hero_warrior.png", mage:"assets/t_hero_wizard.png", gambler:"assets/t_hero_gambler.png", ren:"assets/t_hero_ren.png", samurai:"assets/t_hero_samurai.png", dragoon:"assets/t_hero_dragoon.png", paladin:"assets/t_hero_paladin.png", sorcerer:"assets/t_hero_sorcerer.png", darkknight:"assets/t_hero_darkknight.png", fallen:"assets/t_hero_fallen.png", reddragoon:"assets/t_hero_reddragoon.png", gilgamesh:"assets/t_hero_gilgamesh.png", lucifer:"assets/t_hero_lucifer.png", odin:"assets/t_hero_odin.png", loki:"assets/t_hero_loki.png", valkyrie:"assets/t_hero_valkyrie.png", magicblade:"assets/t_hero_magicblade.png" };
 // Each monster now has its own dedicated generated sprite.
 const MON_SPRITE = {
   "プーニャ緑":"assets/t_mon_slime.png","プーニャ黄":"assets/t_mon_slime.png",
@@ -871,7 +1005,7 @@ function dset(p){
           fdiag:mk('fdiag'),bdiag:mk('bdiag')}; // 斜め前/斜め後ろ(右向き基準・左は反転)
 }
 const DIR_SPRITES={
-  hero_warrior:dset('warrior'), hero_mage:dset('wizard'), hero_gambler:dset('gambler'), hero_ren:dset('ren'), hero_samurai:dset('samurai'), hero_dragoon:dset('dragoon'), hero_gunner:dset('gunner'), hero_kensei:dset('kensei'), hero_spellblade:dset('spellblade'), hero_yuusha:dset('yuusha'), hero_paladin:dset('paladin'), hero_sorcerer:dset('sorcerer'), hero_darkknight:dset('darkknight'), hero_fallen:dset('fallen'),
+  hero_warrior:dset('warrior'), hero_mage:dset('wizard'), hero_gambler:dset('gambler'), hero_ren:dset('ren'), hero_samurai:dset('samurai'), hero_dragoon:dset('dragoon'), hero_paladin:dset('paladin'), hero_sorcerer:dset('sorcerer'), hero_darkknight:dset('darkknight'), hero_fallen:dset('fallen'), hero_reddragoon:dset('reddragoon'), hero_gilgamesh:dset('gilgamesh'), hero_lucifer:dset('lucifer'), hero_odin:dset('odin'), hero_loki:dset('loki'), hero_valkyrie:dset('valkyrie'), hero_magicblade:dset('magicblade'),
   "プーニャ緑":dset('slime'), "プーニャ黄":dset('slime'),
   "スケルトン":dset('skeleton'), "ゴブリン":dset('goblin'), "ドラゴン":dset('dragon'),
   // 全モンスター方向対応（正面/背面/横の待機を生成済み。攻撃/被弾はm2ポーズ、斜めは前後にフォールバック）
@@ -998,6 +1132,20 @@ function getImg(path){
   im.onload=()=>{ im._ok=true; }; im.onerror=()=>{ im._ok=false; };
   return im;
 }
+// スプライトを白く塗りつぶしたシルエット（撃破発光用）。元画像のアルファ形状を保持。
+const _whiteCache={};
+function whiteSilhouette(path){
+  if(!path) return null;
+  if(_whiteCache[path]!==undefined) return _whiteCache[path];
+  const im=getImg(path);
+  if(!(im&&im._ok)){ return null; } // ロード完了後に次回生成
+  const c=document.createElement('canvas'); c.width=im.width; c.height=im.height;
+  const g=c.getContext('2d');
+  g.drawImage(im,0,0);
+  g.globalCompositeOperation='source-in'; // 既存アルファの内側だけを白で塗る
+  g.fillStyle='#ffffff'; g.fillRect(0,0,c.width,c.height);
+  _whiteCache[path]=c; return c;
+}
 
 /* ---------------------------- DATA: monsters --------------------------- */
 // role: melee/ranged/healer/split/summon/knock/poison/revive/magicimmune/coward
@@ -1059,30 +1207,41 @@ const JOBS = {
   dragoon:{key:"dragoon",jp:"竜騎士", emoji:"🐉", hp:58, mp:24, atk:11, def:9, sight:3, capIdx:0,
     potBonus:1.0, magBonus:1.1,
     desc:"竜槍の重撃。HPと防御が高く前線で粘る。視界3。"},
-  gunner:{key:"gunner",jp:"ガンナー", emoji:"🔫", hp:38, mp:32, atk:10, def:4, sight:4, capIdx:1,
-    potBonus:1.1, magBonus:1.35,
-    desc:"魔銃の遠見。視界が広くMP・魔法が高い遊撃型。視界4。"},
-  kensei:{key:"kensei",jp:"剣聖", emoji:"🗡️", hp:60, mp:26, atk:15, def:8, sight:3, capIdx:0,
-    potBonus:1.0, magBonus:1.1, crit:0.16,
-    desc:"戦士の極み。聖剣の大剣でHP・攻撃・防御すべてが高い王道強化型。視界3。"},
-  spellblade:{key:"spellblade",jp:"魔法剣士", emoji:"✨", hp:48, mp:34, atk:12, def:6, sight:3, capIdx:0,
-    potBonus:1.1, magBonus:1.4,
-    desc:"剣技と魔法の両刀。攻守そこそこにMP・魔法が高い。視界3。"},
-  yuusha:{key:"yuusha",jp:"勇者", emoji:"⚔️", hp:56, mp:28, atk:16, def:8, sight:3, capIdx:0,
-    potBonus:1.0, magBonus:1.15, crit:0.18,
-    desc:"伝説の剣を継ぐ者。攻防に優れ会心も高い最上位の剣士。視界3。"},
-  paladin:{key:"paladin",jp:"聖騎士", emoji:"🛡️", hp:54, mp:22, atk:14, def:7, sight:3, capIdx:0,
-    potBonus:1.0, magBonus:1.0, crit:0.14,
-    desc:"戦士の正統。宝剣を帯びた誇り高き騎士。攻撃力が高い。視界3。"},
+  paladin:{key:"paladin",jp:"聖騎士", emoji:"🛡️", hp:56, mp:22, atk:14, def:9, sight:3, capIdx:0,
+    potBonus:1.25, magBonus:1.0, crit:0.16,
+    desc:"宝剣と聖盾の重騎士。高いHP・防御に加え回復+25%。粘り強く前線を支える聖なる壁。視界3。"},
   sorcerer:{key:"sorcerer",jp:"魔導士", emoji:"🔮", hp:36, mp:38, atk:9, def:4, sight:3, capIdx:1,
     potBonus:1.15, magBonus:1.5,
     desc:"紫紺の魔力を操る魔導士。MPと魔法が非常に高い後衛。視界3。"},
-  darkknight:{key:"darkknight",jp:"闇騎士", emoji:"🗡️", hp:56, mp:24, atk:16, def:7, sight:3, capIdx:0,
+  darkknight:{key:"darkknight",jp:"闇騎士", emoji:"🗡️", hp:56, mp:24, atk:16, def:5, sight:3, capIdx:0,
     potBonus:1.0, magBonus:1.15, crit:0.16,
-    desc:"呪われた漆黒の大剣を振るう堕ちた騎士。HP・攻撃が高い前衛。視界3。"},
-  fallen:{key:"fallen",jp:"堕天使", emoji:"🖤", hp:48, mp:32, atk:14, def:6, sight:4, capIdx:1,
+    desc:"呪われた漆黒の大剣の高火力前衛。HPは高いが呪いで守備が薄く、被弾は痛い諸刃型。視界3。"},
+  fallen:{key:"fallen",jp:"ゼラート", emoji:"🖤", hp:48, mp:32, atk:14, def:6, sight:4, capIdx:1,
     potBonus:1.1, magBonus:1.35, crit:0.16,
-    desc:"漆黒の翼と三日月刃の槍を持つ堕天使。魔法と視界に優れる遊撃型。視界4。"},
+    desc:"漆黒の翼と三日月刃を携えた堕天の遊撃手。魔法と視界に優れる遊撃型。視界4。"},
+  // ---- 女性職業シリーズ（豪華装備・AI生成） ----
+  valkyrie:{key:"valkyrie",jp:"ヴァルキリー", emoji:"🪽", hp:54, mp:28, atk:14, def:7, sight:4, capIdx:0,
+    potBonus:1.0, magBonus:1.2, crit:0.16,
+    desc:"銀翼の戦乙女。広い視界とMP・魔法で前後を駆ける遊撃騎士。守りは薄め。視界4。"},
+  magicblade:{key:"magicblade",jp:"魔剣姫", emoji:"🗡️", hp:46, mp:36, atk:13, def:6, sight:3, capIdx:1,
+    potBonus:1.1, magBonus:1.45, crit:0.18,
+    desc:"紫紺の魔力を帯びた細剣の姫。剣技と魔法の二刀で会心も高い両刀型。視界3。"},
+  // ---- 神話英雄シリーズ（豪華装備・AI生成） ----
+  reddragoon:{key:"reddragoon",jp:"紅竜騎士", emoji:"🐲", hp:60, mp:24, atk:13, def:10, sight:2, capIdx:0,
+    potBonus:1.0, magBonus:1.1,
+    desc:"全職最高のHPと防御を誇る鉄壁の前線役。だが鈍重で視界が狭く、不意打ちに弱い。視界2。"},
+  gilgamesh:{key:"gilgamesh",jp:"ギルガメシュ", emoji:"👑", hp:52, mp:26, atk:17, def:5, sight:3, capIdx:0,
+    potBonus:0.85, magBonus:1.0, crit:0.18, luck:true,
+    desc:"黄金鎧の英雄王。ATK・会心が最高で配当も得る。だが守りを知らず防御が薄く回復も苦手＝ガラスの大砲。視界3。"},
+  lucifer:{key:"lucifer",jp:"ルシファー", emoji:"🌑", hp:50, mp:34, atk:14, def:6, sight:4, capIdx:1,
+    potBonus:1.1, magBonus:1.4, crit:0.14,
+    desc:"光に背いた元・最高位天使。黒翼と欠けた光輪。魔法と視界に優れる。視界4。"},
+  odin:{key:"odin",jp:"オーディン", emoji:"👁️", hp:44, mp:36, atk:11, def:5, sight:5, capIdx:1,
+    potBonus:1.15, magBonus:1.5,
+    desc:"片目と引き換えに知を得た大賢者。神槍グングニルと最広の視界5・最高の魔法。"},
+  loki:{key:"loki",jp:"ロキ", emoji:"🃏", hp:42, mp:30, atk:12, def:4, sight:4, capIdx:2,
+    potBonus:1.1, magBonus:1.25, crit:0.22, luck:true,
+    desc:"紫金のトリックスター。低耐久だが会心・幸運・視界に優れた技巧派。視界4。"},
   // 第1部の主人公レン（戦士と魔法使いの中間／MP=HP半分）。職業選択には出さない(hidden)。
   ren:{key:"ren",jp:"主人公レン", emoji:"🗡️", hp:46, mp:23, atk:10, def:5, sight:3, capIdx:0,
     potBonus:1.1, magBonus:1.25, mpHalf:true, hidden:true,
@@ -1212,7 +1371,7 @@ const CARDS = {
   longsword:{nm:"ロングソード",cat:"equip",ic:"⚔️",cost:50, mp:0, ds:"剣を装備し通常攻撃+30%（このラン）", swordMul:1.3, slot:'sword'},
   greatsword:{nm:"グレートソード",cat:"equip",ic:"🗡️",cost:90,mp:0,ds:"剣を装備し通常攻撃+60%（最強の剣）", swordMul:1.6, slot:'sword'},
   goldsword:{nm:"ゴールドソード",cat:"equip",ic:"💰",cost:70,mp:0,ds:"格上撃破で配当+", goldSword:true},
-  drainsword:{nm:"ドレインソード",cat:"equip",ic:"🩸",cost:80,mp:0,ds:"与ダメの半分を吸収", drain:true},
+  drainsword:{nm:"ドレインソード",cat:"equip",ic:"🩸",cost:80,mp:0,ds:"与ダメの1/4を吸収", drain:true},
   sleepsword:{nm:"スリープソード",cat:"equip",ic:"💤",cost:60,mp:0,ds:"攻撃時たまに睡眠付与", sleepSword:true},
   shield: {nm:"シールド",     cat:"equip",ic:"🛡️",cost:60, mp:0, ds:"このランDEF+6", shieldDef:6},
   pocket1:{nm:"ポケット+1",   cat:"equip",ic:"👝", cost:40, mp:0, ds:"カード枠+1(最大12)", pocket:1},
@@ -1320,11 +1479,142 @@ function log(msg,cls){const d=document.getElementById('log');const e=document.cr
 function K(base){ return (G.slot && G.slot!==1) ? base+'_'+G.slot : base; }
 function saveGame(){ try{ localStorage.setItem(K("mg_save"),
   JSON.stringify({medals:G.medals, collection:G.collection, endless:!!G.endlessAvail, slot:!!G.slotUnlocked,
-    stats:G.stats||{}, cdun:G.clearedDuns||{}, monCards:G.monCards||{}})); }catch(e){} }
+    stats:G.stats||{}, cdun:G.clearedDuns||{}, monCards:G.monCards||{}, unlocked:G.unlocked||{}})); }catch(e){} }
 function loadGame(){ try{ const s=JSON.parse(localStorage.getItem(K("mg_save")));
   if(s && typeof s.medals==="number"){ G.medals=s.medals; G.collection=s.collection||{}; G.endlessAvail=!!s.endless; G.slotUnlocked=!!s.slot;
-    G.stats=s.stats||{}; G.clearedDuns=s.cdun||{}; G.monCards=s.monCards||{}; return true; } }catch(e){}
+    G.stats=s.stats||{}; G.clearedDuns=s.cdun||{}; G.monCards=s.monCards||{}; G.unlocked=s.unlocked||{}; return true; } }catch(e){}
   return false; }
+// ---- 隠しキャラ（職業）解放 ----
+// 基本キャラ＝戦士・魔法使い・ギャンブラーのみ最初から使える。他はワールドの専用ボス城を制覇して解放。
+const BASE_JOBS=['warrior','mage','gambler'];
+function jobUnlocked(key){
+  if(BASE_JOBS.includes(key)) return true;
+  if(key==='ren') return false; // 物語専用（職業選択には出さない）
+  return !!(G.unlocked && G.unlocked[key]);
+}
+function unlockJob(key){
+  G.unlocked=G.unlocked||{};
+  if(BASE_JOBS.includes(key)||G.unlocked[key]) return false;
+  G.unlocked[key]=true; saveGame();
+  const j=JOBS[key]; if(j) log(`🎉 ${j.emoji}${j.jp} が仲間になった！ フリープレイで使えるようになった。`,'l-gold');
+  return true;
+}
+// ===== 城主（隠しキャラ）登場・撃破カットシーン =====
+// 各キャラ固有の登場(intro)／敗北・仲間入り(defeat)セリフ。語り口＝そのキャラの性格。
+const CB_SCENE={
+ samurai:{nm:'剣豪 ムサシ', intro:[['narr','＊ 城の最奥——刀を提げた剣豪が、静かに目を開けた。'],['cb','…よく来た。この城、剣で抜けると申すか。'],['cb','面白い。一合、付き合おう。抜けるなら——わが刃を、越えてみよ。']], defeat:[['cb','…見事。一片の迷いもない太刀筋であった。'],['cb','その腕、ここで朽ちさせるには惜しい。'],['cb','行け。わが剣技、汝に託す——侍として、共に振るうがいい。']]},
+ dragoon:{nm:'竜騎士 ヴァイス', intro:[['cb','竜の鱗を纏いし城へ、よくぞ踏み入った。'],['cb','我が槍は竜をも貫く。生半可な覚悟では、串刺しだぞ。']], defeat:[['cb','ぐ……竜の守りを、破るとは。'],['cb','よかろう。この竜槍、貴公の手に。共に空を駆けよ。']]},
+ paladin:{nm:'聖騎士 ガウェイン', intro:[['cb','止まれ。この城を守るは、誇りある聖騎士。'],['cb','汝の心、宝剣に問う。穢れあらば——退けるのみ。']], defeat:[['cb','…清き太刀だ。汝の心、確かに見た。'],['cb','わが宝剣と盾、汝に授けよう。正義のために振るえ。']]},
+ sorcerer:{nm:'大魔導 ザルス', intro:[['cb','ふん、塔の主に挑むとは命知らずな。'],['cb','紫紺の魔よ——侵入者を、灰に変えてやろう。']], defeat:[['cb','馬鹿な…我が魔導が、破られるとは。'],['cb','面白い時代だ。よかろう、この魔力、貴様に貸し与える。']]},
+ valkyrie:{nm:'戦乙女 ブリュンヒルデ', intro:[['cb','勇者よ、この城に挑む資格があるか試させてもらう。'],['cb','戦乙女の槍、受けてみせよ。死を恐れぬ者だけが先へ進める。']], defeat:[['cb','…あなたの魂、確かに輝いている。'],['cb','選ばれし者よ。わが翼と槍、あなたに。共に天を駆けましょう。']]},
+ darkknight:{nm:'闇騎士 モルド', intro:[['cb','よく来たな、光の側の者。'],['cb','呪われた我が大剣、その身で受けてみるがいい。']], defeat:[['cb','ぐ……呪いの剣を、退けるか。'],['cb','貴様の強さ、本物だ。この闇の力、使いこなしてみせろ。']]},
+ magicblade:{nm:'魔剣姫 セリス', intro:[['cb','あら、わたくしの城に客人？　珍しいこと。'],['cb','剣と魔法、両方でお相手するわ。退屈はさせない。']], defeat:[['cb','ふふ…強いのね。久しぶりに本気を出したわ。'],['cb','気に入った。わたくしの魔剣、あなたに預けましょう。']]},
+ reddragoon:{nm:'紅竜将 ガイア', intro:[['cb','重き鎧の城へ、よくぞ。だが——退路はないぞ。'],['cb','紅き竜の重撃、その身で知るがいい。']], defeat:[['cb','むぅ……鉄壁を、崩されるとは。'],['cb','見上げた剛の者よ。わが紅竜の鎧、貴公に。前線を任せたぞ。']]},
+ fallen:{nm:'堕天 ゼラート', intro:[['cb','……ここまで来たか。黒き翼の城へ、ようこそ。'],['cb','三日月の刃が、汝の影を刈り取るだろう。']], defeat:[['cb','…墜ちた我を、さらに墜とすか。'],['cb','いいだろう。この翼と鎌、汝に。闇を駆ける遊撃手となれ。']]},
+ loki:{nm:'奸計の神 ロキ', intro:[['cb','やあ、迷い込んだ子ネズミ君。'],['cb','僕の城で遊んでいくかい？　ただし——生きて出られたらね。']], defeat:[['cb','あはは、まいったまいった！　君、最高だよ。'],['cb','気に入った。僕の力、貸してあげる。一緒にこの世を引っ掻き回そう。']]},
+ gilgamesh:{nm:'英雄王 ギルガメシュ', intro:[['cb','雑種が。我が黄金の城に、何用だ。'],['cb','身の程を知れ。我こそ最古にして最強の王——跪け。']], defeat:[['cb','……ほう。この我に、傷を付けるか。'],['cb','面白い。雑種にしては上出来だ。我が宝、貸し与えてやる。光栄に思え。']]},
+ lucifer:{nm:'堕天使 ルシファー', intro:[['cb','光に選ばれし者よ。だが——光は、いつか世界を焼く。'],['cb','我が黒翼の前に、汝の信じる正義を示してみせよ。']], defeat:[['cb','…美しい。汝の魂は、墜ちてなお輝く。'],['cb','わが力、汝に託そう。光と闇、その両方を背負って往け。']]},
+ odin:{nm:'神王 オーディン', intro:[['cb','……知っておるよ。汝がここへ来ることも、その先も。'],['cb','片目で見た未来。それでも挑むか。ならば——神槍で試そう。']], defeat:[['cb','うむ。知識は、力には及ばぬこともある。良い学びだ。'],['cb','神槍グングニル、汝に貸そう。世界の真実を、その目で見るがいい。']]},
+};
+// 城主城の外観（地図アイコン）と床テーマ（既存アセットをキャラ別に割当）
+const CB_SLUG={ samurai:'red', dragoon:'blue', paladin:'gold', sorcerer:'deep', valkyrie:'gold',
+  darkknight:'deep', magicblade:'special', reddragoon:'red', fallen:'deep', loki:'prime',
+  gilgamesh:'gold', lucifer:'prime', odin:'great' };
+const CB_TEX={ samurai:'tegowai', dragoon:'fierce', paladin:'space', sorcerer:'hard', valkyrie:'space',
+  darkknight:'ultimate', magicblade:'space', reddragoon:'ultimate', fallen:'hard', loki:'maboroshi',
+  gilgamesh:'space', lucifer:'space', odin:'space' };
+// 出撃時に流す「これから城主の城を攻略する」独自ストーリーのあおり
+const CB_TEASER={
+ samurai:'一万の太刀を退けた剣豪が、最奥で静かに待つ。',
+ dragoon:'竜の血を引く騎士。その竜槍に、貫けぬものは無いという。',
+ paladin:'聖盾の前では、いかなる刃も砕けると伝えられる。',
+ sorcerer:'塔に近づいた者は、皆、灰になったと聞く。',
+ valkyrie:'戦場を選定する乙女。敗者に、翼は与えられない。',
+ darkknight:'呪われた大剣が、挑んだ者の名を一つずつ刻んでいく。',
+ magicblade:'剣も魔も極めし姫。退屈な相手は、すぐに飽きられる。',
+ reddragoon:'紅竜の鉄壁。これを崩した者は、まだ誰もいない。',
+ fallen:'堕ちた黒翼が、三日月の刃で影ごと刈り取るという。',
+ loki:'奸計の神の城。罠と嘘が、客を笑顔で出迎える。',
+ gilgamesh:'英雄王の黄金宮。雑種が立ち入ってよい場所ではない。',
+ lucifer:'堕天の王が、光を騙った者を静かに見定めている。',
+ odin:'神王の大広間。汝の結末を、その片目はすでに見ている。',
+};
+// 出撃カットシーン: 城門の前で「強き城主が待つ」ことを伝える独自ストーリー
+function cbChallengeLines(job){
+  const sc=CB_SCENE[job]; if(!sc) return [];
+  const firstCb=sc.intro.find(l=>l[0]==='cb');
+  const out=[
+    ['narr','＊ 重い城門が、軋みながら開いていく。'],
+    ['narr','＊ '+sc.nm+'の城——その最奥に、城主は在る。'],
+    ['narr','＊ '+(CB_TEASER[job]||'容易には越えられぬ相手だ。')],
+    ['narr','＊ それでも——今、この城の攻略を始める。'],
+  ];
+  if(firstCb) out.push(['cb_'+job, firstCb[1], null, {classic:true}]);
+  return out;
+}
+function playCbChallenge(job, after){
+  if(!CB_SCENE[job]){ if(after)after(); return; }
+  registerCbSpeakers();
+  showCbLord(job);
+  playCutscene(cbChallengeLines(job), ()=>{ if(after)after(); }, 'bg_lord_'+job);
+}
+// 城主を会話の話者として登録（立ち絵＝t_hero、名前＝城主名、背景＝城主絵）
+function registerCbSpeakers(){
+  if(typeof PORT==='undefined'||typeof SPK==='undefined') return;
+  Object.keys(CB_SCENE).forEach(job=>{ const j=JOBS[job]; if(!j) return;
+    PORT['cb_'+job]={img:'assets/t_story_'+job+'.png', e:j.emoji, nm:CB_SCENE[job].nm};
+    SPK['cb_'+job]={v:'heavy', spd:26};
+  });
+}
+// 'cb' という話者キーを、現在戦っている城主に動的解決する
+let _cbActive=null;
+function cbLines(job, kind){
+  const sc=CB_SCENE[job]; if(!sc) return [];
+  return sc[kind].map(l=> l[0]==='cb' ? ['cb_'+job, l[1], l[2]||null, Object.assign({classic:true}, l[3]||{})] : l);
+}
+function showCbLord(job){ const el=document.getElementById('csLord'); if(!el) return;
+  el.onerror=()=>{ el.classList.add('hide'); };
+  el.src='assets/t_story_'+job+'.png'; el.classList.remove('hide');
+  // 再生のためアニメをリスタート
+  el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+}
+function hideCbLord(){ const el=document.getElementById('csLord'); if(el){ el.classList.add('hide'); el.removeAttribute('src'); } }
+function playCbIntro(job){
+  if(!CB_SCENE[job]) return false;
+  registerCbSpeakers();
+  document.getElementById('game').classList.add('hidden');
+  showCbLord(job);
+  playCutscene(cbLines(job,'intro'),
+    ()=>{ document.getElementById('game').classList.remove('hidden'); draw(); },
+    'bg_lord_'+job);
+  return true;
+}
+function playCbDefeat(job, after){
+  if(!CB_SCENE[job]){ if(after)after(); return; }
+  registerCbSpeakers();
+  document.getElementById('game').classList.add('hidden');
+  showCbLord(job);
+  playCutscene(cbLines(job,'defeat'),
+    ()=>{ document.getElementById('game').classList.remove('hidden'); unlockJob(job); draw(); if(after)after(); },
+    'bg_lord_'+job);
+}
+// 専用ボス城の「キャラ本人」ボス定義を生成（モンスター登録＋立ち絵スプライト）。星に応じて超強化。
+function makeCharBossDef(job, star){
+  const j=JOBS[job]; if(!j) return null;
+  const nm='覇者 '+j.jp;
+  const k=Math.max(4,star||6);
+  const hp=Math.round(420 + k*120);     // 超高耐久
+  const atk=Math.round(22 + k*4.2);      // 痛打
+  const def=Math.round(8 + k*1.4);
+  // モンスターとして扱えるよう登録（立ち絵を流用）
+  if(typeof MONSTERS!=='undefined' && !MONSTERS[nm]){
+    MONSTERS[nm]={hp,atk,def,emoji:j.emoji,role:'melee',cap:[200,200,200],pay:50,color:'#ffd24d',minDmg:Math.round(10+k)};
+  } else if(MONSTERS[nm]){ MONSTERS[nm].hp=hp; MONSTERS[nm].atk=atk; MONSTERS[nm].def=def; }
+  const spr=HERO_SPRITE[job];
+  if(spr){ if(typeof SPRITES!=='undefined'&&SPRITES.mon) SPRITES.mon[nm]=spr;
+    if(typeof MON_SPRITE!=='undefined') MON_SPRITE[nm]=spr; }
+  return {nm, hp, atk, def, _unlockJob:job};
+}
 // ---- 記録（挑戦回数・クリア数・最短クリア時間） & フリープレイ進行解放 ----
 function statOf(k){ G.stats=G.stats||{}; return (G.stats[k]=G.stats[k]||{att:0,clr:0,best:0}); }
 function statAttempt(k){ if(!k)return; statOf(k).att++; saveGame(); }
@@ -1347,15 +1637,29 @@ function refreshSlotBtn(){ const b=document.getElementById('slotBtn'); if(b) b.c
 function renderSetup(){
   // jobs
   const jp=document.getElementById('jobpick'); jp.innerHTML='';
+  // 初期解放されている職業が選ばれていなければ戦士へ
+  if(!jobUnlocked(G.job)) G.job='warrior';
   Object.values(JOBS).filter(j=>!j.hidden).forEach(j=>{
-    const el=document.createElement('div'); el.className='jobcard'+(G.job===j.key?' sel':'');
+    const unlocked=jobUnlocked(j.key);
+    const el=document.createElement('div'); el.className='jobcard'+(G.job===j.key?' sel':'')+(unlocked?'':' locked');
     const portrait=HERO_SPRITE[j.key];
-    el.innerHTML=`<div style="text-align:center"><img src="${portrait}" alt="${j.jp}"
-        style="height:120px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))"></div>
-      <b>${j.emoji} ${j.jp}</b>
-      <div class="tag" style="margin-top:4px">${j.desc}</div>
-      <div class="tag" style="margin-top:4px">HP${j.hp} / ATK${j.atk} / DEF${j.def} / 視界${j.sight}</div>`;
-    el.onclick=()=>{G.job=j.key;sfxUISelect&&sfxUISelect();renderSetup();};
+    if(unlocked){
+      el.innerHTML=`<div style="text-align:center"><img src="${portrait}" alt="${j.jp}"
+          style="height:120px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5))"></div>
+        <b>${j.emoji} ${j.jp}</b>
+        <div class="tag" style="margin-top:4px">${j.desc}</div>
+        <div class="tag" style="margin-top:4px">HP${j.hp} / ATK${j.atk} / DEF${j.def} / 視界${j.sight}</div>`;
+      el.onclick=()=>{G.job=j.key;sfxUISelect&&sfxUISelect();renderSetup();};
+    } else {
+      // 未解放: シルエット＋🔒。専用ボス城を制覇すると解放
+      el.style.opacity='.6';
+      el.innerHTML=`<div style="text-align:center;position:relative">
+          <img src="${portrait}" alt="???" style="height:120px;object-fit:contain;filter:brightness(0) drop-shadow(0 4px 10px rgba(0,0,0,.5))">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:34px">🔒</div></div>
+        <b>？？？</b>
+        <div class="tag" style="margin-top:4px">ワールドの専用ボス城を制覇すると解放される隠しキャラ。</div>`;
+      el.onclick=()=>{ sfxUIBack&&sfxUIBack(); log('🔒 まだ解放されていない隠しキャラ。ワールドの専用ボス城で本人を倒そう。','l-warn'); };
+    }
     jp.appendChild(el);
   });
   // dungeons（幻はレア出現・一度きり）
@@ -1412,10 +1716,15 @@ function showShop(where, toBag){
   const note = where==='dungeon'
     ? 'メダルで購入。買ったカードはこのランの袋（手札）に直接入る。'
     : 'メダルで購入したカードはコレクションに入る。出撃準備で袋に詰めて持ち込もう。';
-  showModal(`<h2>${title}</h2>
-    <p class="muted" style="font-size:12px">所持メダル <b class="gold" id="shopMedals">${G.medals}</b>。${note}</p>
-    <div class="cards" id="shopWrap" style="max-height:340px;overflow:auto;justify-content:center">${cards}</div>
-    <div class="center" style="margin-top:10px"><button id="shopClose">閉じる</button></div>`);
+  showModal(`<div class="shopModal">
+    <div class="shopHead">
+      <span class="shopIcon">🏪</span>
+      <div><div class="shopTitle">${title}</div><div class="shopNote">${note}</div></div>
+      <div class="shopPouch">🪙 <span id="shopMedals">${G.medals}</span></div>
+    </div>
+    <div class="cards shopShelf" id="shopWrap">${cards}</div>
+    <div class="center" style="margin-top:12px"><button id="shopClose">閉じる</button></div>
+  </div>`);
   document.querySelectorAll('#shopWrap .shopcard').forEach(el=>{
     el.onclick=()=>{ const id=el.dataset.id, c=CARDS[id];
       if(G.medals<c.cost){ log("メダルが足りない","l-warn"); sfxCard&&sfxCard('fail'); return; }
@@ -1675,7 +1984,7 @@ function startRun(){
   G.atk=j.atk; G.def=j.def; G.lvl=1; G.floor=1;
   G.swordAtk=0;G.shieldDef=0;G.goldSword=false;G.drain=false;G.sleepSword=false;
   G.swordMul=1; G.equip={sword:null,shield:null,rings:[]}; G.rings={}; G._defFrac=0; // 剣盾は1スロット／指輪は複数重複可（このランのみ）
-  G.reviveCharge=false; G.handMax=10;
+  G.reviveCharge=false; G.handMax=10; G._cbIntroShown=false;
   G.status={barrier:0,invis:0,combo:0,speed:0,regen:0,charmCount:0,bright:false,silent:false};
   G.regenLeft=0; G.loot=0; G.over=false; G.allies=[]; G.summon=null; G.floorCache={}; if(!G.monCards)G.monCards={};
   // hand = the bag (cards are now at risk: lost on death, kept on escape/clear)
@@ -1684,6 +1993,8 @@ function startRun(){
   // 持ち込み制限超過分はコレクションへ返す（幻は5枚まで）
   G.bag.slice(limit).forEach(id=>{ G.collection[id]=(G.collection[id]||0)+1; });
   if(G.bag.length>limit) log(`⚠ ${d.jp}の持ち込みは${limit}枚まで。超過分はコレクションへ戻した。`,"l-warn");
+  // 「同じ条件でもう一度」用に出撃条件を記録（職業・ダンジョン・持ち込みカード）
+  if(!G.storyMode && !G.worldMode){ G._lastRun={job:G.job, dungeon:G.dungeon, bag:G.hand.slice()}; }
   G.bag=[]; saveGame();
   if(d.hidden){ G.maboroshiAvail=false; log("✨ 幻のダンジョンは一度きり……","l-warn"); }
   document.body.classList.remove('setupbg');
@@ -1760,7 +2071,12 @@ function buildFloor(){
   const last=rooms[rooms.length-1];
   const isFinal = (G.floor>=effFloors());
   const _ch = G.storyMode && (typeof curChapter==='function') && curChapter();
-  const _chBossDef = (isFinal && _ch && typeof CH_BOSS!=='undefined') ? CH_BOSS[_ch.key] : null; // 各章のボス
+  let _chBossDef = (isFinal && _ch && typeof CH_BOSS!=='undefined') ? CH_BOSS[_ch.key] : null; // 各章のボス
+  // ワールドの専用ボス城: 最深部にキャラ本人を超強ボスとして配置（撃破で職業解放）
+  if(!_chBossDef && isFinal && G.worldMode && typeof castleById==='function'){
+    const _wc=castleById(G.worldCastle);
+    if(_wc && _wc.charBoss) _chBossDef = makeCharBossDef(_wc.charBoss, d.star||_wc.star||6);
+  }
   if(isFinal){
     G.stairs=null;
     G.gem={x:last.cx,y:last.cy}; // クリアの証
@@ -1778,7 +2094,7 @@ function buildFloor(){
   };
   G.stairs=bump(G.stairs); G.gem=bump(G.gem);
   let _bossCell=null;
-  if(_chBossDef && G.gem){ _bossCell={x:G.gem.x,y:G.gem.y}; G.gem=null; } // ボス撃破までクリスタルは出さない
+  if(isFinal && !d.tutorial && G.gem){ _bossCell={x:G.gem.x,y:G.gem.y}; G.gem=null; } // ボス撃破までクリスタルは出さない（全ボス共通）
   // items (gem cards / pickups) scattered
   G.items=[];
   const itemCount=1+rnd(3);
@@ -1796,7 +2112,7 @@ function buildFloor(){
   }
   // monsters by floor band
   G.monsters=[]; G.allies=[];
-  const band = d.bands[Math.min(G.floor-1, d.bands.length-1)];
+  const band = floorBand();
   // density scales with actual room area (not whole map) to avoid overcrowding
   const roomArea=rooms.reduce((s,r)=>s+r.w*r.h,0);
   const target=Math.max(2,Math.round(roomArea*d.dense*0.9));
@@ -1825,21 +2141,22 @@ function buildFloor(){
     }
   }
   // final floor: place a guardian near gem（チュートリアル・オーブ戦では置かない）
-  if(isFinal && !d.tutorial && !_chBossDef){
+  if(isFinal && !d.tutorial && !_chBossDef && _bossCell){
+    // 最終フロアの守護者をクリスタルのマスに配置し、倒すまでクリスタルを出さない（全ダンジョン共通）
     const gband = band;
     const strong = gband[gband.length-1];
-    let gx=last.cx, gy=last.cy-1;
-    if(gy<1)gy=last.cy+1;
-    if(map[gy] && map[gy][gx] && !(gx===G.px&&gy===G.py)){
-      const g=spawnMonster(strong,gx,gy); if(g)g.guardian=true;
-    }
+    G.monsters=G.monsters.filter(m=>!(m.x===_bossCell.x&&m.y===_bossCell.y));
+    const g=spawnMonster(strong,_bossCell.x,_bossCell.y);
+    if(g){ g.guardian=true; g.boss=true; g._orbBoss=true; g._orbCell=_bossCell;
+      g.maxhp=g.hp=Math.round(g.maxhp*1.8); g.pay=g.pay*3; }
   }
   // 各章: 章ボスを最深部に配置。倒すとクリアのクリスタルが出現（最終章=幻影のオーブはHP2500）。
   if(_bossCell && _chBossDef){
     G.monsters=G.monsters.filter(m=>!(m.x===_bossCell.x&&m.y===_bossCell.y));
     const b=spawnMonster(_chBossDef.nm,_bossCell.x,_bossCell.y);
     if(b){ b.guardian=true; b.boss=true; b._orbBoss=true; b._orbCell=_bossCell;
-      b.maxhp=b.hp=_chBossDef.hp; b.atk=_chBossDef.atk; b.def=_chBossDef.def; }
+      b.maxhp=b.hp=_chBossDef.hp; b.atk=_chBossDef.atk; b.def=_chBossDef.def;
+      if(_chBossDef._unlockJob) b._cbJob=_chBossDef._unlockJob; }
   }
   // チュートリアル: 練習用に「ポーション」カードと宝石を必ず1つずつ落とす
   if(d.tutorial){
@@ -1853,14 +2170,14 @@ function buildFloor(){
     if(!G.items.some(it=>it.type==='gem')) placeAt({type:'gem',val:10});
   }
   // 店内売店: かなり難しいダンジョン(★5以上)だけ、たまに出現（最終フロアは除く）
-  if(!d.tutorial && !isFinal && d.star>=5 && Math.random()<0.45){
+  if(!d.tutorial && !isFinal && d.star>=5 && Math.random()<0.22){
     for(let g=0;g<120;g++){ const r=pick(rooms); const x=r.x+rnd(r.w), y=r.y+rnd(r.h);
       if(map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py) && !(G.gem&&G.gem.x===x&&G.gem.y===y)
         && !(G.stairs&&G.stairs.x===x&&G.stairs.y===y) && !G.items.some(it=>it.x===x&&it.y===y)
         && !G.monsters.some(m=>m.x===x&&m.y===y)){ G.items.push({x,y,type:'shop'}); break; } }
   }
   // カジノエリア: 非チュートリアル・非最終フロアでたまに出現。1部屋に複数台のスロットが並ぶ。
-  if(!d.tutorial && !isFinal && Math.random()<0.28){
+  if(!d.tutorial && !isFinal && Math.random()<0.12){
     const cand=rooms.filter((r,idx)=> idx!==0 && r.w*r.h>=9);
     const room=(cand.length?pick(cand):pick(rooms));
     const freeC=(x,y)=> map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py)
@@ -1905,9 +2222,24 @@ function floorFactor(){
   const f=Math.max(1,G.floor||1), fl=Math.max(1,effFloors());
   const p=(fl<=1)?1:(f-1)/(fl-1);                  // 0..1 進行度
   const star=(DUNGEONS[G.dungeon]||{}).star||1;    // 難易度（強いダンジョンほど大）
-  const startF=0.80;                                // 1F は少し弱め＝倒して成長できる
-  const endF  =1.10 + 0.085*Math.min(star,9);       // 最終Fは難易度に応じて大きく上昇
-  return startF + (endF-startF)*Math.pow(p,0.85);   // 深層へ向けて加速（奥ほど急に強く）
+  const startF=0.85;                                // 1F は少し弱め＝倒して成長できる
+  const endF  =1.30 + 0.11*Math.min(star,9);        // 最終Fは難易度に応じて大きく上昇（強化）
+  return startF + (endF-startF)*Math.pow(p,0.78);   // 深層へ向けて加速（奥ほど急に強く）
+}
+// このフロアで実際に湧くモンスター帯。深層では「弱い種」を自動的に除外し、
+// 低層で出る雑魚が高層に居残らないようにする（pay=強さの目安でフィルタ）。
+function floorBand(raw){
+  const d=DUNGEONS[G.dungeon];
+  if(!raw) raw=d.bands[Math.min(G.floor-1,d.bands.length-1)]||[];
+  if(raw.length<=1) return raw;
+  const fl=Math.max(1,effFloors());
+  const prog=(fl<=1)?1:Math.min(1,(G.floor-1)/(fl-1)); // 0(浅)→1(最深)
+  const pays=raw.map(n=>MONSTERS[n]?MONSTERS[n].pay:1);
+  const maxPay=Math.max.apply(null,pays);
+  // しきい値: 浅い階は全種、深い階ほど最強種のpayの最大45%未満を切り捨て
+  const cutoff=maxPay*(0.12+0.48*prog);
+  const kept=raw.filter(n=>(MONSTERS[n]?MONSTERS[n].pay:1)>=cutoff);
+  return kept.length?kept:raw;
 }
 /* ===================== 床ギミック & 障害物 ===================== */
 // テーマ別の床ギミック出現傾向（texから判定。world城は色→texで反映済み）
@@ -2190,7 +2522,7 @@ function spawnMonster(name,x,y){
 // このフロアの推奨レベル（帯の平均攻撃力×係数から概算）。怠けて成長しないと足りなくなる。
 function recommendedLevel(){
   const d=DUNGEONS[G.dungeon];
-  const band=d.bands[Math.min(G.floor-1,d.bands.length-1)]||[];
+  const band=floorBand();
   if(!band.length) return 1;
   const sc=floorFactor();
   const avgAtk=band.reduce((s,n)=>s+(MONSTERS[n]?MONSTERS[n].atk:0),0)/band.length*sc;
@@ -2228,6 +2560,12 @@ function announceFloor(){
     const ch=curChapter();
     if(ch && ch.boss && ch.boss.length){ setTimeout(()=>{ document.getElementById('game').classList.add('hidden');
       playCutscene(ch.boss, ()=>{ document.getElementById('game').classList.remove('hidden'); draw(); }); }, 350); }
+  }
+  // ワールド専用ボス城: 最深部に到達したら城主の登場カットシーン
+  if(G.worldMode && G.floor>=effFloors() && !G._cbIntroShown && typeof castleById==='function'){
+    const wc=castleById(G.worldCastle);
+    if(wc && wc.charBoss && CB_SCENE[wc.charBoss]){ G._cbIntroShown=true;
+      setTimeout(()=>playCbIntro(wc.charBoss), 350); }
   }
 }
 
@@ -2467,7 +2805,8 @@ function draw(){
   if(G.h<=VIEW_H){ oy=((cv.height-G.h*TILE)/2)|0; }
   else { const camY=clamp(pvy+0.5-VIEW_H/2, 0, G.h-VIEW_H); oy=Math.round(-camY*TILE); }
   if(G._shake && tN>=G._shake.t0 && tN-G._shake.t0<200){ const k=1-(tN-G._shake.t0)/200;
-    ox+=Math.round((Math.random()*2-1)*5*k); oy+=Math.round((Math.random()*2-1)*5*k); }
+    const amp=(G._shake.amp===undefined?1:G._shake.amp)*5;
+    ox+=Math.round((Math.random()*2-1)*amp*k); oy+=Math.round((Math.random()*2-1)*amp*k); }
   // 床/壁は「連続したパターン」として描く: 原点(ox,oy)に座標系を移し、世界座標で
   // パターン塗り。テクスチャはカメラと完全に一致してスクロールするため、立っているマスと
   // 床が必ず揃う（半マスズレが起きない）。
@@ -2529,14 +2868,14 @@ function draw(){
   // player: glide + lunge + hit shake + soft idle bob + facing flip
   const j=JOBS[G.job];
   chase(G,G.px,G.py);
-  const [plx,ply]=lungeOff(G); const [phx,phy,pfl,pyaw]=hitOff(G);
+  const [plx,ply]=lungeOff(G); const [phx,phy,pfl,prot,psx,psy]=hitOff(G);
   G._moving=(Math.abs(G._vx-G.px)+Math.abs(G._vy-G.py))>0.06; // 歩行アニメ判定
   const pbob=Math.sin(tN/620)*3.0;
-  const ppx=ox+(G._vx+plx)*TW+phx, ppy=oy+(G._vy+ply)*TILE+pbob+phy;
+  const ppx=ox+(G._vx+plx)*TW+phx+atkShakeOff(G), ppy=oy+(G._vy+ply)*TILE+pbob+phy;
   drawShadow(ox+G._vx*TW, oy+G._vy*TILE, true);
   const pds=dirSprite('hero_'+G.job, G); // 8方向・攻撃/被弾ポーズ
   drawUnitSprite(pds?pds.path:SPRITES.player, j.emoji, ppx, ppy, 1.5,
-    pds?pds.flip:(G._face||1), pfl, 1, 1, atkSpinOff(G), pyaw); // レンは大きめ表示 / 被弾=横ターン
+    pds?pds.flip:(G._face||1), pfl, psx, psy, atkSpinOff(G), 0); // 攻撃の回転斬りのみ回転 / 被弾=左右揺れだけ
   if(G.faceMode||G.diagMode) drawFacingArrow(ppx+TW/2, ppy+TILE/2); // 🧭/⤡ 向き矢印
   if(G.status.invis>0){ ctx.fillStyle="rgba(120,160,255,.25)";
     ctx.fillRect(ppx,ppy,TW,TILE); }
@@ -2663,7 +3002,14 @@ function drawMiniMap(mx,my){
   ctx.fillStyle="#ff2828"; ctx.fillRect(mx+G.px*s,my+G.py*s,s,s);
 }
 /* ---- animation helpers: smooth motion, lunge, hit-shake, idle bob ---- */
-const now=()=>performance.now();
+/* ---- ヒットストップ: 攻撃が当たった瞬間だけゲーム内時計を凍結し「当たった！」を脳に伝える。
+   威力＝停止量（通常60ms/とどめ120ms/会心160ms/被弾70ms）。SE・エフェクト・揺れ・吹き飛びとセットで使う。 ---- */
+const _rawNow=()=>performance.now();
+let _hsEnd=0,_hsFrozenAt=0,_hsOffset=0;
+const now=()=>{ const t=_rawNow(); return t<_hsEnd ? _hsFrozenAt : t-_hsOffset; };
+function hitstop(ms){ if(!ms) return; const t=_rawNow();
+  if(t<_hsEnd){ _hsOffset+=(t+ms)-_hsEnd; _hsEnd=t+ms; }   // 停止中なら延長
+  else { _hsFrozenAt=t-_hsOffset; _hsOffset+=ms; _hsEnd=t+ms; } }
 function chase(e,tx,ty){ // exponential glide of visual position toward logical tile
   if(e._vx===undefined||Math.max(Math.abs(e._vx-tx),Math.abs(e._vy-ty))>2.5){e._vx=tx;e._vy=ty;return;}
   const k=1-Math.exp(-(G._dt||16)/60);
@@ -2684,16 +3030,42 @@ function lungeOff(e){ // attack step-in: ゆっくり大きく踏み込み、ホ
 // （バク宙のような画面平面回転ではなく、Y軸の水平スピン＝横向きに1回転して戻る。
 //   全キャラ・8方向共通。yaw=0..1 の進行度を返し、描画側で横幅cos圧縮＋反転で表現）
 function hitOff(e){
-  if(!e._hit) return [0,0,0,0];
-  const h=e._hit, t=(now()-h.t0)/380;
-  if(t>=1){ e._hit=null; return [0,0,0,0]; }
-  if(t<0) return [0,0,0,0];
+  // 被弾リアクション=「強いゴムを一瞬押し込んで離した時の減衰振動」。
+  //   ①被弾方向へグッと押し込み ②反発して逆へ ③2〜3回ブルブル ④ピタッと収束。
+  //   横(左右)のみ・回転/傾きなし・伸縮あり。ヒットストップで①の押し込みがホールドされる。
+  if(!e._hit) return [0,0,0,0,1,1];
+  const h=e._hit;
   const mag=(h.mag===undefined)?1:h.mag;
-  const flashA = t<0.25 ? (1-t/0.25) : 0;
-  const push = (t<0.3? t/0.3 : 1-(t-0.3)/0.7)*8*mag;
-  const wob  = Math.sin(t*26)*(1-t)*4*mag;
-  const yaw = 1-Math.pow(1-t,2); // 横ターン進行度（右回り1回転・イージング）
-  return [ (h.dx||0)*push + wob, (h.dy||0)*push, flashA, yaw ];
+  const m=Math.min(1.7, mag);
+  const dur=Math.min(0.16, 0.045 + 0.060*Math.max(0,mag-0.6)); // 約0.05〜0.15s
+  const t=(now()-h.t0)/(dur*1000);
+  if(t>=1){ e._hit=null; return [0,0,0,0,1,1]; }
+  if(t<0) return [0,0,0,0,1,1];
+  const flashA = t<0.3 ? (1-t/0.3) : 0;
+  // ★衝撃→ダメージポーズへの“約4フレーム(≈67ms)”の滑らかな補完。
+  //   実時間(_rawNow)で進めるので、ヒットストップで時間が止まっていても、この補完だけは滑らかに入る。
+  //   瞬時にポーズへ飛ばさず、止め続けもせず、手応えと滑らかさを両立。
+  if(h.tr===undefined) h.tr=_rawNow();
+  const tr=Math.min(1,(_rawNow()-h.tr)/67);
+  const ease=tr*tr*(3-2*tr);                   // smoothstep（0→1）
+  const dir = h.dx ? h.dx : 1;                 // 横方向（左右）。被弾方向へ最初に押し込む
+  const amp = TW*(0.06 + 0.085*m);             // 振れ幅=キャラ幅の約11〜21%（最初に大きく→収束）
+  const env = Math.exp(-3.2*t);                // 急減衰（最初に大きく、最後は小さく）
+  const x   = dir * amp * env * Math.cos(t*Math.PI*2*2.7) * ease; // 押し込み→反発振動（補完つき）
+  const sq  = env * (0.06 + 0.05*m) * ease;    // 伸縮も同じ補完で滑らかに入る
+  return [ x, 0, flashA, 0, 1+sq, 1-sq*0.7 ];
+}
+// 攻撃を「与えた側」の小さな横揺れ（受けた側=hitOffより小さく・横のみ・伸縮/回転なし）
+function atkShakeOff(e){
+  if(!e._atkShake) return 0;
+  const h=e._atkShake, dur=0.12;
+  const t=(now()-h.t0)/(dur*1000);
+  if(t>=1){ e._atkShake=null; return 0; }
+  if(t<0) return 0;
+  const dir=h.dx||1;
+  const amp=TW*0.045;                 // 小さめ（受け側の約1/4）
+  const env=Math.exp(-4.2*t);
+  return dir*amp*env*Math.cos(t*Math.PI*2*2.7);
 }
 // 回転斬り中の攻撃側スピン（右回り1回転/300ms）
 function atkSpinOff(e){
@@ -2705,9 +3077,10 @@ function atkSpinOff(e){
 }
 // size class for hit reactions: 雑魚は大きく揺れ、ボスはほぼ動かない
 function hitMag(m){
-  if(m.guardian||/キングドラゴン|カオス|デーモン|ドラゴン/.test(m.name)) return 0;
-  if(/グランシャーク|ターミネーター|マッドブル|リスタール|リスタドラゴン|ビショップ/.test(m.name)) return 0.55;
-  return 1.2;
+  // 重い敵ほど のけぞり(flinch)は小さい。だが完全に無反応にはしない（必ず少し揺れる）
+  if(m.guardian||/キングドラゴン|カオス|デーモン|ドラゴン/.test(m.name)) return 0.5;
+  if(/グランシャーク|ターミネーター|マッドブル|リスタール|リスタドラゴン|ビショップ/.test(m.name)) return 0.8;
+  return 1.1;
 }
 function fitSprite(im,px,py,scale){
   scale=scale||1.2; const box=TILE*scale;
@@ -2780,10 +3153,10 @@ function drawMon(m,ox,oy,ally){
   } else {                                                     // default: light bob
     bob=Math.sin(tN/750+ph)*3.2;
   }
-  const [lx,ly]=lungeOff(m); const [hx,hy,fl,hyaw]=hitOff(m);
-  if(fl){ sqy*=0.94; sqx*=1.05; } // squash a bit on hit
+  const [lx,ly]=lungeOff(m); const [hx,hy,fl,hrot,hsx,hsy]=hitOff(m);
+  sqx*=hsx; sqy*=hsy; // 被弾の伸縮（左右に潰れて戻る）
   m._moving = (Math.abs(m._vx-m.x)+Math.abs(m._vy-m.y))>0.06; // 歩行アニメ判定
-  const px=ox+(m._vx+lx)*TW+hx+stepX, py=oy+(m._vy+ly)*TILE+bob+hy;
+  const px=ox+(m._vx+lx)*TW+hx+stepX+atkShakeOff(m), py=oy+(m._vy+ly)*TILE+bob+hy;
   drawShadow(ox+m._vx*TW, oy+m._vy*TILE, big);
   const ds=dirSprite(m.name,m); // 方向・状態別スプライト（あれば）
   const img= ds ? ds.path : (poseSprite(m.name,m) || SPRITES.mon[m.name]); // 攻撃/被弾差し替え
@@ -2794,7 +3167,7 @@ function drawMon(m,ox,oy,ally){
     ctx.save(); ctx.filter='brightness(1.06) sepia(1) hue-rotate(178deg) saturate(2.6)';
   }
   drawUnitSprite(img, m.emoji, px,py,
-    big?1.38:1.2, ds?ds.flip:(m._face||1), fl, sqx, sqy, 0, hyaw); // 被弾=横ターン
+    big?1.38:1.2, ds?ds.flip:(m._face||1), fl, sqx, sqy, hrot, 0); // 被弾=左右しなり＋回転
   if(ally){ ctx.restore(); ctx.filter='none'; }
   // hp bar
   const ratio=clamp(m.hp/m.maxhp,0,1);
@@ -2866,6 +3239,9 @@ function tutTick(){
     if(h.cond()){ G.tut.shown[h.id]=true; G.tut.cool=now()+1400; tutToast(h.text); break; }
   }
 }
+function clearSwordSlot(){ // 剣スロットの全効果を解除（持ち替え時）
+  G.swordMul=1; G.swordAtk=0; G.drain=false; G.goldSword=false; G.sleepSword=false; G.equip.sword=null;
+}
 function equipBarHTML(){
   const p=[];
   if(G.equip&&G.equip.sword) p.push('⚔️'+CARDS[G.equip.sword].nm);
@@ -2885,8 +3261,9 @@ function renderHand(){
   G.hand.sort(cardOrder); // 手札も同じ並び
   G.hand.forEach((id,i)=>{
     const c=CARDS[id];
-    const el=cardEl(c,id,()=>useCard(i));
-    if(mpCost(c)>G.mp) el.style.opacity=.45; // MP不足は半透明
+    const noMp=(c.cat!=='equip') && (mpCost(c)>G.mp); // 装備はMP不要
+    const el=cardEl(c,id, noMp ? (()=>{ sfxUIBack&&sfxUIBack(); log(`MPが足りない（必要${mpCost(c)} / 現在${Math.round(G.mp)}）`,'l-warn'); }) : (()=>useCard(i)));
+    if(noMp) el.classList.add('noMp'); // MP不足は使用不可表示（グレーアウト）
     const btn=document.createElement('button');
     btn.className='mpbtn'; btn.textContent='→MP+'+mpValue(id);
     btn.title='このカードをMPに変換する（行動を消費しない）';
@@ -2935,6 +3312,7 @@ function tryAct(dir){
 function playerTurn(action){
   G.busy=true;
   let extraTurn=false;
+  G._eDelay=0; // 敵攻撃の開始遅延（プレイヤーが攻撃したターンだけ後ろにずらす）
   if(action===null){
     // その場で剣を振る（空振り待ち）: 向いている“実際の方向”へ素振り斬撃（上下・斜めも対応）
     let fdx=G._dirX||0, fdy=G._dirY||0;
@@ -3039,28 +3417,45 @@ function doPlayerAttack(mon){
     fxThrust(G.px,G.py,mon.x,mon.y,crit);
     fxSlash(mon.x,mon.y,ang,crit);
   }
-  mon._hit={t0:now(),dx:adx,dy:ady,mag:hitMag(mon)};
+  mon._hit={t0:now()+120,dx:adx,dy:ady,mag:hitMag(mon)*(crit?1.7:1.0)}; // 踏み込みが当たる瞬間(≈120ms)に同期
+  G._eDelay=320; // プレイヤーの攻撃モーション(踏み込み300ms)が終わってから敵が攻撃するようにする
+  G._atkShake={t0:now()+120,dx:adx}; // 与えた側=プレイヤーは小さく横揺れ（命中の瞬間）
   sfxHit(crit); // ズォッ……ザンッ……ドンッ（包丁×まな板ASMR / 会心はズォン……ザァンッ！）
-  if(crit){ G._shake={t0:now()}; G._lockUntil=now()+125; }
+  if(crit){ G._lockUntil=now()+125; }
   else G._lockUntil=now()+80;
   mon.hp-=dmg;
+  // ヒットストップ: 踏み込みが当たる瞬間(≈120ms)に同期して時を止める。会心は 停止→画面揺れ の順
+  // 命中ヒットストップ。撃破時の強調は killMonster 側でまとめて行う（ここでは非撃破のみ）
+  { const _kill=mon.hp<=0;
+    // 命中ヒットストップ（敵に当たった瞬間を強調）: 通常110ms / 会心260ms。
+    // 威力＝停止量。会心は画面揺れ、通常も軽い揺れを足して「当たった！」を強める
+    if(!_kill){ setTimeout(()=>{ hitstop(crit?160:60); G._shake={t0:now(),amp:crit?1:0.5}; },120); } }
   if(crit){ log(`💥 会心の一撃！ ${mon.name} に ${dmg} ダメージ！`,"l-gold");
     popText(mon.x,mon.y,"-"+dmg,"#fff3a0",true); }
   else { log(`▶ ${mon.name} に ${dmg} ダメージ！`,"l-dmg");
     popText(mon.x,mon.y,"-"+dmg,"#ffffff"); }
-  if(G.drain){ const h=Math.round(dmg*0.5); healPlayer(h,true); }
+  if(G.drain){ const h=Math.max(1,Math.round(dmg*0.25)); healPlayer(h,true); } // 吸収を弱体化（50%→25%）
   if(G.sleepSword && Math.random()<0.3){ mon.sleep=4; log(`${mon.name} は眠った！`,"l-mag"); }
   if(mon.hp<=0){ killMonster(mon); }
 }
 function killMonster(mon){
   fxDie(mon); // shrink & fade out
+  // 撃破の瞬間を強調: 白フラッシュ→画面揺れ→停止延長（「倒した！」を分かりやすく）
+  { const d0=mon._fxDelay||0;
+    const _boss=mon.boss||mon.guardian||mon._orbBoss||mon.name==='カオス';
+    const _spr=SPRITES.mon[mon.name]||MON_SPRITE[mon.name];
+    // 撃破の瞬間: モンスターの形に沿って白く発光させる（床は光らせない）+ 放射状の光条
+    fxO.push({type:'killflash',x:mon.x,y:mon.y,img:_spr,flip:mon._face||1,big:_boss,
+      t0:now()+d0+120,dur:_boss?460:320});
+    setTimeout(()=>{ G._shake={t0:now()}; hitstop(_boss?320:150); }, d0+120); }
   sfxKill(mon._fxDelay||0);            // とどめ: ドンッ……ザクッ……
   sfxVanish(matOf(mon), mon._fxDelay||0); // 素材別の消滅音（シュン/プシュ/カララ…）
   log(`✔ ${mon.name} を倒した！`,"l-good");
   if(mon._orbBoss){ const c=mon._orbCell||{x:mon.x,y:mon.y}; G.gem={x:c.x,y:c.y};
-    log('✨ 幻影のオーブが砕けた——クリアのクリスタルが現れた！','l-gold');
+    log((mon.name==='幻影のオーブ'?'✨ 幻影のオーブが砕けた':'✨ 守護者を打ち倒した')+'——クリアのクリスタルが現れた！','l-gold');
     sfxGem&&sfxGem(); G._shake={t0:now()}; }
   if(mon._orbBoss && G._bossTheme){ G._bossTheme=null; if(bgm.on) bgmStart(); } // ボス撃破→通常BGMへ
+  if(mon._cbJob){ const _j=mon._cbJob; setTimeout(()=>playCbDefeat(_j), 800); } // 城主撃破→敗北・仲間入りカットシーン
   tryRecruit(mon); // 一定確率で仲間（カード）化
   // level cap growth（モンスターゲート風: 格上ほど大きく成長・最大+5・上限到達で停止）
   const cap=mon.cap[JOBS[G.job].capIdx];
@@ -3215,6 +3610,7 @@ function canStep(x,y,nx,ny){
 function occupied(x,y){ return (G.px===x&&G.py===y)||G.monsters.some(m=>m.x===x&&m.y===y)||G.allies.some(a=>a.x===x&&a.y===y); }
 
 function enemyPhase(){
+  G._atkSeq=0; // 敵攻撃の時間差演出用カウンタ（毎ターンリセット）
   // generator omens + corpse revival
   maybeGenerator();
   tickWorld();
@@ -3364,9 +3760,11 @@ function enemyAttackAlly(m,a){
   a.hp-=dmg;
   const edx=Math.sign(a.x-m.x), edy=Math.sign(a.y-m.y);
   if(edx) m._face=edx>0?1:-1; m._dirX=edx; m._dirY=edy;
-  m._lunge={dx:edx,dy:edy,t0:now()};
-  a._hit={t0:now(),dx:edx,dy:edy,mag:1};
-  if(G.lit[a.y]&&G.lit[a.y][a.x]){ popText(a.x,a.y,'-'+dmg,'#7cc8ff'); log(`${m.name} が ${a.name}(味方) に ${dmg}`,'l-dmg'); }
+  const off=(G._eDelay||0)+((G._atkSeq=(G._atkSeq||0)+1)-1)*180;
+  m._lunge={dx:edx,dy:edy,t0:now()+off};
+  a._hit={t0:now()+off+140,dx:edx,dy:edy,mag:1};
+  setTimeout(()=>hitstop(50),off+140);
+  if(G.lit[a.y]&&G.lit[a.y][a.x]){ popText(a.x,a.y,'-'+dmg,'#7cc8ff',false,off+140); log(`${m.name} が ${a.name}(味方) に ${dmg}`,'l-dmg'); }
 }
 function summonMenu(){
   const cards=Object.entries(G.monCards||{}).filter(([nm,c])=>c>0);
@@ -3428,28 +3826,39 @@ function enemyAttack(m,ranged,mult){
   const defTot=G.def+G.shieldDef;
   // 被ダメージ = 敵攻撃 - 守備 + ランダム。守備が高くても最低保証ダメージは通る（ランク別）
   const atkP=Math.round(m.atk*(mult||1));
-  const minG = m.pay>=18?8 : m.pay>=11?6 : m.pay>=7?4 : m.pay>=3?2 : 1;
+  // 最低保証ダメージ: モンスター個別の minDmg があれば優先（フロア倍率で底上げ）。無ければランク別の既定値
+  const baseMin = m.pay>=18?14 : m.pay>=11?10 : m.pay>=7?7 : m.pay>=3?4 : 2;
+  const ownMin = (MONSTERS[m.name] && MONSTERS[m.name].minDmg!=null) ? MONSTERS[m.name].minDmg : baseMin;
+  const minG = Math.max(1, Math.round(ownMin * (m.minScale===false?1:floorFactor())));
   let dmg=Math.max(minG, Math.round(atkP - defTot) + (rnd(5)-2));
   if(m.role==="knock") dmg=Math.round(dmg*0.85);
   const edx=Math.sign(G.px-m.x), edy=Math.sign(G.py-m.y);
   if(edx) m._face=edx;
   m._dirX=edx; m._dirY=edy;
+  // 敵の攻撃は1体ずつ時間差(180ms)で繰り出す＋振りかぶり(140ms)→命中の二拍子。
+  // 同時多発だと「いつ・誰に殴られたか」が分からないため、敵のターンを目で追えるようにする
+  const off=(G._eDelay||0)+((G._atkSeq=(G._atkSeq||0)+1)-1)*180;
   if(!ranged){
-    m._lunge={dx:edx,dy:edy,t0:now()}; fxImpact(G.px,G.py);
-    G._hit={t0:now(),dx:edx,dy:edy,mag:1};
-    sfxEnemy(matOf(m),0); // 素材別の攻撃音（獣/鈍器/軟体/骨/魔法/虫/ボス）
+    m._lunge={dx:edx,dy:edy,t0:now()+off};
+    fxO.push({type:'impact',x:G.px,y:G.py,t0:now()+off+140,dur:180}); // 命中の瞬間に着弾フラッシュ
+    G._hit={t0:now()+off+140,dx:edx,dy:edy,mag:1};
+    sfxEnemy(matOf(m),off+140); // 素材別の攻撃音を命中に同期
+    m._atkShake={t0:now()+off+140,dx:edx}; // 与えた側=敵は小さく横揺れ
+    setTimeout(()=>{ hitstop(70); G._shake={t0:now(),amp:0.5}; },off+140); // 被弾ヒットストップ＋画面わずか揺れ
   } else {
     // 敵の遠距離攻撃も弾道演出（発射→飛翔→着弾）
-    m._lunge={dx:edx,dy:edy,t0:now()};
-    fxBolt(m.x,m.y,G.px,G.py,'fire');
-    fxMagic(G.px,G.py,'fire',BOLT_MS);
-    G._hit={t0:now()+BOLT_MS,dx:edx,dy:edy,mag:1};
-    sfxEnemy('magic',BOLT_MS); // ボォン……ズンッ（着弾に同期）
+    m._lunge={dx:edx,dy:edy,t0:now()+off};
+    setTimeout(()=>fxBolt(m.x,m.y,G.px,G.py,'fire'),off);
+    m._atkShake={t0:now()+off,dx:edx}; // 発射の反動で小さく横揺れ
+    fxMagic(G.px,G.py,'fire',off+BOLT_MS);
+    G._hit={t0:now()+off+BOLT_MS,dx:edx,dy:edy,mag:1};
+    sfxEnemy('magic',off+BOLT_MS); // ボォン……ズンッ（着弾に同期）
+    setTimeout(()=>{ hitstop(70); G._shake={t0:now(),amp:0.5}; },off+BOLT_MS); // 着弾で停止＋画面わずか揺れ
   }
-  G._lockUntil=now()+70;
+  G._lockUntil=now()+off+240; // 敵の攻撃を見届けるまで入力を軽くロック
   G.hp-=dmg;
   log(`✖ ${m.name} の${ranged?"遠距離":""}攻撃 ${dmg} ダメージ`,"l-dmg");
-  popText(G.px,G.py,"-"+dmg,"#ff7a6a",false,ranged?BOLT_MS:0);
+  popText(G.px,G.py,"-"+dmg,"#ff7a6a",false,off+(ranged?BOLT_MS:140));
   // knockback
   if(m.role==="knock" && !ranged){
     const dx=Math.sign(G.px-m.x), dy=Math.sign(G.py-m.y);
@@ -3496,7 +3905,7 @@ function tickWorld(){
       G.omens.splice(G.omens.indexOf(o),1);
       if(walkable(o.x,o.y)&&!occupied(o.x,o.y)){
         const d=DUNGEONS[G.dungeon];
-        const band=d.bands[Math.min(G.floor-1,d.bands.length-1)];
+        const band=floorBand();
         spawnMonster(pick(band),o.x,o.y);
         if(G.lit[o.y]&&G.lit[o.y][o.x]) log("🌫️ 煙からモンスターが現れた！","l-warn");
       }
@@ -3688,7 +4097,8 @@ function resolveCard(i,target){
     if(G.lvl<currentCap())levelUp(Math.min(10,currentCap()-G.lvl)); log("パワーアップ！","l-good"); }
   else if(c.hpup){ G.maxhp+=c.hpup; G.hp=G.maxhp; log(`最大HP+${c.hpup}(全回復)`,"l-good"); }
   // ----- equip (rest of run) -----
-  else if(c.swordMul){ G.swordMul=c.swordMul; G.equip.sword=id; log(`⚔️ ${c.nm}を装備した！ 通常攻撃 +${Math.round((c.swordMul-1)*100)}%`,"l-good"); }
+  // 剣は1スロット: 新しい剣を装備したら前の剣の効果（吸収/金/睡眠/倍率/攻撃）を必ずリセット
+  else if(c.swordMul){ clearSwordSlot(); G.swordMul=c.swordMul; G.equip.sword=id; log(`⚔️ ${c.nm}を装備した！ 通常攻撃 +${Math.round((c.swordMul-1)*100)}%`,"l-good"); }
   else if(c.ring){ // 指輪は重複装備OK（リバイブ＋ラッキー等を同時に）
     G.rings=G.rings||{}; G.equip.rings=G.equip.rings||[];
     G.rings[c.ring]=true;
@@ -3696,11 +4106,11 @@ function resolveCard(i,target){
     if(c.ring==='bright'){ G.status.bright=true; computeVisibility(); }
     if(c.ring==='revive'){ G.reviveCharge=true; }
     log(`💍 ${c.nm}を装備した！（他の指輪と重複可）`,"l-good"); }
-  else if(c.swordAtk){ G.swordAtk=Math.max(G.swordAtk,c.swordAtk); G.equip.sword=id; log(`${c.nm}装備 ATK+${c.swordAtk}`,"l-good"); }
+  else if(c.swordAtk){ clearSwordSlot(); G.swordAtk=Math.max(G.swordAtk,c.swordAtk); G.equip.sword=id; log(`${c.nm}装備 ATK+${c.swordAtk}`,"l-good"); }
   else if(c.shieldDef){ G.shieldDef=Math.max(G.shieldDef,c.shieldDef); log(`シールド装備 DEF+${c.shieldDef}`,"l-good"); }
-  else if(c.goldSword){ G.goldSword=true; log("ゴールドソード装備","l-good"); }
-  else if(c.drain){ G.drain=true; G.swordAtk=Math.max(G.swordAtk,4); log("ドレインソード装備","l-good"); }
-  else if(c.sleepSword){ G.sleepSword=true; G.swordAtk=Math.max(G.swordAtk,4); log("スリープソード装備","l-good"); }
+  else if(c.goldSword){ clearSwordSlot(); G.goldSword=true; G.equip.sword=id; log("ゴールドソード装備","l-good"); }
+  else if(c.drain){ clearSwordSlot(); G.drain=true; G.swordAtk=4; G.equip.sword=id; log("ドレインソード装備","l-good"); }
+  else if(c.sleepSword){ clearSwordSlot(); G.sleepSword=true; G.swordAtk=4; G.equip.sword=id; log("スリープソード装備","l-good"); }
   else if(c.pocket){ G.handMax=Math.min(12,G.handMax+c.pocket); log(`カード枠が ${G.handMax} に拡張！`,"l-good"); }
   else if(c.revive){ G.reviveCharge=true; log("💍 リバイブリング装備（1度だけ復活）","l-good"); }
 
@@ -4470,6 +4880,30 @@ function drawFX(list,ox,oy){
         ctx.restore();
       }
     }
+    else if(f.type==='killflash'){       // 撃破発光: モンスターの形が白く光って弾ける
+      const sil=whiteSilhouette(f.img);
+      const box=TILE*(f.big?1.55:1.25);
+      // 光条（放射状の線）— 床ではなく中心から外へ
+      const rays=f.big?10:7, rt=Math.min(1,t/0.5);
+      ctx.save();
+      ctx.globalCompositeOperation='lighter';
+      ctx.strokeStyle=`rgba(255,247,200,${(1-t)*0.9})`; ctx.lineWidth=f.big?3:2;
+      for(let k=0;k<rays;k++){ const a=k*(6.2832/rays)+t*0.8;
+        const r0=box*0.18, r1=box*(0.32+0.5*rt);
+        ctx.beginPath(); ctx.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);
+        ctx.lineTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1); ctx.stroke(); }
+      // 白シルエット: 一瞬大きく→フェード（点滅で「パッ」と弾ける感じ）
+      if(sil){ const r=Math.min(box/sil.width, box/sil.height);
+        const sc=(1+0.35*Math.min(1,t/0.25))* (f.flip===-1?1:1);
+        const w=sil.width*r*sc, h=sil.height*r*sc;
+        const dx=px+(TW-w)/2, dy=py+TILE*0.97-h;
+        const blink = t<0.3 ? (Math.floor(t*30)%2===0?1:0.55) : 1;
+        ctx.globalAlpha=Math.max(0,1-t/0.9)*blink;
+        if(f.flip===-1){ ctx.translate(dx+w/2,0); ctx.scale(-1,1); ctx.translate(-(dx+w/2),0); }
+        ctx.drawImage(sil,dx,dy,w,h);
+      }
+      ctx.restore();
+    }
     else if(f.type==='die'){
       const im=getImg(f.img);
       ctx.save();
@@ -4718,7 +5152,8 @@ function endScreen(title,body,color){
   showModal(`<div class="big center" style="color:${color}">${title}</div>
    <p class="center" style="margin:14px 0">${body}</p>
    <div class="center muted">所持メダル: <b class="gold">${G.medals}</b></div>
-   <div class="center" style="margin-top:16px"><button class="primary" id="mAgain">タイトルへ戻る</button></div>`);
+   <div class="center" style="margin-top:16px">${(!G.storyMode&&!G.worldMode&&G._lastRun)?'<button class="primary" id="mRetry" style="margin-bottom:8px">🔄 同じ条件でもう一度 ▶</button><br>':''}<button class="${(!G.storyMode&&!G.worldMode&&G._lastRun)?'':'primary'}" id="mAgain">タイトルへ戻る</button></div>`);
+  const _rb=document.getElementById('mRetry'); if(_rb) _rb.onclick=()=>{ hideModal(); retrySameRun(); };
   document.getElementById('mAgain').onclick=()=>{ hideModal();
     document.getElementById('game').classList.add('hidden');
     document.getElementById('setup').classList.remove('hidden');
@@ -4733,6 +5168,26 @@ function endScreen(title,body,color){
     renderSetup();
   };
 }
+// 爆速リトライ: 前回と同じ職業・ダンジョン・持ち込みカードで即出撃（桜井流「リトライを速く」）
+function retrySameRun(){
+  const lr=G._lastRun;
+  const toSetup=()=>{ document.getElementById('game').classList.add('hidden');
+    document.getElementById('setup').classList.remove('hidden'); renderSetup(); };
+  if(!lr){ toSetup(); return; }
+  const d=DUNGEONS[lr.dungeon];
+  if(!d){ toSetup(); return; }
+  if(d.bet>G.medals){ alert('メダルが足りないので再挑戦できません。BET:'+d.bet+' / 所持:'+G.medals); toSetup(); return; }
+  G.job=lr.job; G.dungeon=lr.dungeon;
+  // 所持しているカードのみ袋に積み直す（死亡で失った分は持てない）
+  const limit=d.bagLimit||10; G.bag=[];
+  for(const id of lr.bag){ if(G.bag.length>=limit) break;
+    if((G.collection[id]||0)>0){ G.collection[id]--; G.bag.push(id); } }
+  G._cap=null; saveGame();
+  document.body.classList.remove('setupbg');
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  startRun();
+}
 
 /* ---------------------------- MODAL ------------------------------------ */
 function showModal(html){ const o=document.getElementById('overlay'),m=document.getElementById('modal');
@@ -4746,10 +5201,12 @@ document.getElementById('capBtn').onclick=()=>{
     const ic=sp?`<img src="${sp}" style="height:26px;width:26px;object-fit:contain;vertical-align:middle">`:m.emoji;
     return `<tr><td style="text-align:left">${ic} ${n}</td><td>${m.hp}</td><td>${m.atk}</td>
      <td>${m.cap[0]}</td><td>${m.cap[1]}</td><td>${m.cap[2]}</td><td>${roleJP(m.role)}</td></tr>`;}).join('');
-  showModal(`<h2>敵データ・レベル上限</h2>
-   <p class="muted" style="font-size:12px">「この敵ではここまでしか育たない」上限管理。弱敵狩りは途中で頭打ち。</p>
-   <div class="scroll"><table><tr><th>敵</th><th>HP</th><th>ATK</th><th>戦士</th><th>魔法</th><th>賭博</th><th>役割</th></tr>${rows}</table></div>
-   <div class="center" style="margin-top:10px"><button id="mClose">閉じる</button></div>`);
+  showModal(`<div class="dexModal">
+   <h2>📖 魔物図鑑 — 育成上限の書</h2>
+   <p class="dexSub">「この魔物ではここまでしか育たない」。弱敵狩りは途中で頭打ち。格上を討て。</p>
+   <div class="scroll"><table class="dexTable"><tr><th>魔物</th><th>HP</th><th>ATK</th><th>戦士</th><th>魔法</th><th>賭博</th><th>役割</th></tr>${rows}</table></div>
+   <div class="center" style="margin-top:10px"><button id="mClose">閉じる</button></div>
+  </div>`);
   document.getElementById('mClose').onclick=hideModal;
 };
 function roleJP(r){return {melee:"近接",ranged:"遠距離",healer:"回復",split:"分裂",summon:"召喚",
@@ -5391,6 +5848,7 @@ function playCutscene(lines, onDone, bgKey){
     ? {who:l[0], text:l[1], expr:l[2]||null, opts:l[3]||{}}
     : {who:l.speaker||l.who||'narr', text:l.text||'', expr:l.face||l.expr||null, opts:l});
   _cs={entries, i:0, onDone, pages:[], pi:0, typing:false, choosing:false, timer:null, sel:0};
+  _csFF=false; const _ff=document.getElementById('csFfBtn'); if(_ff) _ff.classList.remove('on');
   G._vnPartner=null;
   document.getElementById('csBg').style.backgroundImage =
     opBg(bgKey||vnBgKey(), 'linear-gradient(180deg,#1a1530,#0a0712)');
@@ -5480,8 +5938,8 @@ function dlgTick(){
   if(_cs.shown>=_cs.raw.length){ doneTyping(); return; }
   _cs.shown++; renderTyped();
   const ch=_cs.raw[_cs.shown-1];
-  if(!_cs.silent && /\S/.test(ch) && _cs.shown%2===0) dlgVoice(_cs.voice);
-  let d=_cs.speed;
+  if(!_csFF && !_cs.silent && /\S/.test(ch) && _cs.shown%2===0) dlgVoice(_cs.voice);
+  let d=_csFF?0:_cs.speed;
   if(d>0){ if(/[、，]/.test(ch)) d+=170; if(/[。！？…]/.test(ch)) d+=240; }
   _cs.timer=setTimeout(dlgTick,d);
 }
@@ -5489,6 +5947,7 @@ function doneTyping(){
   _cs.typing=false;
   if(_cs.choices){ renderChoices(); return; }
   if(!_cs.meta.noflow) document.getElementById('csArrow').classList.add('on');
+  if(_csFF){ clearTimeout(_cs.timer); _cs.timer=setTimeout(csAdvance,260); } // 早送り中は自動で次へ
 }
 function renderChoices(){
   _cs.choosing=true; _cs.sel=0;
@@ -5520,6 +5979,7 @@ function nextEntry(){
   showEntry(_cs.i);
 }
 function closeCutscene(){
+  hideCbLord();
   if(_cs&&_cs.timer) clearTimeout(_cs.timer);
   document.getElementById('cutscene').classList.add('hidden');
   document.getElementById('csText').classList.remove('tremor');
@@ -5532,6 +5992,16 @@ function csAdvance(){ // 進行: タイプ中→全文 / ページ→次ペー�
   nextEntry();
 }
 document.getElementById('cutscene').onclick=csAdvance;
+// 早送り（タップでON/OFF）とスキップ（イベントを即終了）
+let _csFF=false;
+(function(){
+  const ff=document.getElementById('csFfBtn'), sk=document.getElementById('csSkipBtn');
+  if(ff) ff.onclick=(ev)=>{ ev.stopPropagation(); _csFF=!_csFF; ff.classList.toggle('on',_csFF);
+    if(_csFF && _cs && !_cs.choosing){ if(_cs.typing){ clearTimeout(_cs.timer); dlgTick(); } else csAdvance(); } };
+  if(sk) sk.onclick=(ev)=>{ ev.stopPropagation();
+    if(!_cs) return; if(_cs.choosing) return; // 選択待ちはスキップしない
+    const cb=_cs.onDone; closeCutscene(); if(cb) cb(); };
+})();
 // 会話ログUI
 let _logOrderNew=true;
 function openDlgLog(){
@@ -6498,45 +6968,52 @@ const WORLD_DEF=[
  {name:'第1エリア 草原の国', bg:'easy', list:[
    ['草原の砦','fort','fort',0],['木こりの城','yellow','normal',3],['風車の城','yellow','normal',4],
    ['石橋の城','yellow','normal',4],['丘の見張り城','yellow','normal',5],['FINE城','yellow','fine',10],
-   ['古井戸の城','green','normal',6],['草原の関所','green','normal',6],['草原の覇者城','red','boss',12]]},
+   ['古井戸の城','green','normal',6],['草原の関所','green','normal',6],['草原の覇者城','red','boss',12],
+   ['剣豪の城','gold','charboss',8,'samurai'],['竜騎士の城','gold','charboss',9,'dragoon']]},
  {name:'第2エリア 森と沼の領域', bg:'fun', list:[
    ['森の砦','fort','fort',0],['苔むす城','green','normal',5],['毒沼の城','green','normal',6],
    ['霧の城','green','normal',6],['DEAR城','green','dear',10],['RARE城','blue','rare',11],
    ['樹海の城','green','normal',7],['沼地の関所','green','normal',7],['朽ちた神殿城','blue','normal',8],
-   ['森の支配者城','red','boss',13]]},
+   ['森の支配者城','red','boss',13],
+   ['聖騎士の城','gold','charboss',10,'paladin'],['魔導士の塔','gold','charboss',10,'sorcerer'],['戦乙女の城','gold','charboss',11,'valkyrie']]},
  {name:'第3エリア 氷と水晶の領域', bg:'hard', list:[
    ['氷雪の砦','fort','fort',0],['水晶の城','blue','normal',8],['凍れる城','blue','normal',8],
    ['PURE城','blue','pure',10],['DEAD城','blue','dead',14],['吹雪の関所','blue','normal',9],
    ['氷柱の城','blue','normal',9],['魔導の尖塔','blue','normal',10],['霜の城','blue','normal',9],
-   ['氷晶の女王城','red','boss',14]]},
+   ['氷晶の女王城','red','boss',14],
+   ['闇騎士の城','gold','charboss',12,'darkknight'],['魔剣姫の城','gold','charboss',12,'magicblade'],['紅竜の城','gold','charboss',13,'reddragoon']]},
  {name:'第4エリア 火山と鉄の城塞', bg:'ultimate', list:[
    ['鉄の砦','fort','fort',0],['溶岩の城','red','normal',10],['HARD城','red','hard',13],
    ['HEAVY城','red','heavy',16],['DEEP城','blue','deep',22],['火口の関所','red','normal',11],
    ['黒鉄の城','red','normal',12],['噴煙の城','red','normal',11],['鎖の大城','red','normal',12],
-   ['業火の覇王城','red','boss',16]]},
+   ['業火の覇王城','red','boss',16],
+   ['堕天の城','gold','charboss',15,'fallen'],['トリックスターの城','gold','charboss',14,'loki']]},
  {name:'第5エリア 封印都市', bg:'maboroshi', list:[
    ['封印都市の砦','fort','fort',0],['崩れゆく城','red','normal',13],['幻影の城','blue','normal',14],
    ['FINAL城','red','final',22],['記憶の城','red','normal',14],['封印の関所','red','normal',15],
    ['GREAT城','gold','great',18],['SPECIAL城','gold','special',30],['PRIME城','gold','prime',18],
-   ['アイランド城','gold','island',10]]},
+   ['アイランド城','gold','island',10],
+   ['英雄王の城','gold','charboss',18,'gilgamesh'],['堕天使の城','gold','charboss',18,'lucifer'],['神王の城','gold','charboss',20,'odin']]},
 ];
 const SECRET_TYPES=['special','prime','island'];
 let WORLD=null;
 function buildWorldData(){
   WORLD=WORLD_DEF.map((a,ai)=>{
     const castles=a.list.map((c,ci)=>{
-      const [nm,color,type,floors]=c;
+      const [nm,color,type,floors,job]=c;
       const id='w'+ai+'_'+ci;
+      const isCB=(type==='charboss');
       const secret=SECRET_TYPES.includes(type);
       const boss=(type==='boss'||type==='great');
       const star=Math.max(1,Math.min(9,Math.round(floors/2)+(color==='gold'?2:0)));
       const win=floors>0?Math.round(floors*(WWINMUL[color]||40)):0;
-      return {id,area:ai,nm,color,type,floors,star,win,secret,boss,fort:type==='fort',adj:[],x:0,y:0};
+      return {id,area:ai,nm,color,type,floors,star,win,secret,boss,charBoss:isCB?job:null,fort:type==='fort',adj:[],x:0,y:0};
     });
     // 並び順: 砦 → 通常(階数昇順) → 隠し → ボス
     const fort=castles.find(c=>c.fort);
-    const normals=castles.filter(c=>!c.fort&&!c.boss&&!c.secret).sort((p,q)=>p.floors-q.floors);
+    const normals=castles.filter(c=>!c.fort&&!c.boss&&!c.secret&&!c.charBoss).sort((p,q)=>p.floors-q.floors);
     const secrets=castles.filter(c=>c.secret);
+    const cbosses=castles.filter(c=>c.charBoss);
     const boss=castles.find(c=>c.boss);
     const path=[fort,...normals]; if(boss) path.push(boss);
     // 蛇行レイアウト（4列）＋パス隣接
@@ -6546,6 +7023,15 @@ function buildWorldData(){
       if(i>0){ const prev=path[i-1]; c.adj.push(prev.id); prev.adj.push(c.id); } });
     // 隠し城は下段に並べ、砦と接続（クリア後に解放）
     secrets.forEach((c,i)=>{ c.x=24+i*26; c.y=92; if(fort){ c.adj.push(fort.id); fort.adj.push(c.id); } });
+    // 専用ボス城（隠しキャラ）: 最下段に並べ、砦と接続して常時挑戦可能
+    cbosses.forEach((c,i)=>{ const n=cbosses.length; c.x=14+(n>1?i*(72/(n-1)):36); c.y=82;
+      // 隣接する通常城をクリア(占領)すると解放。砦直結にはせず、奥めの通常城に接続する
+      let anchor=null;
+      if(normals.length){ const idx=Math.min(normals.length-1, Math.round((i+1)*(normals.length-1)/Math.max(1,n))); anchor=normals[idx]; }
+      else anchor=fort;
+      if(anchor){ c.adj.push(anchor.id); anchor.adj.push(c.id); }
+      // 砦とも線でつなぎ地図上で迷子にしない（隣接=解放条件にはしない見た目用エッジは描画側で判定）
+    });
     return {name:a.name,bg:a.bg,castles};
   });
 }
@@ -6554,6 +7040,7 @@ function allCastles(){ const r=[]; WORLD.forEach(a=>a.castles.forEach(c=>r.push(
 function castleSlug(c){
   if(c.fort) return 'fort';
   switch(c.type){
+    case 'charboss': return CB_SLUG[c.charBoss]||'boss';  // 専用ボス城（隠しキャラ）はキャラ別の外観
     case 'boss': return 'boss';      // エリアボス（魔王城）
     case 'great': return 'great';    // 巨大要塞
     case 'final': return 'final';    // 最終城
@@ -6593,7 +7080,7 @@ function castleAttackable(c){
   if(c.area>G.world.maxArea) return false;
   if(c.secret) return G.world.cleared && c.adj.some(id=>wOwned(id));
   if(c.boss){ // 全城占領で出現
-    const others=WORLD[c.area].castles.filter(x=>!x.boss&&!x.secret);
+    const others=WORLD[c.area].castles.filter(x=>!x.boss&&!x.secret&&!x.charBoss);
     if(!others.every(x=>wOwned(x.id))) return false;
     return c.adj.some(id=>wOwned(id)) || others.some(x=>wOwned(x.id));
   }
@@ -6685,7 +7172,7 @@ function manageCastle(c){
 function confirmSortie(c){
   const owned=Object.entries(G.collection||{}).filter(([id,n])=>n>0);
   G._wpick=[]; // 選択カード
-  const jobBtns=Object.values(JOBS).map(j=>`<button class="wjob" data-j="${j.key}" style="margin:2px">${j.emoji} ${j.jp}</button>`).join('');
+  const jobBtns=Object.values(JOBS).filter(j=>!j.hidden&&jobUnlocked(j.key)).map(j=>`<button class="wjob" data-j="${j.key}" style="margin:2px">${j.emoji} ${j.jp}</button>`).join('');
   const colJP={yellow:'黄城・低',green:'緑城・中',blue:'青城・高',red:'赤城・ボス',gold:'金城・最難関'};
   const _cs=castleSlug(c);
   const cimg=`<div style="text-align:center;margin:2px 0 6px"><img src="assets/castle_${_cs}.png" alt="" style="width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))" onerror="this.style.display='none'"></div>`;
@@ -6696,7 +7183,7 @@ function confirmSortie(c){
     <div class="tag">② 持ち込みカード（<span id="wPickN">0</span>/10）— タップで+1枚（所持数まで重複OK・上限でもう一度タップ＝0に戻る）:</div>
     <div id="wColl" class="cards" style="max-height:210px;overflow:auto;border:1px dashed var(--line);border-radius:8px;padding:6px;margin:4px 0">${owned.length?'':'<span class="tag">カードがありません。カード無しでも挑めます。</span>'}</div>
     <div class="grid2" style="margin-top:8px"><button id="wGo" class="primary">出撃 ▶</button><button id="wCancel">やめる</button></div>`);
-  G._wjob=G.worldJob||'warrior';
+  G._wjob=(G.worldJob&&jobUnlocked(G.worldJob))?G.worldJob:'warrior';
   const markJob=()=>document.querySelectorAll('.wjob').forEach(b=>b.style.borderColor=(b.dataset.j===G._wjob?'var(--gold)':''));
   document.querySelectorAll('.wjob').forEach(b=>b.onclick=()=>{ G._wjob=b.dataset.j; markJob(); }); markJob();
   const coll=document.getElementById('wColl');
@@ -6724,6 +7211,7 @@ function confirmSortie(c){
 }
 // 城ランク→内装テーマ（難易度が上がるほど内装も変化）
 function castleTex(c){
+  if(c.charBoss && CB_TEX[c.charBoss]) return CB_TEX[c.charBoss]; // 城主城はキャラ別の床テーマ
   if(c.fort) return 'hajimete';                 // 砦＝素朴な暖色石床
   switch(c.type){
     case 'boss':    return 'ultimate';          // ボス城＝溶岩・赤黒
@@ -6758,12 +7246,21 @@ function startWorldSortie(c, job, cards){
   saveGame();
   document.getElementById('worldWrap').classList.remove('show');
   titleBgmStop();
-  startRun();
+  // 城主城なら出撃時に独自ストーリーを流してから潜る
+  if(c.charBoss && typeof CB_SCENE!=='undefined' && CB_SCENE[c.charBoss]){
+    registerCbSpeakers();
+    playCbChallenge(c.charBoss, ()=>startRun());
+  } else {
+    startRun();
+  }
 }
 function worldOnClear(){
   const c=castleById(G.worldCastle); if(!c){ showWorld(); return; }
   G.world.owned[c.id]=true;
   let msg=`🏯 <b>${c.nm}</b> を占領した！`;
+  if(c.charBoss){ const j=JOBS[c.charBoss]; const did=unlockJob(c.charBoss);
+    if(did&&j){ msg=`🎉 <b>${j.emoji}${j.jp}</b> を打ち倒し、仲間にした！<br>フリープレイ＆ワールドで使えるようになった。`; }
+    else if(j){ msg=`🏯 <b>${c.nm}</b> を再制圧した（${j.jp} は解放済み）。`; } }
   let advanced=false, won=false;
   if(c.type==='great'){ G.world.cleared=true; won=true;
     earnTitle&&earnTitle('worldKing'); }
