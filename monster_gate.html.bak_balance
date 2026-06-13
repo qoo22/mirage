@@ -163,13 +163,6 @@
     #csBg{ background-position:center 38%; }
     #chapCard .bg{ background-position:center 42%; }
   }
-  #csLord{ position:absolute; left:50%; bottom:30%; transform:translateX(-50%);
-    height:62%; max-height:520px; width:auto; object-fit:contain; z-index:3;
-    filter:drop-shadow(0 8px 22px rgba(0,0,0,.65)); pointer-events:none;
-    animation:csLordIn .5s ease both; }
-  #csLord.hide{ display:none; }
-  @keyframes csLordIn{ from{ opacity:0; transform:translateX(-50%) translateY(14px) scale(.97); }
-    to{ opacity:1; transform:translateX(-50%) translateY(0) scale(1); } }
   #csCtl{ position:absolute; right:12px; top:10px; z-index:6; display:flex; gap:8px; }
   #csCtl button{ font-size:12px; padding:5px 11px; border-radius:8px; border:1px solid rgba(255,255,255,.35);
     background:rgba(20,18,30,.66); color:#fff; cursor:pointer; backdrop-filter:blur(2px); }
@@ -593,111 +586,6 @@
     box-shadow:inset 0 3px 6px rgba(0,0,0,.8); }
   .slcoin{ display:inline-block; padding:2px 10px; border-radius:14px; font-weight:900; color:#3a2604;
     background:radial-gradient(circle at 35% 30%,#fff3b0,#d8a432 72%); border:1px solid #5a3c08; }
-
-  /* =====================================================================
-     「メニューは世界を語る」— 封印の祭壇 / 魔導書テーマのUI上書き（CSSのみ）
-     ===================================================================== */
-  :root{ --gtrim:#d9b25a; --gglow:rgba(255,207,77,.45); --rune:#b079ff; }
-  /* ボタン: 古の刻印を帯びた石板。押すと沈む */
-  button{
-    background:linear-gradient(180deg,#272040,#181226);
-    border:1px solid #3c3160; border-radius:9px; color:var(--ink); letter-spacing:.03em; position:relative;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 2px 7px rgba(0,0,0,.45);
-    transition:transform .1s ease, box-shadow .16s ease, border-color .16s ease; }
-  button:hover{ border-color:var(--gtrim);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 0 13px var(--gglow), 0 3px 9px rgba(0,0,0,.5);
-    transform:translateY(-1px); }
-  button:active{ transform:translateY(1px); box-shadow:inset 0 2px 6px rgba(0,0,0,.55); }
-  button.primary{ background:linear-gradient(180deg,#8a5cff,#5a2fd6);
-    border:1px solid #c3acff; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.5);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 0 17px rgba(123,77,255,.5), 0 3px 9px rgba(0,0,0,.5); }
-  button.primary:hover{ border-color:#ffe6a0;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 0 24px rgba(123,77,255,.65), 0 0 10px var(--gglow), 0 3px 11px rgba(0,0,0,.55); }
-  button.danger{ border-color:#7a3340; }
-  button.danger:hover{ border-color:#ff6e7e;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 0 13px rgba(255,91,110,.4), 0 3px 9px rgba(0,0,0,.5); }
-  /* パネル: 魔導書の頁。淡い内なる輝き */
-  .panel{ background:linear-gradient(180deg, rgba(33,27,58,.97), rgba(19,15,36,.97));
-    border:1px solid #352a52; box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 0 34px rgba(96,60,168,.10); }
-  /* モーダル: 封印の祭壇。金の二重枠＋魔力の残光 */
-  .modal{ background:linear-gradient(180deg,#1d1836,#120e22); border:1px solid var(--gtrim);
-    box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 0 0 5px rgba(18,14,34,.92),
-      0 20px 54px rgba(0,0,0,.7), inset 0 0 40px rgba(123,77,255,.13); }
-  .overlay{ background:radial-gradient(125% 95% at 50% 28%, rgba(26,12,48,.62), rgba(4,3,9,.92));
-    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
-  .overlay:not(.hidden) .modal{ animation:modalIn .22s ease both; }
-  @keyframes modalIn{ from{ opacity:0; transform:translateY(10px) scale(.985); } to{ opacity:1; transform:none; } }
-  /* 見出し: 写本の章題。金字＋光の罫 */
-  h1, h2{ font-family:"Hiragino Mincho ProN","Yu Mincho",serif; }
-  .toprow h1{ color:#ffe7a6; letter-spacing:.06em; text-shadow:0 1px 0 #000, 0 0 16px rgba(255,207,77,.28); }
-  .modal h2, .panel > h2{ color:#ffe7a6; text-align:center; margin-top:0; padding-bottom:6px;
-    letter-spacing:.05em; text-shadow:0 1px 0 #000, 0 0 12px rgba(255,207,77,.22); }
-  .modal h2::after, .panel > h2::after{ content:""; display:block; height:2px; width:66%;
-    margin:7px auto 0; background:linear-gradient(90deg,transparent,var(--gtrim),transparent); opacity:.62; }
-  /* ピル/タグ: 刻印チップ */
-  .pill{ background:linear-gradient(180deg,#241c3f,#1a1430); border-color:#4a3c6e; }
-  /* スクロールバー: 金と紫の細枠 */
-  *::-webkit-scrollbar{ width:10px; height:10px; }
-  *::-webkit-scrollbar-track{ background:#0e0b1a; border-radius:6px; }
-  *::-webkit-scrollbar-thumb{ background:linear-gradient(180deg,#4a3c6e,#2c2547); border-radius:6px; border:2px solid #0e0b1a; }
-  *::-webkit-scrollbar-thumb:hover{ background:linear-gradient(180deg,#6a4fae,#3a2f5c); }
-  /* ステータスバー枠を僅かに金縁に */
-  .bar{ border-color:#4a3c6e; box-shadow:inset 0 0 8px rgba(0,0,0,.5); }
-
-  /* ============ 画面別の作り込み: 商館 / 魔物図鑑 / 征服の地図 ============ */
-  /* --- ショップ: 封印商館 --- */
-  .shopModal .shopHead{ display:flex; align-items:center; gap:12px; margin:-4px 0 12px;
-    padding:10px 14px; border-radius:12px;
-    background:linear-gradient(180deg,#2a2140,#1a1430);
-    border:1px solid var(--gtrim); box-shadow:inset 0 0 22px rgba(123,77,255,.14); }
-  .shopModal .shopIcon{ font-size:30px; filter:drop-shadow(0 2px 4px #000); }
-  .shopModal .shopTitle{ font-family:"Hiragino Mincho ProN","Yu Mincho",serif; font-size:18px;
-    color:#ffe7a6; letter-spacing:.05em; text-shadow:0 1px 0 #000,0 0 12px rgba(255,207,77,.25); }
-  .shopModal .shopNote{ font-size:11px; color:var(--muted); margin-top:2px; }
-  .shopModal .shopPouch{ margin-left:auto; white-space:nowrap; font-size:15px; font-weight:900;
-    color:#3a2604; padding:6px 14px; border-radius:20px;
-    background:radial-gradient(circle at 35% 30%,#ffe9a6,#d8a432 75%); border:1px solid #5a3c08;
-    box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.5); }
-  .shopModal .shopShelf{ padding:12px 10px; border-radius:12px; justify-content:center;
-    background:
-      repeating-linear-gradient(180deg, rgba(70,46,18,.0) 0 96px, rgba(0,0,0,.25) 96px 100px),
-      linear-gradient(180deg,#241a10,#17110a);
-    border:1px solid #4a3a22; box-shadow:inset 0 0 26px rgba(0,0,0,.55);
-    max-height:340px; overflow:auto; }
-
-  /* --- 魔物図鑑: 古文書の台帳 --- */
-  .dexModal .dexSub{ font-size:12px; color:var(--muted); text-align:center; margin:0 0 10px; }
-  .dexModal .scroll{ border:1px solid var(--gtrim); border-radius:10px;
-    background:linear-gradient(180deg,#171022,#120d1c); box-shadow:inset 0 0 24px rgba(0,0,0,.5); padding:2px; }
-  table.dexTable{ border-collapse:separate; border-spacing:0; }
-  table.dexTable th{ position:sticky; top:0; z-index:1;
-    background:linear-gradient(180deg,#3a2e16,#2a2010); color:#ffe7a6;
-    border:0; border-bottom:2px solid var(--gtrim); padding:6px 5px; letter-spacing:.04em;
-    font-family:"Hiragino Mincho ProN","Yu Mincho",serif; }
-  table.dexTable td{ border:0; border-bottom:1px solid #2a2342; padding:5px 6px; }
-  table.dexTable tr:nth-child(even) td{ background:rgba(123,77,255,.06); }
-  table.dexTable tr:hover td{ background:rgba(255,207,77,.10); }
-  table.dexTable td:first-child{ color:#f0ecff; font-weight:700; }
-  table.dexTable img{ filter:drop-shadow(0 1px 2px #000); border-radius:4px; }
-
-  /* --- ワールド地図: 征服の羊皮紙 --- */
-  .wmboard{ border:2px solid var(--gtrim) !important;
-    box-shadow:0 0 0 4px #15101f, 0 14px 40px rgba(0,0,0,.6), inset 0 0 60px rgba(0,0,0,.6); }
-  .wmboard::after{ content:""; position:absolute; inset:0; pointer-events:none; z-index:3;
-    box-shadow:inset 0 0 70px rgba(8,4,16,.85);
-    background:
-      radial-gradient(circle at 6% 8%, rgba(255,220,140,.10), transparent 7%),
-      radial-gradient(circle at 94% 8%, rgba(255,220,140,.10), transparent 7%),
-      radial-gradient(circle at 6% 92%, rgba(255,220,140,.10), transparent 7%),
-      radial-gradient(circle at 94% 92%, rgba(255,220,140,.10), transparent 7%); }
-  .wmboard .wmbg{ opacity:.42 !important; filter:sepia(.25) saturate(.9); }
-  #wmAreaName{ display:inline-block; font-family:"Hiragino Mincho ProN","Yu Mincho",serif !important;
-    color:#ffe7a6 !important; font-size:12.5px !important; letter-spacing:.06em; margin-top:3px;
-    padding:2px 16px; border-radius:4px; position:relative;
-    background:linear-gradient(180deg,#2a2140,#1a1430); border:1px solid #4a3c6e;
-    box-shadow:0 2px 8px rgba(0,0,0,.45); }
-  .wmlegend{ background:linear-gradient(180deg,rgba(30,24,52,.7),rgba(18,14,34,.7));
-    border:1px solid #352a52; border-radius:8px; padding:6px 10px; color:#c8bdf0 !important; }
 </style>
 </head>
 <body>
@@ -803,7 +691,6 @@
   <div id="cutscene" class="hidden">
     <div id="csBg"></div>
     <div id="csVeil"></div>
-    <img id="csLord" class="hide" alt="">
     <div id="csCtl">
       <button id="csFfBtn" title="早送り（タップでON/OFF）">早送り ▶▶</button>
       <button id="csSkipBtn" title="このイベントをスキップ">スキップ ⏭</button>
@@ -1207,9 +1094,9 @@ const JOBS = {
   dragoon:{key:"dragoon",jp:"竜騎士", emoji:"🐉", hp:58, mp:24, atk:11, def:9, sight:3, capIdx:0,
     potBonus:1.0, magBonus:1.1,
     desc:"竜槍の重撃。HPと防御が高く前線で粘る。視界3。"},
-  paladin:{key:"paladin",jp:"聖騎士", emoji:"🛡️", hp:56, mp:22, atk:14, def:9, sight:3, capIdx:0,
-    potBonus:1.25, magBonus:1.0, crit:0.16,
-    desc:"宝剣と聖盾の重騎士。高いHP・防御に加え回復+25%。粘り強く前線を支える聖なる壁。視界3。"},
+  paladin:{key:"paladin",jp:"聖騎士", emoji:"🛡️", hp:54, mp:22, atk:14, def:7, sight:3, capIdx:0,
+    potBonus:1.0, magBonus:1.0, crit:0.14,
+    desc:"戦士の正統。宝剣を帯びた誇り高き騎士。攻撃力が高い。視界3。"},
   sorcerer:{key:"sorcerer",jp:"魔導士", emoji:"🔮", hp:36, mp:38, atk:9, def:4, sight:3, capIdx:1,
     potBonus:1.15, magBonus:1.5,
     desc:"紫紺の魔力を操る魔導士。MPと魔法が非常に高い後衛。視界3。"},
@@ -1220,16 +1107,16 @@ const JOBS = {
     potBonus:1.1, magBonus:1.35, crit:0.16,
     desc:"漆黒の翼と三日月刃を携えた堕天の遊撃手。魔法と視界に優れる遊撃型。視界4。"},
   // ---- 女性職業シリーズ（豪華装備・AI生成） ----
-  valkyrie:{key:"valkyrie",jp:"ヴァルキリー", emoji:"🪽", hp:54, mp:28, atk:14, def:7, sight:4, capIdx:0,
+  valkyrie:{key:"valkyrie",jp:"ヴァルキリー", emoji:"🪽", hp:54, mp:28, atk:14, def:8, sight:4, capIdx:0,
     potBonus:1.0, magBonus:1.2, crit:0.16,
-    desc:"銀翼の戦乙女。広い視界とMP・魔法で前後を駆ける遊撃騎士。守りは薄め。視界4。"},
+    desc:"銀翼の戦乙女。黄金の槍を操り攻守・視界に優れる聖なる遊撃騎士。視界4。"},
   magicblade:{key:"magicblade",jp:"魔剣姫", emoji:"🗡️", hp:46, mp:36, atk:13, def:6, sight:3, capIdx:1,
     potBonus:1.1, magBonus:1.45, crit:0.18,
     desc:"紫紺の魔力を帯びた細剣の姫。剣技と魔法の二刀で会心も高い両刀型。視界3。"},
   // ---- 神話英雄シリーズ（豪華装備・AI生成） ----
-  reddragoon:{key:"reddragoon",jp:"紅竜騎士", emoji:"🐲", hp:60, mp:24, atk:13, def:10, sight:2, capIdx:0,
+  reddragoon:{key:"reddragoon",jp:"紅竜騎士", emoji:"🐲", hp:60, mp:24, atk:13, def:9, sight:2, capIdx:0,
     potBonus:1.0, magBonus:1.1,
-    desc:"全職最高のHPと防御を誇る鉄壁の前線役。だが鈍重で視界が狭く、不意打ちに弱い。視界2。"},
+    desc:"最高のHPと防御を誇る重装の前線役。だが鈍重で視界が狭く、不意打ちに弱い。視界2。"},
   gilgamesh:{key:"gilgamesh",jp:"ギルガメシュ", emoji:"👑", hp:52, mp:26, atk:17, def:5, sight:3, capIdx:0,
     potBonus:0.85, magBonus:1.0, crit:0.18, luck:true,
     desc:"黄金鎧の英雄王。ATK・会心が最高で配当も得る。だが守りを知らず防御が薄く回復も苦手＝ガラスの大砲。視界3。"},
@@ -1371,7 +1258,7 @@ const CARDS = {
   longsword:{nm:"ロングソード",cat:"equip",ic:"⚔️",cost:50, mp:0, ds:"剣を装備し通常攻撃+30%（このラン）", swordMul:1.3, slot:'sword'},
   greatsword:{nm:"グレートソード",cat:"equip",ic:"🗡️",cost:90,mp:0,ds:"剣を装備し通常攻撃+60%（最強の剣）", swordMul:1.6, slot:'sword'},
   goldsword:{nm:"ゴールドソード",cat:"equip",ic:"💰",cost:70,mp:0,ds:"格上撃破で配当+", goldSword:true},
-  drainsword:{nm:"ドレインソード",cat:"equip",ic:"🩸",cost:80,mp:0,ds:"与ダメの1/4を吸収", drain:true},
+  drainsword:{nm:"ドレインソード",cat:"equip",ic:"🩸",cost:80,mp:0,ds:"与ダメの半分を吸収", drain:true},
   sleepsword:{nm:"スリープソード",cat:"equip",ic:"💤",cost:60,mp:0,ds:"攻撃時たまに睡眠付与", sleepSword:true},
   shield: {nm:"シールド",     cat:"equip",ic:"🛡️",cost:60, mp:0, ds:"このランDEF+6", shieldDef:6},
   pocket1:{nm:"ポケット+1",   cat:"equip",ic:"👝", cost:40, mp:0, ds:"カード枠+1(最大12)", pocket:1},
@@ -1516,53 +1403,11 @@ const CB_SCENE={
  lucifer:{nm:'堕天使 ルシファー', intro:[['cb','光に選ばれし者よ。だが——光は、いつか世界を焼く。'],['cb','我が黒翼の前に、汝の信じる正義を示してみせよ。']], defeat:[['cb','…美しい。汝の魂は、墜ちてなお輝く。'],['cb','わが力、汝に託そう。光と闇、その両方を背負って往け。']]},
  odin:{nm:'神王 オーディン', intro:[['cb','……知っておるよ。汝がここへ来ることも、その先も。'],['cb','片目で見た未来。それでも挑むか。ならば——神槍で試そう。']], defeat:[['cb','うむ。知識は、力には及ばぬこともある。良い学びだ。'],['cb','神槍グングニル、汝に貸そう。世界の真実を、その目で見るがいい。']]},
 };
-// 城主城の外観（地図アイコン）と床テーマ（既存アセットをキャラ別に割当）
-const CB_SLUG={ samurai:'red', dragoon:'blue', paladin:'gold', sorcerer:'deep', valkyrie:'gold',
-  darkknight:'deep', magicblade:'special', reddragoon:'red', fallen:'deep', loki:'prime',
-  gilgamesh:'gold', lucifer:'prime', odin:'great' };
-const CB_TEX={ samurai:'tegowai', dragoon:'fierce', paladin:'space', sorcerer:'hard', valkyrie:'space',
-  darkknight:'ultimate', magicblade:'space', reddragoon:'ultimate', fallen:'hard', loki:'maboroshi',
-  gilgamesh:'space', lucifer:'space', odin:'space' };
-// 出撃時に流す「これから城主の城を攻略する」独自ストーリーのあおり
-const CB_TEASER={
- samurai:'一万の太刀を退けた剣豪が、最奥で静かに待つ。',
- dragoon:'竜の血を引く騎士。その竜槍に、貫けぬものは無いという。',
- paladin:'聖盾の前では、いかなる刃も砕けると伝えられる。',
- sorcerer:'塔に近づいた者は、皆、灰になったと聞く。',
- valkyrie:'戦場を選定する乙女。敗者に、翼は与えられない。',
- darkknight:'呪われた大剣が、挑んだ者の名を一つずつ刻んでいく。',
- magicblade:'剣も魔も極めし姫。退屈な相手は、すぐに飽きられる。',
- reddragoon:'紅竜の鉄壁。これを崩した者は、まだ誰もいない。',
- fallen:'堕ちた黒翼が、三日月の刃で影ごと刈り取るという。',
- loki:'奸計の神の城。罠と嘘が、客を笑顔で出迎える。',
- gilgamesh:'英雄王の黄金宮。雑種が立ち入ってよい場所ではない。',
- lucifer:'堕天の王が、光を騙った者を静かに見定めている。',
- odin:'神王の大広間。汝の結末を、その片目はすでに見ている。',
-};
-// 出撃カットシーン: 城門の前で「強き城主が待つ」ことを伝える独自ストーリー
-function cbChallengeLines(job){
-  const sc=CB_SCENE[job]; if(!sc) return [];
-  const firstCb=sc.intro.find(l=>l[0]==='cb');
-  const out=[
-    ['narr','＊ 重い城門が、軋みながら開いていく。'],
-    ['narr','＊ '+sc.nm+'の城——その最奥に、城主は在る。'],
-    ['narr','＊ '+(CB_TEASER[job]||'容易には越えられぬ相手だ。')],
-    ['narr','＊ それでも——今、この城の攻略を始める。'],
-  ];
-  if(firstCb) out.push(['cb_'+job, firstCb[1], null, {classic:true}]);
-  return out;
-}
-function playCbChallenge(job, after){
-  if(!CB_SCENE[job]){ if(after)after(); return; }
-  registerCbSpeakers();
-  showCbLord(job);
-  playCutscene(cbChallengeLines(job), ()=>{ if(after)after(); }, 'bg_lord_'+job);
-}
 // 城主を会話の話者として登録（立ち絵＝t_hero、名前＝城主名、背景＝城主絵）
 function registerCbSpeakers(){
   if(typeof PORT==='undefined'||typeof SPK==='undefined') return;
   Object.keys(CB_SCENE).forEach(job=>{ const j=JOBS[job]; if(!j) return;
-    PORT['cb_'+job]={img:'assets/t_story_'+job+'.png', e:j.emoji, nm:CB_SCENE[job].nm};
+    PORT['cb_'+job]={img:'assets/t_hero_'+job+'.png', e:j.emoji, nm:CB_SCENE[job].nm};
     SPK['cb_'+job]={v:'heavy', spd:26};
   });
 }
@@ -1570,33 +1415,24 @@ function registerCbSpeakers(){
 let _cbActive=null;
 function cbLines(job, kind){
   const sc=CB_SCENE[job]; if(!sc) return [];
-  return sc[kind].map(l=> l[0]==='cb' ? ['cb_'+job, l[1], l[2]||null, Object.assign({classic:true}, l[3]||{})] : l);
+  return sc[kind].map(l=> l[0]==='cb' ? ['cb_'+job, l[1], l[2]||null, l[3]||{}] : l);
 }
-function showCbLord(job){ const el=document.getElementById('csLord'); if(!el) return;
-  el.onerror=()=>{ el.classList.add('hide'); };
-  el.src='assets/t_story_'+job+'.png'; el.classList.remove('hide');
-  // 再生のためアニメをリスタート
-  el.style.animation='none'; void el.offsetWidth; el.style.animation='';
-}
-function hideCbLord(){ const el=document.getElementById('csLord'); if(el){ el.classList.add('hide'); el.removeAttribute('src'); } }
 function playCbIntro(job){
   if(!CB_SCENE[job]) return false;
   registerCbSpeakers();
   document.getElementById('game').classList.add('hidden');
-  showCbLord(job);
   playCutscene(cbLines(job,'intro'),
     ()=>{ document.getElementById('game').classList.remove('hidden'); draw(); },
-    'bg_lord_'+job);
+    't_lord_'+job);
   return true;
 }
 function playCbDefeat(job, after){
   if(!CB_SCENE[job]){ if(after)after(); return; }
   registerCbSpeakers();
   document.getElementById('game').classList.add('hidden');
-  showCbLord(job);
   playCutscene(cbLines(job,'defeat'),
     ()=>{ document.getElementById('game').classList.remove('hidden'); unlockJob(job); draw(); if(after)after(); },
-    'bg_lord_'+job);
+    't_lord_'+job);
 }
 // 専用ボス城の「キャラ本人」ボス定義を生成（モンスター登録＋立ち絵スプライト）。星に応じて超強化。
 function makeCharBossDef(job, star){
@@ -1716,15 +1552,10 @@ function showShop(where, toBag){
   const note = where==='dungeon'
     ? 'メダルで購入。買ったカードはこのランの袋（手札）に直接入る。'
     : 'メダルで購入したカードはコレクションに入る。出撃準備で袋に詰めて持ち込もう。';
-  showModal(`<div class="shopModal">
-    <div class="shopHead">
-      <span class="shopIcon">🏪</span>
-      <div><div class="shopTitle">${title}</div><div class="shopNote">${note}</div></div>
-      <div class="shopPouch">🪙 <span id="shopMedals">${G.medals}</span></div>
-    </div>
-    <div class="cards shopShelf" id="shopWrap">${cards}</div>
-    <div class="center" style="margin-top:12px"><button id="shopClose">閉じる</button></div>
-  </div>`);
+  showModal(`<h2>${title}</h2>
+    <p class="muted" style="font-size:12px">所持メダル <b class="gold" id="shopMedals">${G.medals}</b>。${note}</p>
+    <div class="cards" id="shopWrap" style="max-height:340px;overflow:auto;justify-content:center">${cards}</div>
+    <div class="center" style="margin-top:10px"><button id="shopClose">閉じる</button></div>`);
   document.querySelectorAll('#shopWrap .shopcard').forEach(el=>{
     el.onclick=()=>{ const id=el.dataset.id, c=CARDS[id];
       if(G.medals<c.cost){ log("メダルが足りない","l-warn"); sfxCard&&sfxCard('fail'); return; }
@@ -3031,17 +2862,15 @@ function lungeOff(e){ // attack step-in: ゆっくり大きく踏み込み、ホ
 //   全キャラ・8方向共通。yaw=0..1 の進行度を返し、描画側で横幅cos圧縮＋反転で表現）
 function hitOff(e){
   if(!e._hit) return [0,0,0,0];
-  const h=e._hit, dur=360, t=(now()-h.t0)/dur;
+  const h=e._hit, t=(now()-h.t0)/380;
   if(t>=1){ e._hit=null; return [0,0,0,0]; }
   if(t<0) return [0,0,0,0];
   const mag=(h.mag===undefined)?1:h.mag;
   const flashA = t<0.25 ? (1-t/0.25) : 0;
-  const decay = (1-t)*(1-t);                       // 徐々に収まる
-  // ★被弾時は画像を左右にビリビリ振動させる（約6往復・最大±10px・威力で増幅）
-  const shake = Math.sin(t*Math.PI*2*6) * 10 * mag * decay;
-  // 被弾方向への軽いノックバック（横主体）
-  const kb = (t<0.22? t/0.22 : 1-(t-0.22)/0.78) * 5 * mag;
-  return [ shake + (h.dx||0)*kb, (h.dy||0)*kb*0.35, flashA, 0 ]; // yaw=0: 横回転せず純粋な左右揺れ
+  const push = (t<0.3? t/0.3 : 1-(t-0.3)/0.7)*8*mag;
+  const wob  = Math.sin(t*26)*(1-t)*4*mag;
+  const yaw = 1-Math.pow(1-t,2); // 横ターン進行度（右回り1回転・イージング）
+  return [ (h.dx||0)*push + wob, (h.dy||0)*push, flashA, yaw ];
 }
 // 回転斬り中の攻撃側スピン（右回り1回転/300ms）
 function atkSpinOff(e){
@@ -3213,9 +3042,6 @@ function tutTick(){
     if(G.tut.shown[h.id]) continue;
     if(h.cond()){ G.tut.shown[h.id]=true; G.tut.cool=now()+1400; tutToast(h.text); break; }
   }
-}
-function clearSwordSlot(){ // 剣スロットの全効果を解除（持ち替え時）
-  G.swordMul=1; G.swordAtk=0; G.drain=false; G.goldSword=false; G.sleepSword=false; G.equip.sword=null;
 }
 function equipBarHTML(){
   const p=[];
@@ -3406,7 +3232,7 @@ function doPlayerAttack(mon){
     popText(mon.x,mon.y,"-"+dmg,"#fff3a0",true); }
   else { log(`▶ ${mon.name} に ${dmg} ダメージ！`,"l-dmg");
     popText(mon.x,mon.y,"-"+dmg,"#ffffff"); }
-  if(G.drain){ const h=Math.max(1,Math.round(dmg*0.25)); healPlayer(h,true); } // 吸収を弱体化（50%→25%）
+  if(G.drain){ const h=Math.round(dmg*0.5); healPlayer(h,true); }
   if(G.sleepSword && Math.random()<0.3){ mon.sleep=4; log(`${mon.name} は眠った！`,"l-mag"); }
   if(mon.hp<=0){ killMonster(mon); }
 }
@@ -4067,8 +3893,7 @@ function resolveCard(i,target){
     if(G.lvl<currentCap())levelUp(Math.min(10,currentCap()-G.lvl)); log("パワーアップ！","l-good"); }
   else if(c.hpup){ G.maxhp+=c.hpup; G.hp=G.maxhp; log(`最大HP+${c.hpup}(全回復)`,"l-good"); }
   // ----- equip (rest of run) -----
-  // 剣は1スロット: 新しい剣を装備したら前の剣の効果（吸収/金/睡眠/倍率/攻撃）を必ずリセット
-  else if(c.swordMul){ clearSwordSlot(); G.swordMul=c.swordMul; G.equip.sword=id; log(`⚔️ ${c.nm}を装備した！ 通常攻撃 +${Math.round((c.swordMul-1)*100)}%`,"l-good"); }
+  else if(c.swordMul){ G.swordMul=c.swordMul; G.equip.sword=id; log(`⚔️ ${c.nm}を装備した！ 通常攻撃 +${Math.round((c.swordMul-1)*100)}%`,"l-good"); }
   else if(c.ring){ // 指輪は重複装備OK（リバイブ＋ラッキー等を同時に）
     G.rings=G.rings||{}; G.equip.rings=G.equip.rings||[];
     G.rings[c.ring]=true;
@@ -4076,11 +3901,11 @@ function resolveCard(i,target){
     if(c.ring==='bright'){ G.status.bright=true; computeVisibility(); }
     if(c.ring==='revive'){ G.reviveCharge=true; }
     log(`💍 ${c.nm}を装備した！（他の指輪と重複可）`,"l-good"); }
-  else if(c.swordAtk){ clearSwordSlot(); G.swordAtk=Math.max(G.swordAtk,c.swordAtk); G.equip.sword=id; log(`${c.nm}装備 ATK+${c.swordAtk}`,"l-good"); }
+  else if(c.swordAtk){ G.swordAtk=Math.max(G.swordAtk,c.swordAtk); G.equip.sword=id; log(`${c.nm}装備 ATK+${c.swordAtk}`,"l-good"); }
   else if(c.shieldDef){ G.shieldDef=Math.max(G.shieldDef,c.shieldDef); log(`シールド装備 DEF+${c.shieldDef}`,"l-good"); }
-  else if(c.goldSword){ clearSwordSlot(); G.goldSword=true; G.equip.sword=id; log("ゴールドソード装備","l-good"); }
-  else if(c.drain){ clearSwordSlot(); G.drain=true; G.swordAtk=4; G.equip.sword=id; log("ドレインソード装備","l-good"); }
-  else if(c.sleepSword){ clearSwordSlot(); G.sleepSword=true; G.swordAtk=4; G.equip.sword=id; log("スリープソード装備","l-good"); }
+  else if(c.goldSword){ G.goldSword=true; log("ゴールドソード装備","l-good"); }
+  else if(c.drain){ G.drain=true; G.swordAtk=Math.max(G.swordAtk,4); log("ドレインソード装備","l-good"); }
+  else if(c.sleepSword){ G.sleepSword=true; G.swordAtk=Math.max(G.swordAtk,4); log("スリープソード装備","l-good"); }
   else if(c.pocket){ G.handMax=Math.min(12,G.handMax+c.pocket); log(`カード枠が ${G.handMax} に拡張！`,"l-good"); }
   else if(c.revive){ G.reviveCharge=true; log("💍 リバイブリング装備（1度だけ復活）","l-good"); }
 
@@ -5171,12 +4996,10 @@ document.getElementById('capBtn').onclick=()=>{
     const ic=sp?`<img src="${sp}" style="height:26px;width:26px;object-fit:contain;vertical-align:middle">`:m.emoji;
     return `<tr><td style="text-align:left">${ic} ${n}</td><td>${m.hp}</td><td>${m.atk}</td>
      <td>${m.cap[0]}</td><td>${m.cap[1]}</td><td>${m.cap[2]}</td><td>${roleJP(m.role)}</td></tr>`;}).join('');
-  showModal(`<div class="dexModal">
-   <h2>📖 魔物図鑑 — 育成上限の書</h2>
-   <p class="dexSub">「この魔物ではここまでしか育たない」。弱敵狩りは途中で頭打ち。格上を討て。</p>
-   <div class="scroll"><table class="dexTable"><tr><th>魔物</th><th>HP</th><th>ATK</th><th>戦士</th><th>魔法</th><th>賭博</th><th>役割</th></tr>${rows}</table></div>
-   <div class="center" style="margin-top:10px"><button id="mClose">閉じる</button></div>
-  </div>`);
+  showModal(`<h2>敵データ・レベル上限</h2>
+   <p class="muted" style="font-size:12px">「この敵ではここまでしか育たない」上限管理。弱敵狩りは途中で頭打ち。</p>
+   <div class="scroll"><table><tr><th>敵</th><th>HP</th><th>ATK</th><th>戦士</th><th>魔法</th><th>賭博</th><th>役割</th></tr>${rows}</table></div>
+   <div class="center" style="margin-top:10px"><button id="mClose">閉じる</button></div>`);
   document.getElementById('mClose').onclick=hideModal;
 };
 function roleJP(r){return {melee:"近接",ranged:"遠距離",healer:"回復",split:"分裂",summon:"召喚",
@@ -5949,7 +5772,6 @@ function nextEntry(){
   showEntry(_cs.i);
 }
 function closeCutscene(){
-  hideCbLord();
   if(_cs&&_cs.timer) clearTimeout(_cs.timer);
   document.getElementById('cutscene').classList.add('hidden');
   document.getElementById('csText').classList.remove('tremor');
@@ -6995,13 +6817,7 @@ function buildWorldData(){
     secrets.forEach((c,i)=>{ c.x=24+i*26; c.y=92; if(fort){ c.adj.push(fort.id); fort.adj.push(c.id); } });
     // 専用ボス城（隠しキャラ）: 最下段に並べ、砦と接続して常時挑戦可能
     cbosses.forEach((c,i)=>{ const n=cbosses.length; c.x=14+(n>1?i*(72/(n-1)):36); c.y=82;
-      // 隣接する通常城をクリア(占領)すると解放。砦直結にはせず、奥めの通常城に接続する
-      let anchor=null;
-      if(normals.length){ const idx=Math.min(normals.length-1, Math.round((i+1)*(normals.length-1)/Math.max(1,n))); anchor=normals[idx]; }
-      else anchor=fort;
-      if(anchor){ c.adj.push(anchor.id); anchor.adj.push(c.id); }
-      // 砦とも線でつなぎ地図上で迷子にしない（隣接=解放条件にはしない見た目用エッジは描画側で判定）
-    });
+      if(fort){ c.adj.push(fort.id); fort.adj.push(c.id); } });
     return {name:a.name,bg:a.bg,castles};
   });
 }
@@ -7010,7 +6826,7 @@ function allCastles(){ const r=[]; WORLD.forEach(a=>a.castles.forEach(c=>r.push(
 function castleSlug(c){
   if(c.fort) return 'fort';
   switch(c.type){
-    case 'charboss': return CB_SLUG[c.charBoss]||'boss';  // 専用ボス城（隠しキャラ）はキャラ別の外観
+    case 'charboss': return 'boss';  // 専用ボス城（隠しキャラ）
     case 'boss': return 'boss';      // エリアボス（魔王城）
     case 'great': return 'great';    // 巨大要塞
     case 'final': return 'final';    // 最終城
@@ -7181,7 +6997,6 @@ function confirmSortie(c){
 }
 // 城ランク→内装テーマ（難易度が上がるほど内装も変化）
 function castleTex(c){
-  if(c.charBoss && CB_TEX[c.charBoss]) return CB_TEX[c.charBoss]; // 城主城はキャラ別の床テーマ
   if(c.fort) return 'hajimete';                 // 砦＝素朴な暖色石床
   switch(c.type){
     case 'boss':    return 'ultimate';          // ボス城＝溶岩・赤黒
@@ -7216,13 +7031,7 @@ function startWorldSortie(c, job, cards){
   saveGame();
   document.getElementById('worldWrap').classList.remove('show');
   titleBgmStop();
-  // 城主城なら出撃時に独自ストーリーを流してから潜る
-  if(c.charBoss && typeof CB_SCENE!=='undefined' && CB_SCENE[c.charBoss]){
-    registerCbSpeakers();
-    playCbChallenge(c.charBoss, ()=>startRun());
-  } else {
-    startRun();
-  }
+  startRun();
 }
 function worldOnClear(){
   const c=castleById(G.worldCastle); if(!c){ showWorld(); return; }
