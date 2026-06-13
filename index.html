@@ -3037,7 +3037,7 @@ function hitOff(e){
   const h=e._hit;
   const mag=(h.mag===undefined)?1:h.mag;
   const m=Math.min(1.7, mag);
-  const dur=Math.min(0.16, 0.045 + 0.060*Math.max(0,mag-0.6)); // 約0.05〜0.15s
+  const dur=Math.min(1.10, 0.40 + 0.40*Math.max(0,mag-0.6)); // 持続4倍（往復1回の速さは保ち、回数を4倍に）
   const t=(now()-h.t0)/(dur*1000);
   if(t>=1){ e._hit=null; return [0,0,0,0,1,1]; }
   if(t<0) return [0,0,0,0,1,1];
@@ -3049,9 +3049,9 @@ function hitOff(e){
   const tr=Math.min(1,(_rawNow()-h.tr)/67);
   const ease=tr*tr*(3-2*tr);                   // smoothstep（0→1）
   const dir = h.dx ? h.dx : 1;                 // 横方向（左右）。被弾方向へ最初に押し込む
-  const amp = TW*(0.06 + 0.085*m);             // 振れ幅=キャラ幅の約11〜21%（最初に大きく→収束）
-  const env = Math.exp(-3.2*t);                // 急減衰（最初に大きく、最後は小さく）
-  const x   = dir * amp * env * Math.cos(t*Math.PI*2*2.7) * ease; // 押し込み→反発振動（補完つき）
+  const amp = TW*(0.48 + 0.68*m);              // 振れ幅を半分に（初期比8倍）
+  const env = Math.exp(-2.4*t);                // 減衰をゆるめて大振幅を長めに見せる
+  const x   = dir * amp * env * Math.cos(t*Math.PI*2*8.4) * ease; // 往復回数を4倍（8.4往復）
   const sq  = env * (0.06 + 0.05*m) * ease;    // 伸縮も同じ補完で滑らかに入る
   return [ x, 0, flashA, 0, 1+sq, 1-sq*0.7 ];
 }
@@ -3114,8 +3114,7 @@ function drawUnitSprite(imgPath,emoji,px,py,scale,flip,flashA,sqx,sqy,rot,yaw){
     ctx.fillText(emoji,px+TW/2,py+TILE/2+1);
   }
   ctx.restore();
-  if(flashA){ ctx.fillStyle=`rgba(255,255,255,${0.5*flashA})`;
-    ctx.fillRect(px+2,py+2,TW-4,TILE-4); }
+  // （被弾時の四角い白フラッシュは廃止。発光は撃破時の killflash のみ）
 }
 function drawCell(x,y,emoji,color,ox,oy,imgPath,big){
   const px=ox+x*TW, py=oy+y*TILE;
@@ -3418,7 +3417,10 @@ function doPlayerAttack(mon){
     fxSlash(mon.x,mon.y,ang,crit);
   }
   mon._hit={t0:now()+120,dx:adx,dy:ady,mag:hitMag(mon)*(crit?1.7:1.0)}; // 踏み込みが当たる瞬間(≈120ms)に同期
-  G._eDelay=320; // プレイヤーの攻撃モーション(踏み込み300ms)が終わってから敵が攻撃するようにする
+  // 敵は被弾の左右振動が収束して停止してから攻撃する。揺れの長さは威力で変わるので動的に算出。
+  { const _sm=hitMag(mon)*(crit?1.7:1.0);
+    const _sdur=Math.min(1.10, 0.40 + 0.40*Math.max(0,_sm-0.6)); // hitOffの揺れ持続(秒)と一致
+    G._eDelay=Math.round(120 + _sdur*1000 + 80); } // 命中(120ms)＋揺れ＋余白の後に敵が攻撃
   G._atkShake={t0:now()+120,dx:adx}; // 与えた側=プレイヤーは小さく横揺れ（命中の瞬間）
   sfxHit(crit); // ズォッ……ザンッ……ドンッ（包丁×まな板ASMR / 会心はズォン……ザァンッ！）
   if(crit){ G._lockUntil=now()+125; }
@@ -3429,7 +3431,7 @@ function doPlayerAttack(mon){
   { const _kill=mon.hp<=0;
     // 命中ヒットストップ（敵に当たった瞬間を強調）: 通常110ms / 会心260ms。
     // 威力＝停止量。会心は画面揺れ、通常も軽い揺れを足して「当たった！」を強める
-    if(!_kill){ setTimeout(()=>{ hitstop(crit?160:60); G._shake={t0:now(),amp:crit?1:0.5}; },120); } }
+    if(!_kill){ setTimeout(()=>{ hitstop(crit?640:240); G._shake={t0:now(),amp:crit?1:0.5}; },120); } } // 命中ヒットストップ4倍
   if(crit){ log(`💥 会心の一撃！ ${mon.name} に ${dmg} ダメージ！`,"l-gold");
     popText(mon.x,mon.y,"-"+dmg,"#fff3a0",true); }
   else { log(`▶ ${mon.name} に ${dmg} ダメージ！`,"l-dmg");
@@ -3439,17 +3441,13 @@ function doPlayerAttack(mon){
   if(mon.hp<=0){ killMonster(mon); }
 }
 function killMonster(mon){
-  fxDie(mon); // shrink & fade out
-  // 撃破の瞬間を強調: 白フラッシュ→画面揺れ→停止延長（「倒した！」を分かりやすく）
-  { const d0=mon._fxDelay||0;
-    const _boss=mon.boss||mon.guardian||mon._orbBoss||mon.name==='カオス';
-    const _spr=SPRITES.mon[mon.name]||MON_SPRITE[mon.name];
-    // 撃破の瞬間: モンスターの形に沿って白く発光させる（床は光らせない）+ 放射状の光条
-    fxO.push({type:'killflash',x:mon.x,y:mon.y,img:_spr,flip:mon._face||1,big:_boss,
-      t0:now()+d0+120,dur:_boss?460:320});
-    setTimeout(()=>{ G._shake={t0:now()}; hitstop(_boss?320:150); }, d0+120); }
+  if(mon._killed) return; mon._killed=true; mon._dying=true; // 二重撃破防止／死亡中フラグ
+  const d0=mon._fxDelay||0;
+  const _boss=mon.boss||mon.guardian||mon._orbBoss||mon.name==='カオス';
+  const _spr=SPRITES.mon[mon.name]||MON_SPRITE[mon.name];
+  // 撃破の瞬間(=被弾と同時): 画面揺れ＋ヒットストップ。とどめ側も左右に揺れて見えるよう、死亡演出は後述で遅延。
+  setTimeout(()=>{ G._shake={t0:now()}; hitstop(_boss?320:150); }, d0+120);
   sfxKill(mon._fxDelay||0);            // とどめ: ドンッ……ザクッ……
-  sfxVanish(matOf(mon), mon._fxDelay||0); // 素材別の消滅音（シュン/プシュ/カララ…）
   log(`✔ ${mon.name} を倒した！`,"l-good");
   if(mon._orbBoss){ const c=mon._orbCell||{x:mon.x,y:mon.y}; G.gem={x:c.x,y:c.y};
     log((mon.name==='幻影のオーブ'?'✨ 幻影のオーブが砕けた':'✨ 守護者を打ち倒した')+'——クリアのクリスタルが現れた！','l-gold');
@@ -3475,8 +3473,16 @@ function killMonster(mon){
   if(JOBS[G.job].luck && Math.random()<0.3){ const p=mon.pay; G.loot+=p; log(`🎲 ギャンブラー配当 +${p}`,"l-gold"); }
   // base small payout
   G.loot+=Math.max(1,Math.round(mon.pay*0.4));
-  // remove
-  const i=G.monsters.indexOf(mon); if(i>=0)G.monsters.splice(i,1);
+  // 死亡演出は被弾の左右振動を見せてから（即除去だと撃破時に振幅が見えない）
+  { const dd=(mon._fxDelay||0)+120+420;
+    setTimeout(()=>{
+      fxDie(mon); // 溶暗/崩壊アニメ
+      fxO.push({type:'killflash',x:mon.x,y:mon.y,img:_spr,flip:mon._face||1,big:_boss,t0:now(),dur:_boss?460:320});
+      { const _bossv=mon.boss||mon.guardian||mon._orbBoss||mon.name==='カオス';
+        let _str=Math.min(1.2,(mon.pay||1)/28); if(_bossv) _str=Math.max(_str,1.0);
+        sfxVanish(matOf(mon),0,_str); } // 消滅音（強い敵ほど低音＆少し大きい）
+      const i=G.monsters.indexOf(mon); if(i>=0)G.monsters.splice(i,1);
+    }, dd); }
   // 低確率(12%)で敵がカード化して床に残る（モンスターゲートらしい中毒ポイント）
   if(Math.random()<0.12 && !G.items.some(it=>it.x===mon.x&&it.y===mon.y)
      && !(G.gem&&G.gem.x===mon.x&&G.gem.y===mon.y)){
@@ -3607,7 +3613,7 @@ function canStep(x,y,nx,ny){
   }
   return true;
 }
-function occupied(x,y){ return (G.px===x&&G.py===y)||G.monsters.some(m=>m.x===x&&m.y===y)||G.allies.some(a=>a.x===x&&a.y===y); }
+function occupied(x,y){ return (G.px===x&&G.py===y)||G.monsters.some(m=>!m._dying && m.x===x&&m.y===y)||G.allies.some(a=>a.x===x&&a.y===y); }
 
 function enemyPhase(){
   G._atkSeq=0; // 敵攻撃の時間差演出用カウンタ（毎ターンリセット）
@@ -3763,7 +3769,7 @@ function enemyAttackAlly(m,a){
   const off=(G._eDelay||0)+((G._atkSeq=(G._atkSeq||0)+1)-1)*180;
   m._lunge={dx:edx,dy:edy,t0:now()+off};
   a._hit={t0:now()+off+140,dx:edx,dy:edy,mag:1};
-  setTimeout(()=>hitstop(50),off+140);
+  setTimeout(()=>hitstop(200),off+140); // 命中ヒットストップ4倍
   if(G.lit[a.y]&&G.lit[a.y][a.x]){ popText(a.x,a.y,'-'+dmg,'#7cc8ff',false,off+140); log(`${m.name} が ${a.name}(味方) に ${dmg}`,'l-dmg'); }
 }
 function summonMenu(){
@@ -3784,7 +3790,7 @@ function summonMenu(){
 }
 function allyAct(a){
   // attack adjacent enemy else move toward nearest
-  const adj=G.monsters.find(m=>dist(m.x,m.y,a.x,a.y)===1);
+  const adj=G.monsters.find(m=>!m._dying && dist(m.x,m.y,a.x,a.y)===1);
   if(adj){ const dmg=Math.max(1,a.atk-adj.def+rnd(3)); adj.hp-=dmg;
     log(`💞 ${a.name}(味方) が ${adj.name} に ${dmg}`,"l-good");
     if(adj.hp<=0){ const i=G.monsters.indexOf(adj); if(i>=0)G.monsters.splice(i,1); log(`${adj.name} 撃破(味方)`,"l-good"); }
@@ -3844,7 +3850,7 @@ function enemyAttack(m,ranged,mult){
     G._hit={t0:now()+off+140,dx:edx,dy:edy,mag:1};
     sfxEnemy(matOf(m),off+140); // 素材別の攻撃音を命中に同期
     m._atkShake={t0:now()+off+140,dx:edx}; // 与えた側=敵は小さく横揺れ
-    setTimeout(()=>{ hitstop(70); G._shake={t0:now(),amp:0.5}; },off+140); // 被弾ヒットストップ＋画面わずか揺れ
+    setTimeout(()=>{ hitstop(280); G._shake={t0:now(),amp:0.5}; },off+140); // 被弾ヒットストップ4倍＋画面わずか揺れ
   } else {
     // 敵の遠距離攻撃も弾道演出（発射→飛翔→着弾）
     m._lunge={dx:edx,dy:edy,t0:now()+off};
@@ -3853,7 +3859,7 @@ function enemyAttack(m,ranged,mult){
     fxMagic(G.px,G.py,'fire',off+BOLT_MS);
     G._hit={t0:now()+off+BOLT_MS,dx:edx,dy:edy,mag:1};
     sfxEnemy('magic',off+BOLT_MS); // ボォン……ズンッ（着弾に同期）
-    setTimeout(()=>{ hitstop(70); G._shake={t0:now(),amp:0.5}; },off+BOLT_MS); // 着弾で停止＋画面わずか揺れ
+    setTimeout(()=>{ hitstop(280); G._shake={t0:now(),amp:0.5}; },off+BOLT_MS); // 着弾ヒットストップ4倍＋画面わずか揺れ
   }
   G._lockUntil=now()+off+240; // 敵の攻撃を見届けるまで入力を軽くロック
   G.hp-=dmg;
@@ -4253,9 +4259,12 @@ function tone(t,f,dur,g,type,f1){ // 高音チャイム系（カード・取得�
   o.connect(gn); gn.connect(SFX_DEST||sfxBus); o.start(t); o.stop(t+dur+0.03);
 }
 // 撃破後の消滅音: 素材ごとに変える（シュン/プシュ/カララ/キュワァ/ガキン…ドサ/ボス）
-function sfxVanish(mat,delayMs){
+function sfxVanish(mat,delayMs,strength){
   if(!audio())return; const t=AC.currentTime+(delayMs||0)/1000+0.16;
+  const s=Math.max(0,Math.min(1.2, strength||0)); // 0=雑魚 〜 1.2=最強。強いほど低音化＆ほんの少し大音量
   SFX_DEST=hitBus; try{
+    // 消滅の低音: 強い敵ほど周波数が低く、音量もわずかに大きい
+    thump(t, {f0:84 - 48*s, f1:Math.max(17, 30 - 13*s), dur:0.34 + 0.24*s, g:0.42 + 0.20*s, type:'triangle'});
   switch(mat){
     case 'slime':  nzHit(t,{dur:0.2,f:700,f1:170,type:'lowpass',g:0.3,a:0.012}); break;   // プシュ……
     case 'bone':   for(let k=0;k<3;k++) nzHit(t+k*0.05,{dur:0.03,f:2500-k*350,q:3,g:0.2}); break; // カララッ
