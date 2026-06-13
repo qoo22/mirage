@@ -3416,7 +3416,8 @@ function tryAct(dir){
   if(mon){ playerTurn({type:"attack",mon}); return; }
   if(!canStep(G.px,G.py,nx,ny)){ return; } // wall or corner-cut diagonal：向きも変えない
   const ally=G.allies.find(a=>a.x===nx&&a.y===ny);
-  if(ally){ return; } // can't walk into ally：向きも変えない
+  // 味方は進路を塞がない: プレイヤーが入る先に味方がいたら入れ替わって道を譲る
+  if(ally){ ally.x=G.px; ally.y=G.py; ally._vx=G.px; ally._vy=G.py; }
   // ここで初めて確定 → 進行方向＝向き
   if(dx) G._face=dx>0?1:-1;
   G._dirX=dx; G._dirY=dy;
@@ -3905,13 +3906,15 @@ function summonMenu(){
   document.getElementById('smClose').onclick=hideModal;
 }
 function allyAct(a){
-  // attack adjacent enemy else move toward nearest
+  // 敵を最優先: 隣接する敵がいれば攻撃、いなければ最寄りの敵へ前進する（プレイヤーは追わない）
   const adj=G.monsters.find(m=>!m._dying && dist(m.x,m.y,a.x,a.y)===1);
   if(adj){ const dmg=Math.max(1,a.atk-adj.def+rnd(3)); adj.hp-=dmg;
+    if(adj.x!==a.x) a._face=adj.x>a.x?1:-1; a._dirX=Math.sign(adj.x-a.x); a._dirY=Math.sign(adj.y-a.y);
     log(`💞 ${a.name}(味方) が ${adj.name} に ${dmg}`,"l-good");
     if(adj.hp<=0){ const i=G.monsters.indexOf(adj); if(i>=0)G.monsters.splice(i,1); log(`${adj.name} 撃破(味方)`,"l-good"); }
     return; }
-  const tgt=G.monsters.reduce((best,m)=>{ const dd=dist(m.x,m.y,a.x,a.y);
+  // 最寄りの生存している敵をターゲット
+  const tgt=G.monsters.reduce((best,m)=>{ if(m._dying)return best; const dd=dist(m.x,m.y,a.x,a.y);
     return (!best||dd<best.d)?{m,d:dd}:best; },null);
   if(tgt){ stepToward(a,tgt.m.x,tgt.m.y); }
 }
@@ -4225,6 +4228,8 @@ function resolveCard(i,target){
     else { vis.forEach(m=>{ m.hp-=c.storm; const sp=neighbors(m.x,m.y).filter(([x,y])=>walkable(x,y)&&!occupied(x,y));
       if(sp.length){const [x,y]=pick(sp);m.x=x;m.y=y;} }); cleanupDead(); log("マルチストーム！吹き飛ばし","l-mag"); } }
   else if(c.charm){ if(!target){consumed=false;log("対象なし","l-warn");}
+    else if(target.boss||target.guardian||target._orbBoss||target._cbJob||target.name==='カオス'){
+      consumed=false; sfxCard&&sfxCard('fail'); log(`${target.name} は強大すぎて誘惑できない！（ボスは仲間にできない）`,"l-warn"); }
     else { const i2=G.monsters.indexOf(target); if(i2>=0)G.monsters.splice(i2,1);
       target.charm=c.charm; G.allies.push(target); log(`${target.name} を誘惑！味方化`,"l-mag"); } }
   else if(c.bright){ G.status.bright=true; computeVisibility(); log("ブライト: 視界MAX","l-mag"); }
