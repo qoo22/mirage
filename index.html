@@ -436,6 +436,11 @@
     .ctrlwrap{margin:2px auto}
     #log{height:110px}
     #hand.cards{max-height:none}
+    /* ワールドモード: モバイルでも全体が見えるようスクロール＆盤面を可変高さに */
+    #worldWrap.show{ max-height:calc(100dvh - 8px); overflow:auto; -webkit-overflow-scrolling:touch; }
+    .wmboard{ height:clamp(300px, 58vh, 430px); }
+    .castle{ width:54px; }
+    .castle .cnmlbl{ font-size:8px; }
   }
   .kbd{font-size:11px;color:var(--muted)}
   .legend{font-size:11px;color:var(--muted);line-height:1.6}
@@ -1028,7 +1033,7 @@ function dirSprite(key,e){
     const lt=(now()-e._lunge.t0)/300; // lungeと同じ尺
     state = (lt<0.45) ? 'atkwind' : 'attack';
   }
-  else if(e._hit) state='hit';
+  else if(e._hit && now()>=e._hit.t0) state='hit'; // 着弾時刻になってから被弾ポーズ（攻撃前に出さない）
   else if(e._moving) state=((now()/140|0)%2)?'walk':'idle';
   else state='idle';
   // 8方向: 斜めは fdiag/bdiag、左向きは反転
@@ -3049,7 +3054,8 @@ function hitOff(e){
   const tr=Math.min(1,(_rawNow()-h.tr)/67);
   const ease=tr*tr*(3-2*tr);                   // smoothstep（0→1）
   const dir = h.dx ? h.dx : 1;                 // 横方向（左右）。被弾方向へ最初に押し込む
-  const amp = TW*(0.48 + 0.68*m);              // 振れ幅を半分に（初期比8倍）
+  const as  = (h.ampScale===undefined)?1:h.ampScale; // ダメージ量などで振幅だけ調整
+  const amp = TW*(0.48 + 0.68*m) * as;          // 振れ幅（ampScaleで増減）
   const env = Math.exp(-2.4*t);                // 減衰をゆるめて大振幅を長めに見せる
   const x   = dir * amp * env * Math.cos(t*Math.PI*2*8.4) * ease; // 往復回数を4倍（8.4往復）
   const sq  = env * (0.06 + 0.05*m) * ease;    // 伸縮も同じ補完で滑らかに入る
@@ -3838,6 +3844,7 @@ function enemyAttack(m,ranged,mult){
   const minG = Math.max(1, Math.round(ownMin * (m.minScale===false?1:floorFactor())));
   let dmg=Math.max(minG, Math.round(atkP - defTot) + (rnd(5)-2));
   if(m.role==="knock") dmg=Math.round(dmg*0.85);
+  const _ampS = dmg<=10 ? 0.5 : dmg<=20 ? (2/3) : 1; // 受けたダメージで被弾振幅を調整
   const edx=Math.sign(G.px-m.x), edy=Math.sign(G.py-m.y);
   if(edx) m._face=edx;
   m._dirX=edx; m._dirY=edy;
@@ -3847,7 +3854,7 @@ function enemyAttack(m,ranged,mult){
   if(!ranged){
     m._lunge={dx:edx,dy:edy,t0:now()+off};
     fxO.push({type:'impact',x:G.px,y:G.py,t0:now()+off+140,dur:180}); // 命中の瞬間に着弾フラッシュ
-    G._hit={t0:now()+off+140,dx:edx,dy:edy,mag:1};
+    G._hit={t0:now()+off+140,dx:edx,dy:edy,mag:1,ampScale:_ampS};
     sfxEnemy(matOf(m),off+140); // 素材別の攻撃音を命中に同期
     m._atkShake={t0:now()+off+140,dx:edx}; // 与えた側=敵は小さく横揺れ
     setTimeout(()=>{ hitstop(280); G._shake={t0:now(),amp:0.5}; },off+140); // 被弾ヒットストップ4倍＋画面わずか揺れ
@@ -3857,7 +3864,7 @@ function enemyAttack(m,ranged,mult){
     setTimeout(()=>fxBolt(m.x,m.y,G.px,G.py,'fire'),off);
     m._atkShake={t0:now()+off,dx:edx}; // 発射の反動で小さく横揺れ
     fxMagic(G.px,G.py,'fire',off+BOLT_MS);
-    G._hit={t0:now()+off+BOLT_MS,dx:edx,dy:edy,mag:1};
+    G._hit={t0:now()+off+BOLT_MS,dx:edx,dy:edy,mag:1,ampScale:_ampS};
     sfxEnemy('magic',off+BOLT_MS); // ボォン……ズンッ（着弾に同期）
     setTimeout(()=>{ hitstop(280); G._shake={t0:now(),amp:0.5}; },off+BOLT_MS); // 着弾ヒットストップ4倍＋画面わずか揺れ
   }
@@ -7107,6 +7114,8 @@ function showWorld(){
   document.body.classList.add('setupbg');
   document.getElementById('worldWrap').classList.add('show');
   renderWorld();
+  // モバイル等でレイアウト確定前だと寸法が0になりノードがずれることがあるため、次フレームで再描画
+  requestAnimationFrame(()=>{ try{ renderWorld(); }catch(e){} });
 }
 function renderWorld(){
   const ai=G.world.view; const area=WORLD[ai];
