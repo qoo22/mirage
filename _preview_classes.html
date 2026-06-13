@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新職業プレビュー(神話英雄シリーズ)</title>
+<style>
+  :root{ --bg:#15161c; --tile:#2a2c3a; --tile2:#232533; --gold:#ffd24a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:#eee; font-family:system-ui,"Hiragino Sans",sans-serif; text-align:center; padding:16px 10px 40px; }
+  h1{ font-size:18px; margin:6px 0 2px; }
+  p.sub{ color:#9aa; font-size:12px; margin:0 0 14px; }
+  .row{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .card{ background:#1d1f28; border:1px solid #333; border-radius:14px; padding:14px 12px 18px; width:300px; max-width:46vw; }
+  .card h2{ font-size:15px; margin:2px 0 4px; color:var(--gold); }
+  .card p{ font-size:11px; color:#9aa; margin:0 0 10px; min-height:28px; }
+  .stage{ width:100%; aspect-ratio:1/1; border-radius:10px; position:relative;
+    background:
+      linear-gradient(135deg, var(--tile) 25%, transparent 25%) 0 0/40px 40px,
+      linear-gradient(225deg, var(--tile) 25%, transparent 25%) 0 0/40px 40px,
+      linear-gradient(45deg, var(--tile) 25%, transparent 25%) 0 0/40px 40px,
+      linear-gradient(315deg, var(--tile) 25%, var(--tile2) 25%) 0 0/40px 40px;
+    display:flex; align-items:center; justify-content:center; }
+  .stage img{ width:88%; image-rendering:auto; }
+  .ref .card h2{ color:#7fc7ff; }
+</style>
+</head>
+<body>
+<h1>新職業プレビュー — 神話英雄シリーズ</h1>
+<p class="sub">聖騎士と同スタイル(3〜4頭身・豪華装備)/ FLUX.1 Kontext で生成</p>
+
+<div class="row ref">
+  <div class="card"><h2>聖騎士(参照元)</h2><p>既存アセット</p>
+    <div class="stage"><img src="assets/t_d_paladin_front_idle.png" alt="聖騎士"></div></div>
+</div>
+<br>
+<div class="row">
+  <div class="card"><h2>竜騎士</h2><p>緋色の竜鱗鎧と黄金の槍、竜翼(「紅竜騎士」として導入済)</p>
+    <div class="stage"><img src="_preview_classes/t_hero_dragoon.png" alt="竜騎士"></div></div>
+  <div class="card"><h2>ギルガメシュ</h2><p>宝石をちりばめた黄金鎧の英雄王(導入済)</p>
+    <div class="stage"><img src="_preview_classes/t_hero_gilgamesh.png" alt="ギルガメシュ"></div></div>
+  <div class="card"><h2>ルシファー</h2><p>堕天の黒翼と白金の儀礼鎧、欠けた光輪(導入済)</p>
+    <div class="stage"><img src="_preview_classes/t_hero_lucifer.png" alt="ルシファー"></div></div>
+  <div class="card"><h2>カイン</h2><p>呪印の灯る漆黒の放浪者、呪われた刃</p>
+    <div class="stage"><img src="_preview_classes/t_hero_cain.png" alt="カイン"></div></div>
+  <div class="card"><h2>オーディン</h2><p>隻眼の大賢者、神槍グングニルと大鴉(導入済)</p>
+    <div class="stage"><img src="_preview_classes/t_hero_odin.png" alt="オーディン"></div></div>
+  <div class="card"><h2>ロキ</h2><p>紫金の軽鎧と双短剣のトリックスター(導入済)</p>
+    <div class="stage"><img src="_preview_classes/t_hero_loki.png" alt="ロキ"></div></div>
+  <div class="card"><h2>トール</h2><p>雷纏う狂戦士、神鎚ミョルニル</p>
+    <div class="stage"><img src="_preview_classes/t_hero_thor.png" alt="トール"></div></div>
+</div>
+</body>
+</html>
