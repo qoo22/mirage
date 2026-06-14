@@ -669,8 +669,12 @@
   .jobcard .jname b{ font-size:15px; }
   .jrole{ flex:none; font-size:10px; font-weight:800; padding:2px 8px; border-radius:11px;
     background:linear-gradient(180deg,#241c3f,#1a1430); border:1px solid var(--gtrim); }
-  .jobcard .jdesc{ display:block; margin:5px 0 7px; min-height:30px; }
+  .jobcard .jdesc{ display:block; margin:5px 0 7px; min-height:40px; }
   .jbars{ display:grid; gap:3px; }
+  /* [監修・UI] 職業カードの大きさを統一：同じ高さに揃え、ステータスバーを下端で揃える */
+  #jobpick{ align-items:stretch; }
+  #jobpick .jobcard{ display:flex; flex-direction:column; }
+  #jobpick .jobcard .jbars{ margin-top:auto; }
   .jstat{ display:flex; align-items:center; gap:6px; font-size:9.5px; color:#b9aee0; }
   .jstat .jlab{ flex:0 0 30px; text-align:right; }
   .jstat .jbar{ flex:1; height:6px; background:#241c3f; border-radius:4px; overflow:hidden; border:1px solid #3a2f5c; }
@@ -3602,7 +3606,7 @@ function killMonster(mon){
   const _boss=mon.boss||mon.guardian||mon._orbBoss||mon.name==='カオス';
   const _spr=SPRITES.mon[mon.name]||MON_SPRITE[mon.name];
   // 撃破の瞬間(=被弾と同時): 画面揺れ＋ヒットストップ。とどめ側も左右に揺れて見えるよう、死亡演出は後述で遅延。
-  setTimeout(()=>{ G._shake={t0:now(),amp:_boss?2:1}; hitstop(_boss?300:150); }, d0+120); // [監修#10] 撃破の揺れを段階化（ボス2/通常1）＝特別感
+  setTimeout(()=>{ G._shake={t0:now(),amp:_boss?2:1}; hitstop(_boss?320:150); }, d0+120); // [監修#10] 撃破の振幅段階化（ボス±10px/雑魚±5px据え置き）＝特別感。時間は原状320/150
   sfxKill(mon._fxDelay||0);            // とどめ: ドンッ……ザクッ……
   log(`✔ ${mon.name} を倒した！`,"l-good");
   if(mon._orbBoss){ const c=mon._orbCell||{x:mon.x,y:mon.y}; G.gem={x:c.x,y:c.y};
