@@ -1499,6 +1499,9 @@ const CARDS = {
   orbcall:    {nm:"オーブコール",cat:"atk", ic:"🔮", cost:0, mp:30, shard:4, forbidden:true, selfDmg:25,
     ds:"視界内全敵に110。自分も25ダメージ", mag:110, multi:true},
 };
+// [⑩] 装備カードの消費MP=0は不自然 → レア度比例（やりくりさせる）。上限18でどの職でも一応使える。
+{ const EQUIP_MP={R:6,SR:10,SSR:14,UR:18,LR:18};
+  Object.keys(CARDS).forEach(id=>{ const c=CARDS[id]; if(c.cat==='equip' && (c.mp||0)===0) c.mp=EQUIP_MP[cardRarity(id)]||10; }); }
 const SHOP_ORDER = ["pot20","pot40","pot60","pot80","potMax","mpot","heal100",
   "fire","thunder","meteo","mfire","mthunder","mmeteo","spear","poison",
   "lock","sleep","slow","panic","storm","charm","bright","map","search",
@@ -1536,14 +1539,16 @@ const mpValue=(id)=>Math.max(2,Math.round(CARDS[id].cost*0.5));
 // 排出率: 弱い(安い)カードほど高排出、ポーション系はさらに高め。
 // 深い階ほど強カードが解禁され、出現率も少し上がる。
 function rollCardDrop(){
+  const d=DUNGEONS[G.dungeon]||{}; const star=d.star||1;
   const f=Math.max(1,G.floor||1)+(G.dungeon==='maboroshi'?4:0); // 幻はカードの質が高い
-  const maxCost=22+f*14;
-  const pool=SHOP_ORDER.filter(id=>CARDS[id].cost<=maxCost);
+  const deep=f+Math.max(0,star-2);                          // [⑥] 難ダンジョンほど“深さ”を底上げ＝強カード解禁
+  const maxCost=20+deep*13;                                 // 強カード解禁は 深さ×難度 依存
+  const pool=SHOP_ORDER.filter(id=>CARDS[id].cost<=maxCost && !CARDS[id].forbidden);
   const ws=pool.map(id=>{
     const c=CARDS[id];
-    let w=150/(c.cost+10);                                   // コスト逆比例
-    if(c.cat==="heal") w*=2.4;                               // ポーションは高排出
-    w*=1+Math.min(1.5, f*0.06)*Math.max(0,c.cost-18)/24;     // 深層ほど強カード微増
+    let w=170/(c.cost+12);                                  // [⑤] コスト逆比例を強め＝レアは出にくく
+    if(c.cat==="heal") w*=2.2;                              // ポーションは高排出
+    w*=1+Math.min(1.4, deep*0.05)*Math.max(0,c.cost-26)/26; // 強カードは“深く難しい”時だけ増える（浅い/簡単では稀）
     return w;
   });
   let r=Math.random()*ws.reduce((a,b)=>a+b,0);
@@ -1832,38 +1837,79 @@ function freeWorldCastles(){
 }
 // ---- ショップ（購入は所持コレクションへ。出撃準備とは分離） ----
 // where: 'town'（ダンジョン外）/ 'dungeon'（店内売店）。toBag=true で直接袋へ（売店用）
-function showShop(where, toBag){
-  const cards=SHOP_ORDER.map(id=>{ const c=CARDS[id];
-    return `<div class="card cat-${c.cat} shopcard" data-id="${id}" style="width:118px">
+// [新機能③] ショップ在庫＝ランダム10種・各1枚（レアは出にくい＝レア感）。在庫はその店に保持。
+function rollShopStock(){
+  const used=new Set(), pick=[];
+  const weight=id=>{ const c=CARDS[id]; if(!c||c.forbidden) return 0; let w=120/((c.cost||1)+8); if(c.cat==='heal') w*=1.5; return w; };
+  let guard=0;
+  while(pick.length<10 && used.size<SHOP_ORDER.length && guard++<400){
+    const avail=SHOP_ORDER.filter(id=>!used.has(id) && weight(id)>0);
+    if(!avail.length) break;
+    let tot=0; avail.forEach(id=>tot+=weight(id));
+    let r=Math.random()*tot, ch=avail[0];
+    for(const id of avail){ r-=weight(id); if(r<=0){ ch=id; break; } }
+    used.add(ch); pick.push({id:ch, sold:false});
+  }
+  return pick;
+}
+function shopStock(where, it){
+  if(where==='dungeon' && it){ if(!it._stock) it._stock=rollShopStock(); return it._stock; }
+  if(!G._townStock) G._townStock=rollShopStock(); return G._townStock;
+}
+// [新機能④の会話] 店主のセリフ＝プレイヤーの状態・装備・入荷で変化
+function shopkeeperLine(stock){
+  const owned=Object.values(G.collection||{}).reduce((a,b)=>a+b,0)+((G.hand&&G.hand.length)||0)+((G.bag&&G.bag.length)||0);
+  const lux=(G.equip&&(G.equip.sword||G.equip.shield))||G.goldSword||(G.rings&&Object.keys(G.rings).length>=2);
+  const hasRare=stock.some(s=>!s.sold&&(RAR_ORDER[cardRarity(s.id)]||0)>=2);
+  if(hasRare) return '🧔 いらっしゃい！ 今日はすげーのが入ってるんだよ、見てきな！';
+  if(lux)     return '🧔 おっ、すごい装備だな…！ 目の肥えた客は歓迎だ。';
+  if(owned<=2) return '🧔 なんだ、カード全然持ってないじゃねーか。まず一枚どうだ？';
+  return '🧔 いらっしゃい！ ゆっくり見ていきな。';
+}
+function showShop(where, toBag, it){
+  const stock=shopStock(where, it);
+  const cards=stock.map((s,si)=>{ const c=CARDS[s.id]; const rar=cardRarity(s.id);
+    return `<div class="card cat-${c.cat} shopcard${s.sold?' sold':''}" data-si="${si}" style="width:118px${s.sold?';opacity:.4;filter:grayscale(1)':''}">
       <div class="cname"><span>${c.nm}</span><span class="cmp">${c.mp||0}</span></div>
-      <div class="cart">${cardArtPath(id)?`<img src="${cardArtPath(id)}" alt="">`:`<span class="emoji">${c.ic}</span>`}</div>
-      <div class="ctype">${CAT_JP[c.cat]||c.cat}</div>
+      <div class="cart">${cardArtPath(s.id)?`<img src="${cardArtPath(s.id)}" alt="">`:`<span class="emoji">${c.ic}</span>`}</div>
+      <div class="ctype">${CAT_JP[c.cat]||c.cat} <b style="color:#ffd24d">${rar}</b></div>
       <div class="ctext">${c.ds}</div>
-      <div class="cfoot"><span>💰${c.cost}</span><span>${toBag?'袋へ':'所持へ'}</span></div></div>`;}).join('');
-  const title = where==='dungeon' ? '🏪 ダンジョン内の売店' : '🏪 ショップ';
-  const note = where==='dungeon'
-    ? 'メダルで購入。買ったカードはこのランの袋（手札）に直接入る。'
-    : 'メダルで購入したカードはコレクションに入る。出撃準備で袋に詰めて持ち込もう。';
+      <div class="cfoot"><span>💰${c.cost}</span><span>${s.sold?'売切':(toBag?'袋へ':'所持へ')}</span></div></div>`;}).join('');
+  const title = where==='dungeon' ? '🏪 売店' : '🏪 ショップ';
   showModal(`<div class="shopModal">
     <div class="shopHead">
-      <span class="shopIcon">🏪</span>
-      <div><div class="shopTitle">${title}</div><div class="shopNote">${note}</div></div>
+      <img class="shopIcon" src="assets/shop_master.png" alt="" style="width:60px;height:76px;object-fit:contain;border-radius:8px" onerror="this.style.display='none'">
+      <div><div class="shopTitle">${title}</div><div class="shopNote" id="shopLine">${shopkeeperLine(stock)}</div></div>
       <div class="shopPouch">🪙 <span id="shopMedals">${G.medals}</span></div>
     </div>
     <div class="cards shopShelf" id="shopWrap">${cards}</div>
+    <div id="shopConfirm"></div>
     <div class="center" style="margin-top:12px"><button id="shopClose">閉じる</button></div>
   </div>`);
   document.querySelectorAll('#shopWrap .shopcard').forEach(el=>{
-    el.onclick=()=>{ const id=el.dataset.id, c=CARDS[id];
-      if(G.medals<c.cost){ log("メダルが足りない","l-warn"); sfxCard&&sfxCard('fail'); return; }
-      G.medals-=c.cost;
-      if(toBag){ if(G.hand.length<G.handMax){ G.hand.push(id); refreshUI&&refreshUI(); }
-                 else { G.collection[id]=(G.collection[id]||0)+1; log("手札が一杯。コレクションへ。","l-warn"); } }
-      else { G.collection[id]=(G.collection[id]||0)+1; }
-      saveGame(); sfxEquip&&sfxEquip();
-      const mm=document.getElementById('shopMedals'); if(mm) mm.textContent=G.medals;
-      if(!toBag) renderBag();
-      log(`🛒 ${c.nm} を購入した`,"l-gold");
+    el.onclick=()=>{ const si=+el.dataset.si, s=stock[si], c=CARDS[s.id];
+      if(s.sold){ sfxCard&&sfxCard('fail'); return; }
+      const cw=document.getElementById('shopConfirm'); // [新機能⑪] 購入確認
+      cw.innerHTML=`<div style="margin:10px 0;padding:10px;border:2px solid var(--gold);border-radius:10px;text-align:center;background:rgba(40,30,8,.5)">
+        「${c.ic} ${c.nm}」を 💰${c.cost} で購入しますか？ <span class="muted">(所持 ${G.medals})</span>
+        <div style="margin-top:8px"><button class="primary" id="buyYes">購入する ▶</button> <button id="buyNo">やめる</button></div></div>`;
+      sfxUISelect&&sfxUISelect();
+      document.getElementById('buyNo').onclick=()=>{ cw.innerHTML=''; sfxUIBack&&sfxUIBack(); };
+      document.getElementById('buyYes').onclick=()=>{
+        if(G.medals<c.cost){ log("メダルが足りない","l-warn"); sfxCard&&sfxCard('fail'); cw.innerHTML=''; return; }
+        G.medals-=c.cost; s.sold=true;
+        if(toBag){ if(G.hand.length<G.handMax){ G.hand.push(s.id); refreshUI&&refreshUI(); }
+                   else { G.collection[s.id]=(G.collection[s.id]||0)+1; log("手札が一杯。コレクションへ。","l-warn"); } }
+        else { G.collection[s.id]=(G.collection[s.id]||0)+1; }
+        saveGame(); sfxEquip&&sfxEquip();
+        const mm=document.getElementById('shopMedals'); if(mm) mm.textContent=G.medals;
+        if(!toBag) renderBag();
+        log(`🛒 ${c.nm} を購入した`,"l-gold");
+        cw.innerHTML='';
+        el.classList.add('sold'); el.style.opacity='.4'; el.style.filter='grayscale(1)';
+        const foot=el.querySelector('.cfoot span:last-child'); if(foot) foot.textContent='売切';
+        const ln=document.getElementById('shopLine'); if(ln) ln.textContent=shopkeeperLine(stock);
+      };
     };
   });
   document.getElementById('shopClose').onclick=hideModal;
@@ -1884,6 +1930,8 @@ const SLOT_SYMS={
   special:{img:'slot_special',nm:'SPECIAL',coin:0,role:'special',e:'⭐'},
   q:{img:'slot_q',nm:'？',coin:8,role:'q',e:'❓'},
 };
+// [⑦] 台ごとの掛金倍率＝レアが出やすい台ほど高掛金（高リスク高リターン）。卵(monster)台が最も高い。
+const SLOT_BET={item:1, gambler:2, monster:3};
 // 5ライン: 中央 / 上 / 下 / ＼ / ／
 const SLOT_LINES=[ [[1,0],[1,1],[1,2]], [[0,0],[0,1],[0,2]], [[2,0],[2,1],[2,2]], [[0,0],[1,1],[2,2]], [[2,0],[1,1],[0,2]] ];
 function slotSymbols(type){ let s=['diamond','ruby','aqua','sapphire','pearl','topaz','q'];
@@ -1896,7 +1944,7 @@ function slotPick(type){ const p=slotWeight(type); return p[rnd(p.length)]; }
 function slotDecide(type){ const r=Math.random();
   if(r<0.015) return 'diamond';
   if(type==='gambler' && r<0.06) return 'special';
-  if(type==='monster' && r<0.10) return 'egg';
+  if(type==='monster' && r<0.13) return 'egg'; // [⑦] 卵スロットは当たりやすめ
   if((type==='item'||type==='gambler') && r<0.20) return Math.random()<0.5?'sword':'heart';
   if(r<0.45){ const g=['topaz','topaz','pearl','pearl','sapphire','aqua','ruby']; return g[rnd(g.length)]; }
   return null; }
@@ -1919,7 +1967,7 @@ function slotResolve(grid, lines, mult, type, inD){
     const def=SLOT_SYMS[sym], role=def.role; let give=[];
     if(sym==='diamond'){ res.coins+=500*mult; for(let i=0;i<mult;i++) give.push(slotRare()); }
     else if(role==='special'){ const f=['bloodfire','soulreturn','memeater','orbcall']; for(let i=0;i<mult;i++) give.push(f[rnd(f.length)]); }
-    else if(role==='monster'){ const bk=Object.keys(BOSS_CARDS); G.bossCards=G.bossCards||{}; for(let i=0;i<mult;i++){ const k=bk[rnd(bk.length)]; G.bossCards[k]=true; give.push(slotCardForGem('ruby',pool)); } }
+    else if(role==='monster'){ const bk=Object.keys(BOSS_CARDS); G.bossCards=G.bossCards||{}; for(let i=0;i<mult;i++){ const k=bk[rnd(bk.length)]; G.bossCards[k]=true; give.push(Math.random()<0.45?slotRare():slotCardForGem('ruby',pool)); } } // [⑦] 卵=高レア寄り（45%でUR級・残りもSSR/UR）
     else if(role==='atk'){ const p=SHOP_ORDER.filter(id=>CARDS[id].cat==='atk'); res.coins+=20*mult; for(let i=0;i<mult;i++) give.push(p[rnd(p.length)]); }
     else if(role==='heal'){ const p=SHOP_ORDER.filter(id=>CARDS[id].cat==='heal'); res.coins+=20*mult; for(let i=0;i<mult;i++) give.push(p[rnd(p.length)]); }
     else if(role==='q'){ res.coins+=8*mult; for(let i=0;i<3;i++) give.push(pool[rnd(pool.length)]); }
@@ -1933,6 +1981,13 @@ function slotResolve(grid, lines, mult, type, inD){
 function slotCellHTML(sym){ const d=SLOT_SYMS[sym];
   return `<img src="assets/${d.img}.png" alt="" style="width:52px;height:52px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span style="display:none;width:52px;height:52px;align-items:center;justify-content:center;font-size:34px">${d.e}</span>`; }
 let _slot={type:'gambler', lines:3, mult:1, spinning:false, inD:false, cells:null};
+// [⑦の会話] スロットのお姉さん＝状況で応援セリフが変化
+function slotLadyLine(){
+  if(G.medals<10) return '💃 あら、軍資金が心もとないわね…無理は禁物よ。';
+  if(G.hand&&G.hand.length>=8) return '💃 手札パンパンね！ 欲しいカードを狙い撃ちしな！';
+  if(G.medals>=500) return '💃 ふふ、景気がいいじゃない！ ちょっと遊んでく？';
+  return '💃 ちょっと遊んでく？ 冒険に必要なカードは、自らの手で手に入れな！';
+}
 function showSlot(opts){
   if(typeof opts==='boolean') opts={inD:opts, type:'gambler'};
   opts=opts||{};
@@ -1940,6 +1995,9 @@ function showSlot(opts){
   if(_slot.spinning) return;
   const TNAME={item:'アイテムスロット',monster:'モンスタースロット',gambler:'ギャンブラースロット'}[_slot.type];
   showModal(`<div class="slmarquee">🎰 ${TNAME}${_slot.inD?'　-CASINO-':''}</div>
+    <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin:4px 6px">
+      <img src="assets/slot_lady.png" alt="" style="width:46px;height:58px;object-fit:contain" onerror="this.style.display='none'">
+      <div id="slLadyLine" style="font-size:12px;color:#ffd9f0;max-width:300px;text-align:left">${slotLadyLine()}</div></div>
     <p class="muted center" style="font-size:11.5px;margin:8px 2px">所持 <span class="slcoin" id="slMed">${G.medals}</span>　ライン上に同絵柄3つで配当＋カード。<b>ダイヤ=WILD</b>。${_slot.type==='gambler'?'<b class="gold">SPECIAL</b>=レア。':''}${_slot.type==='monster'?'<b>卵</b>=モンスター。':''}
     BET=ライン×倍率（最大15）。当たりは${_slot.inD?'手札（上限超はコレクション）':'コレクション'}へ。</p>
     <div class="center" style="margin:5px 0"><span class="tag">ライン:</span> <span id="slLines"></span> <span class="tag" style="margin-left:8px">倍率:</span> <span id="slMult"></span></div>
@@ -1969,7 +2027,7 @@ function showSlot(opts){
   function renderChips(){
     document.getElementById('slLines').innerHTML=[1,2,3,4,5].map(n=>`<button class="slL" data-n="${n}" style="font-size:12px;padding:3px 8px;margin:1px;${_slot.lines===n?'border-color:var(--gold);color:var(--gold)':''}">${n}</button>`).join('');
     document.getElementById('slMult').innerHTML=[1,2,3].map(n=>`<button class="slX" data-n="${n}" style="font-size:12px;padding:3px 8px;margin:1px;${_slot.mult===n?'border-color:var(--gold);color:var(--gold)':''}">×${n}</button>`).join('');
-    document.getElementById('slBet').textContent=_slot.lines*_slot.mult;
+    document.getElementById('slBet').textContent=_slot.lines*_slot.mult*(SLOT_BET[_slot.type]||1); // [⑦] 台別掛金
     document.querySelectorAll('.slL').forEach(e=>e.onclick=()=>{ if(_slot.spinning)return; _slot.lines=+e.dataset.n; sfxUISelect&&sfxUISelect(); renderChips(); });
     document.querySelectorAll('.slX').forEach(e=>e.onclick=()=>{ if(_slot.spinning)return; _slot.mult=+e.dataset.n; sfxUISelect&&sfxUISelect(); renderChips(); });
   }
@@ -1977,7 +2035,7 @@ function showSlot(opts){
   document.getElementById('slClose').onclick=()=>{ if(!_slot.spinning){ saveGame(); if(_slot.inD) refreshUI&&refreshUI(); hideModal(); } };
   document.getElementById('slSpin').onclick=()=>{
     if(_slot.spinning) return;
-    const bet=_slot.lines*_slot.mult;
+    const bet=_slot.lines*_slot.mult*(SLOT_BET[_slot.type]||1); // [⑦] 台別掛金（レア台ほど高い）
     if(G.medals<bet){ document.getElementById('slResult').textContent='メダルが足りない…'; sfxCard&&sfxCard('fail'); return; }
     G.medals-=bet; document.getElementById('slMed').textContent=G.medals;
     document.getElementById('slResult').innerHTML=''; _slot.spinning=true;
@@ -2021,6 +2079,11 @@ function showSlot(opts){
         }, 700+i*360);
       });
       box.appendChild(wrap);
+      const bestRar=res.cards.reduce((m,id)=>Math.max(m,RAR_ORDER[cardRarity(id)]||0),0); // [②] スロットの当たりも賞賛
+      if(bestRar>=1){ setTimeout(()=>{ const cel=document.createElement('div');
+        cel.style.cssText='margin-top:10px;font-size:18px;font-weight:900;color:#ffe14d;text-shadow:0 0 10px #ffae00';
+        cel.textContent= bestRar>=3?'✨✨ 超大当たり！ やったな！！ ✨✨' : bestRar>=2?'✨ 大当たり！ レアGET！ ✨' : '✨ レアGET！ いい引きだ！';
+        box.appendChild(cel); sfxRareGet&&sfxRareGet(); }, 700+res.cards.length*360); }
       setTimeout(()=>{ const n=document.createElement('div'); n.className='muted'; n.style.cssText='font-size:11px;margin-top:6px';
         n.textContent=(_slot.inD?'カードは手札へ（一杯ならコレクションへ）。':'カードはコレクションへ。');
         box.appendChild(n); }, 700+res.cards.length*360);
@@ -2051,6 +2114,9 @@ function renderBag(){
     const el=cardEl(CARDS[id],id,()=>{
       G.bag.splice(i,1); G.collection[id]=(G.collection[id]||0)+1; renderBag();
     });
+    const total=(G.collection[id]||0)+G.bag.filter(x=>x===id).length; // [⑨] このカードの所持総数を常に表示
+    const badge=document.createElement('div'); badge.className='ccount'; badge.textContent='所持'+total;
+    el.appendChild(badge);
     b.appendChild(el);
   });
   document.getElementById('bet').textContent=DUNGEONS[G.dungeon].bet;
@@ -2130,6 +2196,7 @@ function startRun(){
   G.status={barrier:0,invis:0,combo:0,speed:0,regen:0,charmCount:0,bright:false,silent:false};
   G.regenLeft=0; G.loot=0; G.over=false; G.allies=[]; G.summon=null; G.floorCache={}; if(!G.monCards)G.monCards={};
   G._lvWarned=false; // [監修・間口] 推奨Lv警告トーストはランごとに初回のみ
+  G._townStock=null; // [③] 街ショップはランごとに再入荷
   // hand = the bag (cards are now at risk: lost on death, kept on escape/clear)
   const limit = d.bagLimit || 10;
   G.hand = G.bag.slice(0, limit);
@@ -2313,30 +2380,36 @@ function buildFloor(){
     placeAt({type:'card',card:'pot40'});
     if(!G.items.some(it=>it.type==='gem')) placeAt({type:'gem',val:10});
   }
-  // 店内売店: かなり難しいダンジョン(★5以上)だけ、たまに出現（最終フロアは除く）
-  if(!d.tutorial && !isFinal && d.star>=5 && Math.random()<0.22){
-    for(let g=0;g<120;g++){ const r=pick(rooms); const x=r.x+rnd(r.w), y=r.y+rnd(r.h);
-      if(map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py) && !(G.gem&&G.gem.x===x&&G.gem.y===y)
-        && !(G.stairs&&G.stairs.x===x&&G.stairs.y===y) && !G.items.some(it=>it.x===x&&it.y===y)
-        && !G.monsters.some(m=>m.x===x&&m.y===y)){ G.items.push({x,y,type:'shop'}); break; } }
-  }
-  // カジノエリア: 非チュートリアル・非最終フロアでたまに出現。1部屋に複数台のスロットが並ぶ。
-  if(!d.tutorial && !isFinal && Math.random()<0.12){
-    const cand=rooms.filter((r,idx)=> idx!==0 && r.w*r.h>=9);
-    const room=(cand.length?pick(cand):pick(rooms));
-    const freeC=(x,y)=> map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py)
-      && !(G.gem&&G.gem.x===x&&G.gem.y===y) && !(G.stairs&&G.stairs.x===x&&G.stairs.y===y)
-      && !(G.upstairs&&G.upstairs.x===x&&G.upstairs.y===y) && !G.items.some(it=>it.x===x&&it.y===y)
-      && !G.monsters.some(m=>m.x===x&&m.y===y);
-    const machines=2+rnd(3); // 2〜4台
-    let placed=0,gg=0; const types=['item','monster',(Math.random()<0.5?'item':'monster')];
-    while(placed<machines && gg<200){ gg++;
-      const x=room.x+rnd(room.w), y=room.y+rnd(room.h);
-      if(!freeC(x,y)) continue;
-      if(G.items.some(it=>it.type==='slot'&&dist(it.x,it.y,x,y)<2)) continue; // 台同士は離す
-      G.items.push({x,y,type:'slot',slotType:types[placed%types.length],casino:true}); placed++;
+  // [④] 売店の部屋：★3以上でたまに出現（最終フロア除く）。部屋の“上の行”に屋台が並ぶ（各屋台は別在庫）。店主が会話。
+  if(!d.tutorial && !isFinal && d.star>=3 && Math.random()<0.30){
+    const cand=rooms.filter((r,idx)=> idx!==0 && r.w>=4 && r.h>=3);
+    const room=cand.length?pick(cand):null;
+    if(room){
+      const freeC=(x,y)=> map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py) && !(G.gem&&G.gem.x===x&&G.gem.y===y)
+        && !(G.stairs&&G.stairs.x===x&&G.stairs.y===y) && !(G.upstairs&&G.upstairs.x===x&&G.upstairs.y===y)
+        && !G.items.some(it=>it.x===x&&it.y===y) && !G.monsters.some(m=>m.x===x&&m.y===y);
+      const ty=room.y; let n=0;                                  // 上の行に屋台を並べる
+      for(let x=room.x+1; x<room.x+room.w-1 && n<3; x+=2){ if(freeC(x,ty)){ G.items.push({x,y:ty,type:'shop'}); n++; } }
+      if(n===0){ for(let g=0;g<60;g++){ const x=room.x+rnd(room.w), y=room.y+rnd(room.h); if(freeC(x,y)){ G.items.push({x,y,type:'shop'}); n++; break; } } }
+      if(n>0) G._shopRoom=true;
     }
-    if(placed>0) G._casinoFloor=true;
+  }
+  // [⑦] スロットコーナー：たまに出現。部屋の“上の行”に台が並ぶ（item/卵/gambler＝掛金もレア率も違う）。お姉さんが会話。
+  if(!d.tutorial && !isFinal && Math.random()<0.14){
+    const cand=rooms.filter((r,idx)=> idx!==0 && r.w>=4 && r.h>=3);
+    const room=cand.length?pick(cand):(rooms.length>1?rooms[1]:null);
+    if(room){
+      const freeC=(x,y)=> map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py)
+        && !(G.gem&&G.gem.x===x&&G.gem.y===y) && !(G.stairs&&G.stairs.x===x&&G.stairs.y===y)
+        && !(G.upstairs&&G.upstairs.x===x&&G.upstairs.y===y) && !G.items.some(it=>it.x===x&&it.y===y)
+        && !G.monsters.some(m=>m.x===x&&m.y===y);
+      const types=['item','monster','gambler']; const ty=room.y; let placed=0;
+      for(let x=room.x+1; x<room.x+room.w-1 && placed<3; x+=2){ if(freeC(x,ty)){ G.items.push({x,y:ty,type:'slot',slotType:types[placed%types.length],casino:true}); placed++; } }
+      if(placed===0){ let gg=0; while(placed<2 && gg<160){ gg++; const x=room.x+rnd(room.w), y=room.y+rnd(room.h);
+        if(!freeC(x,y)) continue; if(G.items.some(it=>it.type==='slot'&&dist(it.x,it.y,x,y)<2)) continue;
+        G.items.push({x,y,type:'slot',slotType:types[placed%types.length],casino:true}); placed++; } }
+      if(placed>0) G._casinoFloor=true;
+    }
   }
   // world state: omens / corpses / 床ギミック(tfx) / 障害物(obst) / room-heal tracker
   G.omens=[]; G.corpses=[]; G.healedRooms=new Set();
@@ -2489,7 +2562,7 @@ function doIceSlide(dx,dy){
     if(cellHasStop(nx,ny)) break;                  // 階段/宝石/アイテム → 乗って停止
     if(tfxAt(nx,ny)!=='ice') break;                // 通常床/ダメージ床に到達 → 停止
   }
-  if(slid>0){ sfxSlideStop(); G._shake={t0:now()}; }
+  if(slid>0){ sfxSlideStop(); G._shake={r0:_rawNow()}; }
 }
 // 描画: 床ギミック
 const _tpat={}; // 床ギミックの生成テクスチャ（repeatパターン）キャッシュ
@@ -2953,9 +3026,11 @@ function draw(){
   else { const camX=clamp(pvx+0.5-VIEW_W/2, 0, G.w-VIEW_W); ox=Math.round(-camX*TW); }
   if(G.h<=VIEW_H){ oy=((cv.height-G.h*TILE)/2)|0; }
   else { const camY=clamp(pvy+0.5-VIEW_H/2, 0, G.h-VIEW_H); oy=Math.round(-camY*TILE); }
-  if(G._shake && tN>=G._shake.t0 && tN-G._shake.t0<200){ const k=1-(tN-G._shake.t0)/200;
-    const amp=(G._shake.amp===undefined?1:G._shake.amp)*5;
-    ox+=Math.round((Math.random()*2-1)*amp*k); oy+=Math.round((Math.random()*2-1)*amp*k); }
+  // [監修#10/揺れ分離] 揺れは実時間(_rawNow)基準＝ヒットストップ凍結で持続が縮まない。
+  //   反応(hitstop)は短いまま、揺れの重さ(振幅×持続)は独立。持続は振幅比例(240+amp*80ms)で重い一撃ほど余韻が長い。
+  if(G._shake){ const _se=_rawNow()-(G._shake.r0||0), _samp=(G._shake.amp===undefined?1:G._shake.amp), _sd=240+_samp*80;
+    if(_se>=0 && _se<_sd){ const k=1-_se/_sd, amp=_samp*5;
+      ox+=Math.round((Math.random()*2-1)*amp*k); oy+=Math.round((Math.random()*2-1)*amp*k); } }
   // 床/壁は「連続したパターン」として描く: 原点(ox,oy)に座標系を移し、世界座標で
   // パターン塗り。テクスチャはカメラと完全に一致してスクロールするため、立っているマスと
   // 床が必ず揃う（半マスズレが起きない）。
@@ -3591,7 +3666,7 @@ function doPlayerAttack(mon){
   { const _kill=mon.hp<=0;
     // 命中ヒットストップ（敵に当たった瞬間を強調）: 通常110ms / 会心260ms。
     // 威力＝停止量。会心は画面揺れ、通常も軽い揺れを足して「当たった！」を強める
-    if(!_kill){ setTimeout(()=>{ hitstop(crit?260:120); G._shake={t0:now(),amp:crit?1:0.5}; },120); } } // [監修#10] 命中hitstop 640/240→260/120（コメントの意図値に整合・連戦のテンポ改善）
+    if(!_kill){ setTimeout(()=>{ hitstop(crit?260:120); G._shake={r0:_rawNow(),amp:crit?1:0.5}; },120); } } // [監修#10] 命中hitstop 640/240→260/120（コメントの意図値に整合・連戦のテンポ改善）
   if(crit){ log(`💥 会心の一撃！ ${mon.name} に ${dmg} ダメージ！`,"l-gold");
     popText(mon.x,mon.y,"-"+dmg,"#fff3a0",true); }
   else { log(`▶ ${mon.name} に ${dmg} ダメージ！`,"l-dmg");
@@ -3606,12 +3681,12 @@ function killMonster(mon){
   const _boss=mon.boss||mon.guardian||mon._orbBoss||mon.name==='カオス';
   const _spr=SPRITES.mon[mon.name]||MON_SPRITE[mon.name];
   // 撃破の瞬間(=被弾と同時): 画面揺れ＋ヒットストップ。とどめ側も左右に揺れて見えるよう、死亡演出は後述で遅延。
-  setTimeout(()=>{ G._shake={t0:now(),amp:_boss?2:1}; hitstop(_boss?320:150); }, d0+120); // [監修#10] 撃破の振幅段階化（ボス±10px/雑魚±5px据え置き）＝特別感。時間は原状320/150
+  setTimeout(()=>{ G._shake={r0:_rawNow(),amp:_boss?2:1}; hitstop(_boss?320:150); }, d0+120); // [監修#10] 撃破の振幅段階化（ボス±10px/雑魚±5px据え置き）＝特別感。時間は原状320/150
   sfxKill(mon._fxDelay||0);            // とどめ: ドンッ……ザクッ……
   log(`✔ ${mon.name} を倒した！`,"l-good");
   if(mon._orbBoss){ const c=mon._orbCell||{x:mon.x,y:mon.y}; G.gem={x:c.x,y:c.y};
     log((mon.name==='幻影のオーブ'?'✨ 幻影のオーブが砕けた':'✨ 守護者を打ち倒した')+'——クリアのクリスタルが現れた！','l-gold');
-    sfxGem&&sfxGem(); G._shake={t0:now()}; }
+    sfxGem&&sfxGem(); G._shake={r0:_rawNow()}; }
   if(mon._orbBoss && G._bossTheme){ G._bossTheme=null; if(bgm.on) bgmStart(); } // ボス撃破→通常BGMへ
   if(mon._cbJob){ const _j=mon._cbJob; setTimeout(()=>playCbDefeat(_j), 800); } // 城主撃破→敗北・仲間入りカットシーン
   tryRecruit(mon); // 一定確率で仲間（カード）化
@@ -3695,7 +3770,7 @@ function pickupHere(){
   const it=G.items[idx];
   if(it.type==="shop"){ // 店内売店: 消費せず、購入モーダルを開く（何度でも利用可）
     if(!it._greeted){ it._greeted=true; log("🏪 売店だ。メダルでカードを買える。","l-sys"); }
-    showShop('dungeon', true); return; }
+    showShop('dungeon', true, it); return; } // [③] このタイル固有の在庫（10種・各1枚）
   if(it.type==="slot"){ // ダンジョン内スロット: 消費せず、回すたびに手札が増える
     if(!it._greeted){ it._greeted=true; log(it.casino?"🎰 カジノエリア発見！ スロットでメダルとカードを狙え。":"🎰 スロット台だ！ メダルを賭けてカードを狙え。","l-sys"); }
     showSlot({inD:true, type:it.slotType||'item'}); return; }
@@ -3703,8 +3778,7 @@ function pickupHere(){
     flash(G.px,G.py,"#ffd24d"); sfxGem(); G.items.splice(idx,1); return; }
   if(G.hand.length<G.handMax){
     G.hand.push(it.card); G.items.splice(idx,1);
-    log(`🎴 ${CARDS[it.card].nm} を拾った`,"l-mag");
-    fxCardGet(it.card); sfxPickupCard();
+    rareGetFx(it.card, G.px, G.py); // [新機能] レア(SR以上)は高音SE＋大賞賛／通常は従来通り
   } else {
     // 手札満杯: 手札10＋拾ったカードの計11枚から「床に置く1枚」を選ぶ。置いたカードは残り、戻れば拾える。
     openSwapModal(it, idx);
@@ -4017,7 +4091,7 @@ function enemyAttack(m,ranged,mult){
     G._hit={t0:now()+off+140,dx:edx,dy:edy,mag:1,ampScale:_ampS};
     sfxEnemy(matOf(m),off+140); // 素材別の攻撃音を命中に同期
     m._atkShake={t0:now()+off+140,dx:edx}; // 与えた側=敵は小さく横揺れ
-    setTimeout(()=>{ hitstop(160); G._shake={t0:now(),amp:0.5}; },off+140); // [監修#10] 被弾hitstop 280→160
+    setTimeout(()=>{ hitstop(160); G._shake={r0:_rawNow(),amp:0.5}; },off+140); // [監修#10] 被弾hitstop 280→160
   } else {
     // 敵の遠距離攻撃も弾道演出（発射→飛翔→着弾）
     m._lunge={dx:edx,dy:edy,t0:now()+off};
@@ -4026,7 +4100,7 @@ function enemyAttack(m,ranged,mult){
     fxMagic(G.px,G.py,'fire',off+BOLT_MS);
     G._hit={t0:now()+off+BOLT_MS,dx:edx,dy:edy,mag:1,ampScale:_ampS};
     sfxEnemy('magic',off+BOLT_MS); // ボォン……ズンッ（着弾に同期）
-    setTimeout(()=>{ hitstop(280); G._shake={t0:now(),amp:0.5}; },off+BOLT_MS); // 着弾ヒットストップ4倍＋画面わずか揺れ
+    setTimeout(()=>{ hitstop(280); G._shake={r0:_rawNow(),amp:0.5}; },off+BOLT_MS); // 着弾ヒットストップ4倍＋画面わずか揺れ
   }
   G._lockUntil=now()+off+240; // 敵の攻撃を見届けるまで入力を軽くロック
   G.hp-=dmg;
@@ -4196,7 +4270,7 @@ function cardCastFX(c,id,target){
       else fxMagic(m.x,m.y,'meteor');                              // 隕石
     });
     fxAura(G.px,G.py, kind==='thunder'?'255,233,123':kind==='meteor'?'190,120,255':'255,150,60', 420);
-    sfxCard('use'); G._shake=G._shake||{t0:now()};
+    sfxCard('use'); G._shake=G._shake||{r0:_rawNow()};
     return;
   }
   // ----- 回復: ポーションは青いオーラが包み込む -----
@@ -4479,6 +4553,23 @@ function sfxCard(kind){
     tone(t+0.26,2093,0.28,0.12); }                                  // ピロロロ……ポン
   else if(kind==='fail'){ tone(t,170,0.1,0.18,'square'); tone(t+0.09,145,0.12,0.18,'square'); } // ブブッ
   else { tone(t,1320,0.07,0.09); tone(t+0.05,1980,0.16,0.12); }     // キュイン
+}
+// [新機能] レアカード入手＝高音の上昇キラキラSE（拾った瞬間にレアと分かる）
+function sfxRareGet(){ if(!audio())return;
+  [1320,1760,2200,2640].forEach((f,i)=> setTimeout(()=> sfxBlip({type:'triangle',f0:f,f1:f*1.5,dur:0.16,g:0.26}), i*70));
+  setTimeout(()=> sfxBlip({type:'square',f0:880,f1:1760,dur:0.22,g:0.2}), 40);
+}
+// [新機能] カード入手演出：レア(SR以上)なら高音SE＋大賞賛＋揺れ／通常は従来音（ほめてやれ・レア感）
+function rareGetFx(id,x,y){
+  const r=cardRarity(id), c=CARDS[id];
+  if((RAR_ORDER[r]||0)>=1){
+    log(`✨【${r}】${c.nm} を手に入れた！ やったな、大当たりだ！`,"l-gold");
+    fxCardGet(id); sfxRareGet(); flash(x,y,'#ffe14d');
+    popText(x,y,`✨${r}！`, '#ffe14d', true);
+    G._shake={r0:_rawNow(),amp:1.2};
+  } else {
+    log(`🎴 ${c.nm} を拾った`,"l-mag"); fxCardGet(id); sfxPickupCard();
+  }
 }
 function sfxPickupCard(){ if(!audio())return; const t=AC.currentTime;
   tone(t,1175,0.08,0.11); tone(t+0.07,1760,0.2,0.12); }             // ピロリン
@@ -4808,7 +4899,7 @@ function fxSlash(x,y,ang,gold){ fxO.push({type:'slash',x,y,ang,gold,t0:now(),dur
 function fxImpact(x,y){ fxO.push({type:'impact',x,y,t0:now(),dur:180}); }
 function fxMagic(x,y,kind,delay){
   delay=delay||0;
-  if(kind==='meteor') G._shake={t0:now()+delay};
+  if(kind==='meteor') G._shake={r0:_rawNow()+delay};
   fxO.push({type:kind,x,y,t0:now()+delay,dur: kind==='fire'?460 : kind==='thunder'?300 : 520});
 }
 const BOLT_MS=260; // 魔法弾が飛んでいく時間
@@ -4841,7 +4932,7 @@ function fxDie(m){
   const sheet=deathSheet(m.name);
   if(sheet){
     fxO.push({type:'dsheet',img:sheet,x:m.x,y:m.y,big,t0:now()+d0,dur:big?720:560});
-    if(big) G._shake={t0:now()+d0};
+    if(big) G._shake={r0:_rawNow()+d0};
     return;
   }
   const soul=/魔道士|プリースト|ビショップ|死神|エビルアイ/.test(m.name);
@@ -4851,7 +4942,7 @@ function fxDie(m){
     emoji:m.emoji,flip:m._face||1,t0:now()+d0,dur:big?600:300});
   fxO.push({type:'smoke',x:m.x,y:m.y,t0:now()+d0+(big?250:80),dur:450});
   if(soul) fxO.push({type:'soul',x:m.x,y:m.y,t0:now()+d0+100,dur:600});
-  if(big) G._shake={t0:now()+d0};
+  if(big) G._shake={r0:_rawNow()+d0};
 }
 function drawDieSprite(im,emoji,px,py,sx,sy){
   sy=sy||sx;
