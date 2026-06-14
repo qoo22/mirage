@@ -3026,13 +3026,10 @@ function draw(){
   else { const camX=clamp(pvx+0.5-VIEW_W/2, 0, G.w-VIEW_W); ox=Math.round(-camX*TW); }
   if(G.h<=VIEW_H){ oy=((cv.height-G.h*TILE)/2)|0; }
   else { const camY=clamp(pvy+0.5-VIEW_H/2, 0, G.h-VIEW_H); oy=Math.round(-camY*TILE); }
-  // [監修#10/揺れ分離+タメ] 揺れは実時間(_rawNow)基準＝ヒットストップ凍結で持続が縮まない（反応はキビキビのまま）。
-  //   形は2段階: タメ(フル振幅で持続=_hold)→ 余韻(直線減衰=_decay)。タメも実時計上なのでヒットストップとは独立。
-  //   既定は振幅比例（重い一撃ほどタメ・余韻が長い）。各発火で G._shake.hold / .decay 個別指定も可。
-  if(G._shake){ const _se=_rawNow()-(G._shake.r0||0), _samp=(G._shake.amp===undefined?1:G._shake.amp);
-    const _hold=(G._shake.hold!==undefined?G._shake.hold:Math.round(60+_samp*60));   // タメ(フル振幅)
-    const _decay=(G._shake.decay!==undefined?G._shake.decay:Math.round(200+_samp*80)); // 余韻(減衰)
-    if(_se>=0 && _se<_hold+_decay){ const k=_se<_hold?1:1-(_se-_hold)/_decay, amp=_samp*5;
+  // [監修#10/揺れ分離] 揺れは実時間(_rawNow)基準＝ヒットストップ凍結で持続が縮まない。
+  //   反応(hitstop)は短いまま、揺れの重さ(振幅×持続)は独立。持続は振幅比例(240+amp*80ms)で重い一撃ほど余韻が長い。
+  if(G._shake){ const _se=_rawNow()-(G._shake.r0||0), _samp=(G._shake.amp===undefined?1:G._shake.amp), _sd=240+_samp*80;
+    if(_se>=0 && _se<_sd){ const k=1-_se/_sd, amp=_samp*5;
       ox+=Math.round((Math.random()*2-1)*amp*k); oy+=Math.round((Math.random()*2-1)*amp*k); } }
   // 床/壁は「連続したパターン」として描く: 原点(ox,oy)に座標系を移し、世界座標で
   // パターン塗り。テクスチャはカメラと完全に一致してスクロールするため、立っているマスと

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>画面揺れ A/B 比較ツール — ミラージュゲート</title>
+<style>
+  :root{ --bg:#0c0e18; --panel:#161a2b; --line:#2a3050; --txt:#e8ecff; --sub:#9aa3c8;
+         --a:#5b8cff; --b:#ff9d4d; --good:#43d18a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--txt);
+        font-family:-apple-system,"Hiragino Sans","Yu Gothic",sans-serif; padding:16px; }
+  h1{ font-size:18px; margin:0 0 4px; }
+  .lead{ color:var(--sub); font-size:13px; margin:0 0 14px; line-height:1.6; }
+  .bar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px; }
+  .seg{ display:flex; gap:4px; background:var(--panel); border:1px solid var(--line);
+        border-radius:10px; padding:4px; }
+  .seg button{ background:transparent; color:var(--sub); border:none; padding:7px 11px;
+        border-radius:7px; font-size:13px; cursor:pointer; }
+  .seg button.on{ background:var(--a); color:#fff; font-weight:600; }
+  .fire{ background:var(--good); color:#062; border:none; border-radius:10px;
+        padding:11px 20px; font-size:15px; font-weight:700; cursor:pointer; }
+  .fire:active{ transform:scale(.97); }
+  label.chk{ color:var(--sub); font-size:13px; display:inline-flex; gap:6px; align-items:center; cursor:pointer; }
+  .panels{ display:flex; gap:16px; flex-wrap:wrap; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:14px;
+        padding:12px; flex:1 1 320px; min-width:300px; }
+  .ptitle{ font-size:14px; font-weight:700; margin:0 0 8px; display:flex; align-items:center; gap:8px; }
+  .dotA{ width:10px;height:10px;border-radius:50%;background:var(--a); }
+  .dotB{ width:10px;height:10px;border-radius:50%;background:var(--b); }
+  canvas.scene{ width:100%; aspect-ratio:16/11; background:#070912; border-radius:10px; display:block; }
+  canvas.env{ width:100%; height:54px; background:#070912; border-radius:8px; display:block; margin-top:8px; }
+  .read{ font-size:12px; color:var(--sub); margin-top:8px; line-height:1.7; font-variant-numeric:tabular-nums; }
+  .read b{ color:var(--txt); }
+  .sliders{ margin-top:10px; border-top:1px dashed var(--line); padding-top:10px; }
+  .slider{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--sub); margin:6px 0; }
+  .slider input[type=range]{ flex:1; accent-color:var(--b); }
+  .slider .val{ width:62px; text-align:right; color:var(--txt); font-variant-numeric:tabular-nums; }
+  .hint{ font-size:12px; color:var(--sub); margin-top:14px; line-height:1.6; }
+  .tag{ display:inline-block; background:#1f2540; border:1px solid var(--line); border-radius:6px;
+        padding:1px 7px; font-size:11px; color:var(--sub); margin-left:6px; }
+</style>
+</head>
+<body>
+  <h1>画面揺れ A/B 比較ツール <span class="tag">ミラージュゲート</span></h1>
+  <p class="lead">
+    <b style="color:var(--a)">A</b>と<b style="color:var(--b)">B</b>に好きな揺れを設定して<b>同時に再生</b>し、左右で見比べます。各パネルの<b>ヒットストップ・振幅・振動数・タメ・余韻・揺れ方</b>を個別に微調整できます。<br>
+    <span style="font-size:11px">※揺れは<b>左右（横）のみ</b>。振幅はそのままの実pxです。シナリオ（プリセット）を選ぶとA＝今の軽め／B＝重めの値が入り、そこから自由に調整できます。</span>
+  </p>
+
+  <div class="bar">
+    <div class="seg" id="scen">
+      <button data-s="crit" class="on">会心ヒット</button>
+      <button data-s="hit">通常ヒット</button>
+      <button data-s="killboss">ボス撃破</button>
+      <button data-s="killzako">雑魚撃破</button>
+      <button data-s="hurt">被弾</button>
+    </div>
+    <button class="fire" id="fire">▶ 同時に再生</button>
+    <label class="chk"><input type="checkbox" id="loop"> 🔁 連続再生</label>
+    <label class="chk">モンスター
+      <select id="monPick" style="background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:13px"></select>
+    </label>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <p class="ptitle"><span class="dotA"></span>A <span style="font-size:11px;color:var(--sub);font-weight:400">（プリセット＝今・軽め）</span></p>
+      <canvas class="scene" id="sceneA" width="320" height="220"></canvas>
+      <canvas class="env" id="envA" width="320" height="54"></canvas>
+      <div class="read" id="readA"></div>
+      <div class="sliders" id="ctrlA"></div>
+    </div>
+    <div class="panel">
+      <p class="ptitle"><span class="dotB"></span>B <span style="font-size:11px;color:var(--sub);font-weight:400">（プリセット＝重め・戻し）</span></p>
+      <canvas class="scene" id="sceneB" width="320" height="220"></canvas>
+      <canvas class="env" id="envB" width="320" height="54"></canvas>
+      <div class="read" id="readB"></div>
+      <div class="sliders" id="ctrlB"></div>
+    </div>
+  </div>
+
+  <p class="hint">
+    使い方：シナリオ（プリセット）を選ぶ→各パネルのスライダーで<b>振幅・振動数・タメ・余韻</b>を微調整→「同時に再生」or「連続再生」で見比べ。<br>
+    <b>ヒットストップ</b>＝命中時に時間を止める長さ(ms・反応/テンポ。揺れとは独立)／<b>振幅</b>＝揺れ幅(px)／<b>振動数</b>＝1秒あたりの揺れ回数(Hz)／<b>タメ</b>＝フル振幅で持続→<b>余韻</b>＝減衰（計＝総持続ms）／<b>揺れ方</b>＝ランダム(今のゲーム式)か正弦波。<br>
+    「これだ」という数値が決まったら教えてください。本体に反映します。
+  </p>
+
+<script>
+(function(){
+  // シナリオ＝プリセット。amp=振幅px, hsNew/hsOld=ヒットストップms, A/B=タメ・余韻ms
+  const SCEN = {
+    crit:    {label:"会心ヒット", amp:30, hsNew:260, hsOld:640, A:{hold:0,decay:320}, B:{hold:120,decay:320}},
+    hit:     {label:"通常ヒット", amp:15, hsNew:120, hsOld:240, A:{hold:0,decay:280}, B:{hold:90, decay:260}},
+    killboss:{label:"ボス撃破",   amp:60, hsNew:320, hsOld:320, A:{hold:0,decay:400}, B:{hold:160,decay:360}},
+    killzako:{label:"雑魚撃破",   amp:30, hsNew:150, hsOld:150, A:{hold:0,decay:320}, B:{hold:120,decay:300}},
+    hurt:    {label:"被弾",       amp:15, hsNew:160, hsOld:280, A:{hold:0,decay:280}, B:{hold:90, decay:260}},
+  };
+  let scen = "crit";
+  const $ = id => document.getElementById(id);
+
+  // --- モンスター（緑バックを抜いた透過PNG clip_*.png を使用）---
+  const MONS = [
+    {k:"dragon",    jp:"ドラゴン"},   {k:"darkdragon", jp:"ダークドラゴン"},
+    {k:"demon",     jp:"デーモン"},   {k:"reaper",     jp:"死神"},
+    {k:"skeleton",  jp:"スケルトン"}, {k:"golem",      jp:"ゴーレム"},
+    {k:"goblin",    jp:"ゴブリン"},   {k:"robot",      jp:"ロボット"},
+    {k:"shark",     jp:"グランシャーク"}
+  ];
+  let curMon = "assets/clip_dragon.png";
+  const sprCache = {};
+  // 透過PNGを直接表示＋撃破フラッシュ用の白シルエットを composite で生成（getImageData不要＝file://でも動く）
+  function loadSprite(path){
+    if(sprCache[path] !== undefined) return;
+    const rec = {img:null, white:null, ok:false}; sprCache[path] = rec;
+    const im = new Image();
+    im.onload = ()=>{ rec.img = im; rec.ok = true;
+      const c = document.createElement('canvas'); c.width=im.width; c.height=im.height;
+      const g = c.getContext('2d'); g.drawImage(im,0,0);
+      g.globalCompositeOperation='source-in'; g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height);
+      rec.white = c;
+    };
+    im.onerror = ()=>{ rec.ok=false; };
+    im.src = path;
+  }
+
+  // --- パネル状態 ---
+  function mkPanel(sceneId, envId){
+    const sc = $(sceneId), env = $(envId);
+    return {
+      sc, sctx: sc.getContext("2d"), env, ectx: env.getContext("2d"),
+      gameT: 0, lastReal: performance.now(),
+      hsEnd: 0,                 // 実時間: この時刻までヒットストップ凍結
+      atkAt: -1,                // game時間: 攻撃開始
+      impactAt: -1,             // game時間: 命中の瞬間
+      impacted: false,
+      shakeStart: -1,           // 実時間: 揺れ開始
+      flashStart: -1,           // game時間: 命中フラッシュ開始
+      cfg: null                 // {amp, hs, type, dur | hold,decay}
+    };
+  }
+  const A = mkPanel("sceneA","envA");
+  const B = mkPanel("sceneB","envB");
+
+  // --- スライダー構築（A/B 各パネル）---
+  const SLIDER_DEFS = [
+    {key:'hs',    label:'ヒットストップ', min:0,  max:700, step:10, unit:'ms'},
+    {key:'amp',   label:'振幅',   min:0,  max:200, step:1,  unit:'px'},
+    {key:'freq',  label:'振動数', min:2,  max:60,  step:1,  unit:'Hz'},
+    {key:'hold',  label:'タメ',   min:0,  max:400, step:10, unit:'ms'},
+    {key:'decay', label:'余韻',   min:50, max:900, step:10, unit:'ms'},
+  ];
+  function buildControls(pn, host){
+    SLIDER_DEFS.forEach(d=>{
+      const row=document.createElement('div'); row.className='slider';
+      row.innerHTML='<span style="width:58px">'+d.label+'</span>'+
+        '<input type="range" id="'+pn+'_'+d.key+'" min="'+d.min+'" max="'+d.max+'" step="'+d.step+'" data-u="'+d.unit+'">'+
+        '<span class="val" id="'+pn+'_'+d.key+'V"></span>';
+      host.appendChild(row);
+    });
+    const row=document.createElement('div'); row.className='slider';
+    row.innerHTML='<span style="width:58px">揺れ方</span>'+
+      '<select id="'+pn+'_style" style="flex:1;background:#1a2036;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px;font-size:12px">'+
+      '<option value="random">ランダム（ゲーム式）</option><option value="sine">正弦波</option></select>';
+    host.appendChild(row);
+    // 既定値
+    $(pn+'_freq').value=45; $(pn+'_style').value='random';
+  }
+  buildControls('A', $('ctrlA'));
+  buildControls('B', $('ctrlB'));
+
+  // プリセット（シナリオ）の値をスライダーへ流し込む。freq/style は維持。
+  function applyPreset(){
+    const s=SCEN[scen];
+    ['A','B'].forEach(pn=>{
+      $(pn+'_hs').value    = s.hsNew;       // 既定は「今」の短いヒットストップ（スライダーで昔の長さにもできる）
+      $(pn+'_amp').value   = s.amp;
+      $(pn+'_hold').value  = s[pn].hold;
+      $(pn+'_decay').value = s[pn].decay;
+    });
+    updateReads();
+  }
+
+  // --- A/B の揺れ設定を各スライダーから作る ---
+  function cfgFor(pn){
+    const hold=+$(pn+'_hold').value, decay=+$(pn+'_decay').value;
+    return { amp:+$(pn+'_amp').value, freq:+$(pn+'_freq').value,
+             hold, decay, dur:hold+decay, style:$(pn+'_style').value,
+             hs:+$(pn+'_hs').value };
+  }
+
+  // 揺れの包絡線 0..1（タメ→余韻）を実経過msから返す
+  function envAt(cfg, e){
+    if(e < 0) return 0;
+    if(e < cfg.hold) return 1;
+    if(e < cfg.hold + cfg.decay) return 1 - (e - cfg.hold)/cfg.decay;
+    return 0;
+  }
+
+  // --- 攻撃発火 ---
+  function fire(p, cfg){
+    p.cfg = cfg;
+    p.atkAt = p.gameT;
+    p.impactAt = p.gameT + 120;   // 踏み込み120msで命中
+    p.impacted = false;
+    p.shakeStart = -1;
+    p.flashStart = -1;
+  }
+
+  // --- 1パネル描画 ---
+  function step(p, realNow){
+    const dtReal = realNow - p.lastReal;
+    p.lastReal = realNow;
+    const frozen = realNow < p.hsEnd;       // ヒットストップ中はgame時間を止める
+    p.gameT += frozen ? 0 : dtReal;
+
+    // 命中判定（game時間が命中点に達したら hitstop+揺れ発火）
+    if(p.cfg && !p.impacted && p.gameT >= p.impactAt){
+      p.impacted = true;
+      p.hsEnd = realNow + p.cfg.hs;         // ヒットストップ（実時間で凍結）
+      p.shakeStart = realNow;               // 揺れは実時間で進む（＝分離）
+      p.flashStart = p.gameT;               // フラッシュはgame時間（凍結中は保持）
+    }
+
+    // 揺れオフセット（左右=横のみ。振幅px×包絡線×揺れ方）
+    let ox=0, oy=0, k=0;
+    if(p.cfg && p.shakeStart >= 0){
+      const e = realNow - p.shakeStart;
+      k = envAt(p.cfg, e);
+      const peak = p.cfg.amp * k;          // 現時点の振幅(px)
+      if(p.cfg.style === 'sine'){
+        ox = peak * Math.sin(2*Math.PI*p.cfg.freq*(e/1000));   // 正弦波: 振動数Hzで規則振動
+      } else {
+        const interval = 1000/Math.max(1, p.cfg.freq);          // ランダム: freq回/秒で乱数更新
+        if(p._rndAt===undefined || realNow - p._rndAt >= interval){ p._rnd = Math.random()*2-1; p._rndAt = realNow; }
+        ox = peak * p._rnd;
+      }
+      oy = 0;                              // 縦は揺らさない
+    }
+    drawScene(p, ox, oy, frozen, k);
+    drawEnv(p, realNow);
+  }
+
+  // --- シーン描画（ダンジョン床＋モンスター立ち絵が揺れる）---
+  const TILE = 44;
+  function drawScene(p, ox, oy, frozen, k){
+    const c = p.sctx, W = p.sc.width, H = p.sc.height;
+    c.clearRect(0,0,W,H);
+    c.save(); c.translate(ox, oy);
+    // 床グリッド
+    for(let y=0;y<H/TILE+1;y++)for(let x=0;x<W/TILE+1;x++){
+      c.fillStyle = ((x+y)%2)? "#101426" : "#0d1020";
+      c.fillRect(x*TILE-8, y*TILE-6, TILE-2, TILE-2);
+    }
+    c.strokeStyle = "rgba(120,140,220,.07)";
+    for(let x=0;x<W;x+=TILE){ c.beginPath(); c.moveTo(x,0); c.lineTo(x,H); c.stroke(); }
+    for(let y=0;y<H;y+=TILE){ c.beginPath(); c.moveTo(0,y); c.lineTo(W,y); c.stroke(); }
+
+    // モンスター立ち絵（透過）を中央に接地して描画。命中時は白フラッシュ。
+    const flashK = (p.cfg && p.flashStart>=0) ? Math.max(0, 1-(p.gameT-p.flashStart)/180) : 0;
+    const rec = sprCache[curMon];
+    const cxs = W/2, baseY = H*0.96;
+    // 影
+    c.fillStyle = "rgba(0,0,0,.34)";
+    c.beginPath(); c.ellipse(cxs, baseY-3, 54, 12, 0, 0, Math.PI*2); c.fill();
+    if(rec && rec.ok){
+      const sh = H*0.74, r = sh/rec.img.height, w = rec.img.width*r, hh = rec.img.height*r;
+      const dx = cxs - w/2, dy = baseY - hh;
+      c.drawImage(rec.img, dx, dy, w, hh);
+      if(flashK>0 && rec.white){ c.globalAlpha = 0.85*flashK; c.drawImage(rec.white, dx, dy, w, hh); c.globalAlpha = 1; }
+    } else {
+      c.fillStyle = "#c0392b"; roundRect(c, cxs-26, baseY-58, 52, 52, 9); c.fill();
+      c.fillStyle = "rgba(255,255,255,.55)"; c.font = "11px sans-serif"; c.textAlign = "center";
+      c.fillText("読込中…", cxs, baseY-26);
+    }
+    c.restore();
+
+    // 凍結インジケータ
+    if(frozen){
+      c.fillStyle = "rgba(255,255,255,.06)"; c.fillRect(0,0,W,H);
+      c.fillStyle = "#ffd34d"; c.font="bold 12px sans-serif"; c.textAlign="left";
+      c.fillText("⏸ ヒットストップ中", 10, 18);
+    }
+    if(k>0.02){
+      c.fillStyle = "rgba(123,160,255,.9)"; c.font="bold 12px sans-serif"; c.textAlign="right";
+      c.fillText("〜揺れ "+Math.round(k*100)+"%", W-10, H-10);
+    }
+  }
+
+  // --- エンベロープ（揺れの形）描画 ---
+  function drawEnv(p, realNow){
+    const c = p.ectx, W = p.env.width, H = p.env.height, mid = H/2;
+    c.clearRect(0,0,W,H);
+    c.strokeStyle="rgba(150,160,200,.18)"; c.beginPath(); c.moveTo(0,mid); c.lineTo(W,mid); c.stroke();
+    if(!p.cfg) return;
+    const total = Math.max(p.cfg.dur, 300);
+    const pxPerMs = W / (total*1.05);
+    // 形（上下対称の包絡線）
+    c.beginPath();
+    for(let e=0;e<=total;e+=6){
+      const k = envAt(p.cfg, e);
+      const x = e*pxPerMs, a = (mid-3)*k;
+      if(e===0) c.moveTo(x, mid-a); else c.lineTo(x, mid-a);
+    }
+    for(let e=total;e>=0;e-=6){
+      const k = envAt(p.cfg, e);
+      const x = e*pxPerMs, a = (mid-3)*k;
+      c.lineTo(x, mid+a);
+    }
+    c.closePath();
+    c.fillStyle = (p===A)? "rgba(91,140,255,.35)" : "rgba(255,157,77,.35)";
+    c.fill();
+    c.strokeStyle = (p===A)? "#5b8cff" : "#ff9d4d"; c.lineWidth=1.3; c.stroke();
+    // 再生ヘッド
+    if(p.shakeStart>=0){
+      const e = realNow - p.shakeStart;
+      if(e>=0 && e<=total){ const x=e*pxPerMs;
+        c.strokeStyle="#fff"; c.globalAlpha=.7; c.beginPath(); c.moveTo(x,2); c.lineTo(x,H-2); c.stroke(); c.globalAlpha=1; }
+    }
+    // 目盛り
+    c.fillStyle="rgba(170,180,220,.5)"; c.font="9px sans-serif"; c.textAlign="left";
+    c.fillText("0", 2, H-3);
+    c.textAlign="right"; c.fillText(Math.round(p.cfg.dur)+"ms", W-3, H-3);
+  }
+
+  function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y);
+    c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+
+  // --- 読み取り表示更新 ---
+  function readOut(pn, cfg){
+    SLIDER_DEFS.forEach(d=>{ $(pn+'_'+d.key+'V').textContent = $(pn+'_'+d.key).value + d.unit; });
+    const sty = cfg.style==='sine' ? '正弦波' : 'ランダム';
+    $('read'+pn).innerHTML =
+      "ヒットストップ <b>"+cfg.hs+"ms</b><br>"+
+      "振幅 <b>"+cfg.amp+"px</b>・"+cfg.freq+"Hz・"+sty+"<br>"+
+      "揺れ <b>タメ "+cfg.hold+" ＋ 余韻 "+cfg.decay+" ＝ 計 "+cfg.dur+"ms</b>";
+  }
+  function updateReads(){
+    const a=cfgFor('A'), b=cfgFor('B');
+    readOut('A', a); readOut('B', b);
+    if(A.shakeStart<0){ A.cfg=a; drawEnv(A, performance.now()); }
+    if(B.shakeStart<0){ B.cfg=b; drawEnv(B, performance.now()); }
+  }
+
+  // --- メインループ ---
+  function loop(){
+    const realNow = performance.now();
+    step(A, realNow); step(B, realNow);
+    requestAnimationFrame(loop);
+  }
+
+  // --- 入力 ---
+  $("scen").addEventListener("click", e=>{
+    const btn = e.target.closest("button[data-s]"); if(!btn) return;
+    scen = btn.dataset.s;
+    [...$("scen").children].forEach(b=>b.classList.toggle("on", b===btn));
+    applyPreset();   // プリセット値をスライダーへ
+  });
+  function doFire(){ fire(A, cfgFor('A')); fire(B, cfgFor('B')); }
+  $("fire").addEventListener("click", doFire);
+  // 全スライダー/セレクトの変更で再描画
+  ['A','B'].forEach(pn=>{
+    SLIDER_DEFS.forEach(d=> $(pn+'_'+d.key).addEventListener("input", updateReads));
+    $(pn+'_style').addEventListener("change", updateReads);
+  });
+
+  // 連続再生
+  let loopTimer = null;
+  $("loop").addEventListener("change", e=>{
+    if(e.target.checked){ doFire(); loopTimer = setInterval(doFire, 1300); }
+    else { clearInterval(loopTimer); loopTimer=null; }
+  });
+
+  // モンスター選択
+  const sel = $("monPick");
+  MONS.forEach(m=>{ const o=document.createElement('option');
+    o.value = "assets/clip_"+m.k+".png"; o.textContent = m.jp; sel.appendChild(o); });
+  sel.value = curMon;
+  sel.addEventListener("change", ()=>{ curMon = sel.value; loadSprite(curMon); });
+  loadSprite(curMon);                 // 初期モンスター
+  MONS.forEach(m=>loadSprite("assets/clip_"+m.k+".png")); // 先読み
+
+  applyPreset();   // 初期プリセット(会心)をスライダーへ
+  loop();
+})();
+</script>
+</body>
+</html>
