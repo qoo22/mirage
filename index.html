@@ -3030,7 +3030,7 @@ function draw(){
   //   形は2段階: タメ(フル振幅で持続=_hold)→ 余韻(直線減衰=_decay)。タメも実時計上なのでヒットストップとは独立。
   //   既定は振幅比例（重い一撃ほどタメ・余韻が長い）。各発火で G._shake.hold / .decay 個別指定も可。
   if(G._shake){ const _se=_rawNow()-(G._shake.r0||0), _samp=(G._shake.amp===undefined?1:G._shake.amp);
-    const _hold=(G._shake.hold!==undefined?G._shake.hold:Math.round(60+_samp*60));   // タメ(フル振幅)
+    const _hold=(G._shake.hold!==undefined?G._shake.hold:Math.round(15+_samp*15));   // タメ(フル振幅)＝旧の25%（テンポ優先）
     const _decay=(G._shake.decay!==undefined?G._shake.decay:Math.round(200+_samp*80)); // 余韻(減衰)
     if(_se>=0 && _se<_hold+_decay){ const k=_se<_hold?1:1-(_se-_hold)/_decay, amp=_samp*5;
       ox+=Math.round((Math.random()*2-1)*amp*k); oy+=Math.round((Math.random()*2-1)*amp*k); } }
