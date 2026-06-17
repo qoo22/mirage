@@ -1877,7 +1877,6 @@ function showShop(where, toBag, it){
       <div class="cfoot"><span>💰${c.cost}</span><span>${s.sold?'売切':(toBag?'袋へ':'所持へ')}</span></div></div>`;}).join('');
   const title = where==='dungeon' ? '🏪 売店' : '🏪 ショップ';
   showModal(`<div class="shopModal">
-    <img src="assets/shop_room.png" alt="" style="width:100%;height:84px;object-fit:cover;border-radius:10px;display:block;margin-bottom:8px" onerror="this.style.display='none'">
     <div class="shopHead">
       <img class="shopIcon" src="assets/shop_master.png" alt="" style="width:60px;height:76px;object-fit:contain;border-radius:8px" onerror="this.style.display='none'">
       <div><div class="shopTitle">${title}</div><div class="shopNote" id="shopLine">${shopkeeperLine(stock)}</div></div>
@@ -1996,7 +1995,6 @@ function showSlot(opts){
   if(_slot.spinning) return;
   const TNAME={item:'アイテムスロット',monster:'モンスタースロット',gambler:'ギャンブラースロット'}[_slot.type];
   showModal(`<div class="slmarquee">🎰 ${TNAME}${_slot.inD?'　-CASINO-':''}</div>
-    <img src="assets/slot_room.png" alt="" style="width:100%;height:78px;object-fit:cover;border-radius:8px;display:block;margin:4px 0" onerror="this.style.display='none'">
     <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin:4px 6px">
       <img src="assets/slot_lady.png" alt="" style="width:46px;height:58px;object-fit:contain" onerror="this.style.display='none'">
       <div id="slLadyLine" style="font-size:12px;color:#ffd9f0;max-width:300px;text-align:left">${slotLadyLine()}</div></div>
@@ -2382,9 +2380,9 @@ function buildFloor(){
     placeAt({type:'card',card:'pot40'});
     if(!G.items.some(it=>it.type==='gem')) placeAt({type:'gem',val:10});
   }
-  // [④] 売店の部屋：全ダンジョンでよく出現（最終フロア除く）。部屋の“上の行”に屋台が並ぶ（各屋台は別在庫）。店主が会話。
-  if(!d.tutorial && !isFinal && Math.random()<0.42){
-    const cand=rooms.filter((r,idx)=> idx!==0 && r.w>=3 && r.h>=2);
+  // [④] 売店の部屋：★3以上でたまに出現（最終フロア除く）。部屋の“上の行”に屋台が並ぶ（各屋台は別在庫）。店主が会話。
+  if(!d.tutorial && !isFinal && d.star>=3 && Math.random()<0.30){
+    const cand=rooms.filter((r,idx)=> idx!==0 && r.w>=4 && r.h>=3);
     const room=cand.length?pick(cand):null;
     if(room){
       const freeC=(x,y)=> map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py) && !(G.gem&&G.gem.x===x&&G.gem.y===y)
@@ -2396,9 +2394,9 @@ function buildFloor(){
       if(n>0) G._shopRoom=true;
     }
   }
-  // [⑦] スロットコーナー：よく出現。部屋の“上の行”に台が並ぶ（item/卵/gambler＝掛金もレア率も違う）。お姉さんが会話。
-  if(!d.tutorial && !isFinal && Math.random()<0.30){
-    const cand=rooms.filter((r,idx)=> idx!==0 && r.w>=3 && r.h>=2);
+  // [⑦] スロットコーナー：たまに出現。部屋の“上の行”に台が並ぶ（item/卵/gambler＝掛金もレア率も違う）。お姉さんが会話。
+  if(!d.tutorial && !isFinal && Math.random()<0.14){
+    const cand=rooms.filter((r,idx)=> idx!==0 && r.w>=4 && r.h>=3);
     const room=cand.length?pick(cand):(rooms.length>1?rooms[1]:null);
     if(room){
       const freeC=(x,y)=> map[y]&&map[y][x]===1 && !(x===G.px&&y===G.py)
@@ -2443,7 +2441,7 @@ function floorFactor(){
   const star=(DUNGEONS[G.dungeon]||{}).star||1;    // 難易度（強いダンジョンほど大）
   const startF=0.85;                                // 1F は少し弱め＝倒して成長できる
   const endF  =1.30 + 0.11*Math.min(star,9);        // 最終Fは難易度に応じて大きく上昇（強化）
-  return startF + (endF-startF)*Math.pow(p,1.4);    // 指数>1で「序盤やさしく・終盤に手ごたえ」の凸カーブ（ピークendFは不変）
+  return startF + (endF-startF)*Math.pow(p,0.78);   // 深層へ向けて加速（奥ほど急に強く）
 }
 // このフロアで実際に湧くモンスター帯。深層では「弱い種」を自動的に除外し、
 // 低層で出る雑魚が高層に居残らないようにする（pay=強さの目安でフィルタ）。
