@@ -1,0 +1,93 @@
+{
+ "scenes": [
+  {
+   "img": "op_gate",
+   "lines": [
+    "昔、ミラージュゲートという",
+    "伝説の門があった。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_treasure",
+   "lines": [
+    "その奥には、",
+    "失われた財宝と奇跡のカードが眠っていた。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_powers",
+   "lines": [
+    "富をもたらす力。",
+    "傷を癒やす力。",
+    "そして、命さえ取り戻せると言われる力。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_gather",
+   "lines": [
+    "人々は門へ集まり、",
+    "ある者は国を救い、",
+    "ある者は大切な人を救おうとした。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_tragedy",
+   "lines": [
+    "だがその奇跡は、",
+    "多くの悲劇も生んだ。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_seal",
+   "lines": [
+    "やがて人々は、門の力を恐れ、",
+    "ミラージュゲートを封印した。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_break",
+   "lines": [
+    "しかし今、その封印を解き、",
+    "世界を支配する力を得ようとする者が現れる。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_chaos",
+   "lines": [
+    "再び開かれた門。",
+    "再び始まる混沌。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_boy",
+   "lines": [
+    "その中で、ひとりの少年が門へ向かう。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_sister",
+   "lines": [
+    "不治の病に倒れた妹を、",
+    "救うために。"
+   ],
+   "title": false
+  },
+  {
+   "img": "op_walk",
+   "lines": [
+    "MIRAGE GATE",
+    "封印カードの迷宮"
+   ],
+   "title": true
+  }
+ ]
+}

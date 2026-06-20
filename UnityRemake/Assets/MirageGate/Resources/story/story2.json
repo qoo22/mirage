@@ -1,0 +1,1198 @@
+{
+ "chapters": [
+  {
+   "key": "e1",
+   "title": "第1章 第一次試験「はじまりの洞窟」",
+   "dungeon": "hajimete",
+   "bossNm": "試験番のゴブリン",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ ——あれから、幾年。レンは記憶の多くを失ったまま、ふたたびミラージュゲートの前に立っていた。妹の名と、その面影を、取り戻すために。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "また会えたね、レン。あたしはリリィ——カード商人で、あんたの案内人。今日から「探索者試験」、はじめるよ。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "探索者になれば、ミラージュゲートに入れるのか？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "正式にはね。非合法で入れば、だいたい死ぬか、売られるか——カードにされる。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "カードに？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "この世界では、強すぎる願いも、人間も、カードになる。……あんたの失くした記憶も、たぶん、どこかでカードになってる。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "第一次試験。最下層の「証カード」を持ち帰れば合格。受験者同士の妨害も——許可されてる。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 受験者の中に、ふたり。氷のような目をした剣士と、眼鏡の門番見習い。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "kyle",
+     "text": "俺はカイル。組む気はない、足手まといはいらない。——俺にも、探す相手がいる。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "俺も足手まといになる気はない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "ノアだ。門を守る家の出でね。……足手まといにならないために組む、って手もあるよ。その方が、生存率は高い。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "ギギッ！　ここから先は、通さない！",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "試験番のゴブリン。初心者狩りさ。遠慮はいらないよ。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "lily",
+     "text": "合格。……毎年、半分は死ぬ試験なのにね。あんた、やっぱり“ただの新人”じゃない。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "kyle",
+     "text": "借りは作らない。次は敵だと思え。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "僕は死にたがりが嫌いだ。……お互いさま、だろ？",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e2",
+   "title": "第2章 第二次試験「湿った森の生存戦」",
+   "dungeon": "kiraku",
+   "bossNm": "霧の毒蟲",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第二次試験。毒と霧に沈む森。二十四時間、生き延びた者だけが次へ進む。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "支給カードは3枚だけ。毒、虫、霧——油断すれば、朝を迎えられない。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mel",
+     "text": "あ、来た来た！　わたしメル、召喚型の受験生！　ひとりより、みんなの方が強いって信じてるタイプ。よろしくね！",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "カード適性って知ってる？　斬撃・召喚・魔導・操作・解析・禁忌。人にはカードとの相性がある。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "俺は？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "あなたは斬撃型に見える。でも——まだ底が見えない。まるで、何かを“封じてる”みたいに。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "シャアアアッ……",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "霧の毒だ。視界が効かない。匂いと音で来る。正面で殴るな。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "mel",
+     "text": "生きてる！　ね、組んでよかったでしょ？",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "kyle",
+     "text": "……今回だけだ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ その夜、レンは夢を見る。会ったこともないはずの、少女の声を。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "お兄ちゃん……まだ、思い出さないで。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e3",
+   "title": "第3章 第三次試験「カード奪取戦」",
+   "dungeon": "futsuu",
+   "bossNm": "シグマ",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第三次試験——カード奪取戦。受験者は、互いの“番号”を奪い合う。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "標的の番号を奪えば得点、自分のは守れ。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "強さじゃ勝てない。情報戦だ。誰が誰を狙い、能力は何か——それを読む。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 群衆の中から、気配もなく——痩せた男が、レンの隣に立っていた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "sigma",
+     "text": "シグマだ。解析と操作が得意でね。……強いカードを持つ人間ほど、動きが読みやすい。なぜか分かる？",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "そのカードに頼るからか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "sigma",
+     "text": "正解。君はまだマシだ。でも、失いたくないものができれば——誰でも、頼るようになる。",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "sigma",
+     "text": "僕の適性は操作型。君のカードを——少しの間、封じさせてもらう。",
+     "face": "smirk",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "弱そうに見えて、試験で一番危険な男。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "sigma",
+     "text": "カードを使わずに勝つか。……面白い人だ。また会おう、闇市で。",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "闇市？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "……嫌な予感がする。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e4",
+   "title": "第4章 最終試験「候補者の決闘」",
+   "dungeon": "tegowai",
+   "bossNm": "カイル",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 最終試験は、一対一の決闘。殺せば失格。降参させるか、戦意を折れ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "あなたの相手は——カイル。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "kyle",
+     "text": "俺は勝つ。妹みたいに育った幼馴染を、探すためにライセンスがいる。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "俺もだ。俺にも、取り戻したい人がいる。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "kyle",
+     "text": "なら、どっちかが諦めるしかない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "諦める必要はない。俺たちは、殺し合いに来たわけじゃない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "kyle",
+     "text": "一撃誓約——外せばHP半分。それでも、この一撃に懸ける！",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "制約が重いほど威力は上がる。あの一撃、受けちゃだめ！",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "kyle",
+     "text": "……甘いな。でも、その甘さを折れないなら、本物だ。借りは、いつか返す。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "おめでとう。これで君たちは——合法的に死ねるようになった。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 探索者ライセンス。持つだけで一生食べていける証。そして、門の最奥へ進む鍵。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e5",
+   "title": "第5章 風の神殿",
+   "dungeon": "fun",
+   "bossNm": "風詠みのセイレーン",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ ライセンスを手に、ふたりは本物の迷宮へ。最初の試練は、記憶を映す風の神殿。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "ミア——妹の、記憶カードの手がかりを探したい。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "その情報を持ってるのは、たぶん闇市のクロウ。でもその前に——この神殿は、あなたの過去を知ってる。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "あなたの記憶、風に揺れているわ。あなたは一度、ここへ来た。誰かを救うために。",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "聞いちゃダメ。幻に引き込まれる。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "hero",
+     "text": "……俺は、ここに来たことがある。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "うん。あなたは昔、ゲートの最深部まで行った。今は、それだけ言っておく。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e6",
+   "title": "第6章 闇市「カードスロット遺跡」",
+   "dungeon": "hard",
+   "bossNm": "ジャックポットデーモン",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 噂をたどり、ふたりは違法カードの巣窟——闇市の遺跡へ降りた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "crow",
+     "text": "ようこそ、迷える探索者。情報屋のクロウだ。妹の記憶カードを探しているんだろう？",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "なぜ知っている。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "crow",
+     "text": "欲しいものを持つ人間は、みんな同じ顔をする。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "何が望みだ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "crow",
+     "text": "君がどこまで払えるか、見てみたい。遺跡の奥のスロットを、回してごらん。",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "回せ、回せ、回せ！　欲望が止まるまで！",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "勝てばレア、負ければ全部。欲を出すな。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "crow",
+     "text": "見事。君は欲に飲まれなかった。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "crow",
+     "text": "だが、君を狙う連中がいる。黒札団——違法カードを集め、“幻影のオーブ”の解放を企む集団さ。",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e7",
+   "title": "第7章 黒札団",
+   "dungeon": "fierce",
+   "bossNm": "副団長イリス",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ そして黒札団が、牙を剥く。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "iris",
+     "text": "はじめまして、未来のカード。わたしはイリス、黒札団の副団長で——操作型。あなたの召喚モンスター、もらうわね。",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mel",
+     "text": "わたしの仲間を——返して！",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "riine",
+     "text": "仲間……羨ましい。わたしはリーネ。死んだ仲間のカードで戦うの。だから、奪うことに——ためらいはない。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "乱暴はよせ、イリス。——彼には、まだ選ぶ余地がある。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "iris",
+     "text": "笑顔で、残酷に。それが、わたしの流儀。",
+     "face": "smirk",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "奪った召喚を、自分のものとして使う。厄介だよ。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "leon",
+     "text": "いい目だ。失いたくないものがある目。……いずれ、こちら側に来る。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "断る。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "そう急ぐな。私はレオン、黒札団の団長。君と私は、案外、同じものを欲しがっている。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e8",
+   "title": "第8章 封印騎士の神殿",
+   "dungeon": "ultimate",
+   "bossNm": "封印騎士アルゼン",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 神殿の奥で、レンの記憶が——ついに、戻りはじめる。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "水の神殿と炎の神殿は繋がってる。ここで——あなたの記憶が、本当に戻る。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "arzen",
+     "text": "止まれ、探索者。私は封印騎士アルゼン。その先へ進めば、また同じ悲劇が起きる。",
+     "face": "stern",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "俺はもう逃げない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "arzen",
+     "text": "ならば証明しろ。力ではなく、判断で。",
+     "face": "stern",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "記憶とは水。器が割れれば、二度と戻らぬ。",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "boss",
+     "text": "お前は妹を救おうと、世界の封印を解こうとした。そして妹自身が、それを止めた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "「私ひとりのために、みんなを壊さないで」",
+     "face": "sad",
+     "effect": "tremor",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "arzen",
+     "text": "思い出したか。お前の本当の適性——封印型。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "arzen",
+     "text": "倒した魔物をカードに封じ、敵の力さえ封じる。だが使うたび、自分の記憶を失う。",
+     "face": "stern",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "あなたの記憶を封じたのは、わたし。これ以上、あなたが壊れないように。……ごめんね。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "……ありがとう。もう、逃げない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e9",
+   "title": "第9章 幻のダンジョン襲撃",
+   "dungeon": "maboroshi",
+   "bossNm": "戦狂いグラム",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 黒札団が、幻のダンジョンを人工的に出現させた。狙いは“幻核カード”——オーブへの鍵。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "持ち込みは5枚まで。階段は一定ターンで動く。敵も味方も、同時に潜ってる。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 通路の奥から、地を揺らす笑い声。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "gram",
+     "text": "ハハッ！　黒札団のグラムだ。重い斬撃が好きでね。お前の「ドザンッ」、受けてみろ！",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "gram",
+     "text": "純粋な力だ。誓約も小細工も、いらねえ！",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "kyle",
+     "text": "一撃誓約——今は、お前のために使ってやる。退け、グラム！",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "setc",
+     "text": "……構造は読んだ。撤退する。私はセト、黒札団の解析役。レオンの言う通り——彼が、鍵だ。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "riine",
+     "text": "死んだ仲間も、いつか戻る。レオンなら、戻してくれる。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mel",
+     "text": "戻すって……それじゃ、戻ったことに、ならないよ。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "e10",
+   "title": "第10章 団長レオン",
+   "dungeon": "ultimate",
+   "bossNm": "黒札団団長レオン",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 黒札団の本拠。団長レオンが、静かに待っていた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "カードにされた者たちは、今も門の中で叫んでいる。それを救おうとするのが、そんなに悪か？",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "世界が壊れる。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "世界。いつもそうだ。その言葉は、目の前の一人を見捨てる時に、便利だな。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "……俺もそう思っていた。一人を救えない世界なら、壊れていいと。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "なら、なぜ止める？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "その一人が、世界を壊すなと、言ったからだ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "leon",
+     "text": "禁忌型——奪ったカードで戦おう。君の覚悟、見せてくれ。",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "leon",
+     "text": "強いな。だが、私は止まらない。最奥で、また会おう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "efinal",
+   "title": "終章 カードを置く者",
+   "dungeon": "ultimate",
+   "bossNm": "幻影のオーブ",
+   "isFinal": true,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ そして、すべての道は最奥へ——幻影のオーブの前へ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "ここが、ミラージュゲートの最奥。幻影のオーブ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "crow",
+     "text": "最後の取引だ。オーブを壊さず、妹だけを戻す方法がある。門の封印を解けばいい。",
+     "face": "smirk",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "crow",
+     "text": "世界中に迷宮が広がるが——妹は、戻る。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "私は、失った者を取り戻す。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "俺は、失った者と——進む。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "きれいごとだ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "そうかもしれない。でも、俺はそのきれいごとを、選ぶ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "お兄ちゃん。もういいよ。最後のカードは——使わないで。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [],
+   "outro": []
+  }
+ ]
+}

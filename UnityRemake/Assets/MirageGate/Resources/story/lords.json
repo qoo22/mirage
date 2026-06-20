@@ -1,0 +1,620 @@
+{
+ "lords": [
+  {
+   "job": "samurai",
+   "nm": "剣豪 ムサシ",
+   "teaser": "一万の太刀を退けた剣豪が、最奥で静かに待つ。",
+   "tex": "tegowai",
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 城の最奥——刀を提げた剣豪が、静かに目を開けた。",
+     "face": "",
+     "effect": "",
+     "classic": true,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "剣豪 ムサシ",
+     "text": "…よく来た。この城、剣で抜けると申すか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "剣豪 ムサシ",
+     "text": "面白い。一合、付き合おう。抜けるなら——わが刃を、越えてみよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "剣豪 ムサシ",
+     "text": "…見事。一片の迷いもない太刀筋であった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "剣豪 ムサシ",
+     "text": "その腕、ここで朽ちさせるには惜しい。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "剣豪 ムサシ",
+     "text": "行け。わが剣技、汝に託す——侍として、共に振るうがいい。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "dragoon",
+   "nm": "竜騎士 ヴァイス",
+   "teaser": "竜の血を引く騎士。その竜槍に、貫けぬものは無いという。",
+   "tex": "fierce",
+   "intro": [
+    {
+     "who": "竜騎士 ヴァイス",
+     "text": "竜の鱗を纏いし城へ、よくぞ踏み入った。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "竜騎士 ヴァイス",
+     "text": "我が槍は竜をも貫く。生半可な覚悟では、串刺しだぞ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "竜騎士 ヴァイス",
+     "text": "ぐ……竜の守りを、破るとは。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "竜騎士 ヴァイス",
+     "text": "よかろう。この竜槍、貴公の手に。共に空を駆けよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "paladin",
+   "nm": "聖騎士 ガウェイン",
+   "teaser": "聖盾の前では、いかなる刃も砕けると伝えられる。",
+   "tex": "space",
+   "intro": [
+    {
+     "who": "聖騎士 ガウェイン",
+     "text": "止まれ。この城を守るは、誇りある聖騎士。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "聖騎士 ガウェイン",
+     "text": "汝の心、宝剣に問う。穢れあらば——退けるのみ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "聖騎士 ガウェイン",
+     "text": "…清き太刀だ。汝の心、確かに見た。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "聖騎士 ガウェイン",
+     "text": "わが宝剣と盾、汝に授けよう。正義のために振るえ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "sorcerer",
+   "nm": "大魔導 ザルス",
+   "teaser": "塔に近づいた者は、皆、灰になったと聞く。",
+   "tex": "hard",
+   "intro": [
+    {
+     "who": "大魔導 ザルス",
+     "text": "ふん、塔の主に挑むとは命知らずな。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "大魔導 ザルス",
+     "text": "紫紺の魔よ——侵入者を、灰に変えてやろう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "大魔導 ザルス",
+     "text": "馬鹿な…我が魔導が、破られるとは。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "大魔導 ザルス",
+     "text": "面白い時代だ。よかろう、この魔力、貴様に貸し与える。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "valkyrie",
+   "nm": "戦乙女 ブリュンヒルデ",
+   "teaser": "戦場を選定する乙女。敗者に、翼は与えられない。",
+   "tex": "space",
+   "intro": [
+    {
+     "who": "戦乙女 ブリュンヒルデ",
+     "text": "勇者よ、この城に挑む資格があるか試させてもらう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "戦乙女 ブリュンヒルデ",
+     "text": "戦乙女の槍、受けてみせよ。死を恐れぬ者だけが先へ進める。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "戦乙女 ブリュンヒルデ",
+     "text": "…あなたの魂、確かに輝いている。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "戦乙女 ブリュンヒルデ",
+     "text": "選ばれし者よ。わが翼と槍、あなたに。共に天を駆けましょう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "darkknight",
+   "nm": "闇騎士 モルド",
+   "teaser": "呪われた大剣が、挑んだ者の名を一つずつ刻んでいく。",
+   "tex": "ultimate",
+   "intro": [
+    {
+     "who": "闇騎士 モルド",
+     "text": "よく来たな、光の側の者。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "闇騎士 モルド",
+     "text": "呪われた我が大剣、その身で受けてみるがいい。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "闇騎士 モルド",
+     "text": "ぐ……呪いの剣を、退けるか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "闇騎士 モルド",
+     "text": "貴様の強さ、本物だ。この闇の力、使いこなしてみせろ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "magicblade",
+   "nm": "魔剣姫 セリス",
+   "teaser": "剣も魔も極めし姫。退屈な相手は、すぐに飽きられる。",
+   "tex": "space",
+   "intro": [
+    {
+     "who": "魔剣姫 セリス",
+     "text": "あら、わたくしの城に客人？　珍しいこと。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "魔剣姫 セリス",
+     "text": "剣と魔法、両方でお相手するわ。退屈はさせない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "魔剣姫 セリス",
+     "text": "ふふ…強いのね。久しぶりに本気を出したわ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "魔剣姫 セリス",
+     "text": "気に入った。わたくしの魔剣、あなたに預けましょう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "reddragoon",
+   "nm": "紅竜将 ガイア",
+   "teaser": "紅竜の鉄壁。これを崩した者は、まだ誰もいない。",
+   "tex": "ultimate",
+   "intro": [
+    {
+     "who": "紅竜将 ガイア",
+     "text": "重き鎧の城へ、よくぞ。だが——退路はないぞ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "紅竜将 ガイア",
+     "text": "紅き竜の重撃、その身で知るがいい。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "紅竜将 ガイア",
+     "text": "むぅ……鉄壁を、崩されるとは。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "紅竜将 ガイア",
+     "text": "見上げた剛の者よ。わが紅竜の鎧、貴公に。前線を任せたぞ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "fallen",
+   "nm": "堕天 ゼラート",
+   "teaser": "堕ちた黒翼が、三日月の刃で影ごと刈り取るという。",
+   "tex": "hard",
+   "intro": [
+    {
+     "who": "堕天 ゼラート",
+     "text": "……ここまで来たか。黒き翼の城へ、ようこそ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "堕天 ゼラート",
+     "text": "三日月の刃が、汝の影を刈り取るだろう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "堕天 ゼラート",
+     "text": "…墜ちた我を、さらに墜とすか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "堕天 ゼラート",
+     "text": "いいだろう。この翼と鎌、汝に。闇を駆ける遊撃手となれ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "loki",
+   "nm": "奸計の神 ロキ",
+   "teaser": "奸計の神の城。罠と嘘が、客を笑顔で出迎える。",
+   "tex": "maboroshi",
+   "intro": [
+    {
+     "who": "奸計の神 ロキ",
+     "text": "やあ、迷い込んだ子ネズミ君。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "奸計の神 ロキ",
+     "text": "僕の城で遊んでいくかい？　ただし——生きて出られたらね。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "奸計の神 ロキ",
+     "text": "あはは、まいったまいった！　君、最高だよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "奸計の神 ロキ",
+     "text": "気に入った。僕の力、貸してあげる。一緒にこの世を引っ掻き回そう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "gilgamesh",
+   "nm": "英雄王 ギルガメシュ",
+   "teaser": "英雄王の黄金宮。雑種が立ち入ってよい場所ではない。",
+   "tex": "space",
+   "intro": [
+    {
+     "who": "英雄王 ギルガメシュ",
+     "text": "雑種が。我が黄金の城に、何用だ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "英雄王 ギルガメシュ",
+     "text": "身の程を知れ。我こそ最古にして最強の王——跪け。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "英雄王 ギルガメシュ",
+     "text": "……ほう。この我に、傷を付けるか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "英雄王 ギルガメシュ",
+     "text": "面白い。雑種にしては上出来だ。我が宝、貸し与えてやる。光栄に思え。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "lucifer",
+   "nm": "堕天使 ルシファー",
+   "teaser": "堕天の王が、光を騙った者を静かに見定めている。",
+   "tex": "space",
+   "intro": [
+    {
+     "who": "堕天使 ルシファー",
+     "text": "光に選ばれし者よ。だが——光は、いつか世界を焼く。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "堕天使 ルシファー",
+     "text": "我が黒翼の前に、汝の信じる正義を示してみせよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "堕天使 ルシファー",
+     "text": "…美しい。汝の魂は、墜ちてなお輝く。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "堕天使 ルシファー",
+     "text": "わが力、汝に託そう。光と闇、その両方を背負って往け。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "job": "odin",
+   "nm": "神王 オーディン",
+   "teaser": "神王の大広間。汝の結末を、その片目はすでに見ている。",
+   "tex": "space",
+   "intro": [
+    {
+     "who": "神王 オーディン",
+     "text": "……知っておるよ。汝がここへ来ることも、その先も。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "神王 オーディン",
+     "text": "片目で見た未来。それでも挑むか。ならば——神槍で試そう。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "defeat": [
+    {
+     "who": "神王 オーディン",
+     "text": "うむ。知識は、力には及ばぬこともある。良い学びだ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "神王 オーディン",
+     "text": "神槍グングニル、汝に貸そう。世界の真実を、その目で見るがいい。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1121 @@
+{
+ "chapters": [
+  {
+   "key": "ch1",
+   "title": "第1章 願いのはじまり",
+   "dungeon": "hajimete",
+   "bossNm": "はじまりの願い",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ ミラージュゲートの中——そこは、誰かの“願い”が、そのまま形になってしまった世界だった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "——おっと。そこの君。ぼくが、見えるんだね。……ひさしぶりだ、そんな目をした人は。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "ぼくはピコ。この門に棲みついた、しゃべるカードさ。中へ入る“資格”のある人を、ずっと待っていた。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "カードが、しゃべるのか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "この門ではね、強い“願い”ほど、形になる。だから——叶えたいものが大きい人ほど、危ない。君みたいに、ね。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "……俺の願いは、ひとつだけだ。妹を——ミアを、助ける。そのために、ここへ来た。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "妹、ねえ。——奇跡のカード、買う？　効果は本物。副作用は……あとで、わかる。ぜんぶ、あとでね。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "あたしはリリィ。しがないカード商人。……あんたのその目、放っておくと高くつきそうだ。だから、付き合ってあげる。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 通路の隅に、黒いカードホルダーが落ちている。——レンのものと、気味が悪いほど、よく似た形。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "先客がいるんだ。君より先に、最奥を目指してる“誰か”がね。……あの人もきっと、誰かを取り戻しに来た。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "奥の「はじまりの願い」には、近づくな。あれは——この門で、いちばん最初に願った者の、成れの果てだ。",
+     "face": "neutral",
+     "effect": "",
+     "classic": true,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "願えば、叶う。たやすいことだ。……代償？　そんなもの、気づくのはいつだって、ぜんぶ済んだ“あと”さ。",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "その“あと”で、何人が泣いたと思ってんの。——こいつは、その最初のひとり。だから、いちばん長く、忘れられてきた。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "願いには、必ず——誰かが払う。……覚えておく。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "narr",
+     "text": "＊ 願いの残響は　くだけ、一枚のカードに　なった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "あたしも行くよ。あんたの旅の最後まで——その願いの“値札”を、見届けてやる。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ リリィが　なかまに　なった！",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ くだけた願いの跡に、白い花が　ひとつ、咲いていた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "その花、拾っておくね。……レン。この花を、君はこれから、何度も見ることになる。なぜ、なんて——今は、聞かないで。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "ch2",
+   "title": "第2章 泣けない街",
+   "dungeon": "kiraku",
+   "bossNm": "悲しみ売り",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第二層。誰も泣いていない、しずかな街。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "この街は平和です。昨日、父が死にました。とても、平和です。",
+     "face": "neutral",
+     "effect": "",
+     "classic": true,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "……みんな、悲しんでない。涙が、ひとつもない。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "ぼくはノア。見習いの門番。門を守る家系なのに、まだ何も守れたことがなくて。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "ここの人たちは「悲しみを消すカード」を買ったの。楽になった。でも——",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "大事な人を失っても、もう泣けない。悲しめないって、こういうことなんだ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "ねえレン。気づいてる？　願いが叶うたび、空に細いひびが入る。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "あのひびの向こうで——たぶん、誰かの“明日”が、ひとつ消えてるんだ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "悲しみを、安く買い取ってあげただけだ。望んだのは、彼らだよ。",
+     "face": "",
+     "effect": "shake",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": [
+      {
+       "label": "悲しみも、その人のものだ",
+       "set": "ch2_grief"
+      },
+      {
+       "label": "忘れたくないものがある",
+       "set": "ch2_grief"
+      },
+      {
+       "label": "……わからない",
+       "set": "ch2_grief"
+      }
+     ]
+    },
+    {
+     "who": "boss",
+     "text": "その目。久しく見ていない。——涙は、弱さでは、なかったのかもな。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "narr",
+     "text": "＊ 街の人々の頬に、ひとすじ、涙が戻った。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "守れた……のかな。ぼくも、一緒に行っていい？　門の謎を、見届けたいんだ。",
+     "face": "determined",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ ノアが　なかまに　なった！",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "ch3",
+   "title": "第3章 とまった明日",
+   "dungeon": "futsuu",
+   "bossNm": "明日を手放した子",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第三層。時計の止まった学校。黒板に、来ない明日が書いてある。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "ここは時間がねじれてる。誰かの「未来」を、別の願いの燃料に使った跡だよ。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "ここに座ってた子は、医者になりたかった。その未来は……知らない誰かの願いに、使われました。",
+     "face": "neutral",
+     "effect": "",
+     "classic": true,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "未来を、燃料に……？　じゃあ、叶えた人の裏で、必ず誰かが、何かを失ってる。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "boss",
+     "text": "ぼくは大人になれない。でもお母さんは笑った。なら、これでよかったんだよね？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お兄ちゃん。……私のために、お兄ちゃんの未来を、なくさないでね。",
+     "face": "sad",
+     "effect": "tremor",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": [
+      {
+       "label": "それでもミアを助けたい",
+       "set": "ch3_future"
+      },
+      {
+       "label": "誰も失わない道を探す",
+       "set": "ch3_future"
+      },
+      {
+       "label": "……まだ、選べない",
+       "set": "ch3_future"
+      }
+     ]
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "うらやましいな。きみには、まだ“明日”があるんだ。",
+     "face": "",
+     "effect": "tremor",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "この子も、誰かの願いの“支払い”にされた。……許せないね。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "narr",
+     "text": "＊ 少年は　一枚の予定表に　なって　消えた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "奪われていい明日なんて、ない。……レン、それだけは、忘れないで。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "ch4",
+   "title": "第4章 騎士の懺悔",
+   "dungeon": "fun",
+   "bossNm": "白紙の騎士",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第四層。焼け落ちた戦場の、記憶。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "俺たちは勝ったのか？　それとも、最初から、いなかったことに……？",
+     "face": "neutral",
+     "effect": "",
+     "classic": true,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "……この層には、来たくなかった。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "俺はガルム。元・王国騎士。戦を終わらせた——「消滅のカード」で。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "敵も味方も、守るはずだった民も。“何を失ったか”ごと、消した。それが、俺の願いの代償だ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "願いは、必ず誰かに“あとばらい”させる。……この門の、いつものやり口だ。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "お前は多くを救った。だから——多くを、白紙にした。",
+     "face": "",
+     "effect": "red",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "逃げない。今度は、消した者たちの声を、聞いたうえで——前に進む。",
+     "face": "determined",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "garm",
+     "text": "許されたいのではない。忘れたく、ないのだ。連れて行ってくれ、レン。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ ガルムが　なかまに　なった！",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "白い花が、また一輪。……消された村に、咲いていた花だって。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "ch5",
+   "title": "第5章 まどろみの郷",
+   "dungeon": "fierce",
+   "bossNm": "まどろみの聖女",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第五層。眠る人々の、夢でできた郷。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "あなたが帰ってこない夢を、毎晩見るの。だからここでは——帰ってきたことに、したの。",
+     "face": "sad",
+     "effect": "",
+     "classic": true,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "みんな、夢に逃げてる。……正直、ぼくも、その気持ちが、少しわかる。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "この郷の聖女は、人々を“幸せな夢”に閉じ込めた。優しさで、ね。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "現実で泣くより、夢で笑うほうが、いいでしょう。それの、何が罪なのですか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "夢では——もう一度、会いに行けない。たとえ、また失うとしても、な。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "narr",
+     "text": "＊ 郷の人々が　目を覚ました。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "救うって……ありがとうって、言われることばかりじゃ、ないんだね。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "奇跡で誰かを眠らせたぶん、どこかで、誰かが目覚められずにいる。つながってるんだ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "ch6",
+   "title": "第6章 門番の遺言",
+   "dungeon": "tegowai",
+   "bossNm": "閉じられぬ門",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第六層。ノアの家系が、代々守ってきた——封印の記憶。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "門を閉じたのは、勇気ではない。怖かったからだ。だから二度と、開かぬようにした。",
+     "face": "neutral",
+     "effect": "",
+     "classic": true,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "ご先祖さま……ぼくにも、できるかな。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "通していい願いと、通しちゃいけない願いがある。誰かを壊す奇跡は——通さない！",
+     "face": "determined",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "pico",
+     "text": "これ、殴っても閉じない。みんなの“閉じたい理由”が、鍵なんだ。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "ぼくは弱い。だから、弱い人が奇跡にすがる気持ちが、わかる。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "わかったうえで——止める。それが、門番の仕事だ！",
+     "face": "determined",
+     "effect": "shake",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "narr",
+     "text": "＊ ノアが「封印の鍵」を　受け継いだ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "次が、最奥。……レン、本当のことを、話すね。覚悟して。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "ch7",
+   "title": "第7章 ミアの真実",
+   "dungeon": "hard",
+   "bossNm": "奪われた未来",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第七層。レンの家と、病室と、まだ見ぬ町が——混ざりあっている。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ そして、すべての伏線が、ひとつに繋がる。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "ミラージュゲートの「奇跡」は、別の時間軸から“結果”を奪う装置。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "誰かが救われると、別の世界で、誰かの未来が消える。空のひびは、その数だ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "……そしてね、レン。ミアの病気は——昔この門が叶えた“誰かの願い”の、あとばらいなんだ。",
+     "face": "sad",
+     "effect": "tremor",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "ミアの病が……この門の、せいだったのか。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "ぼく自身も、昔この門に封じられた“奪われた子どもの願い”の、集まりなんだ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "だから君を待ってた。同じことを、繰り返してほしくなくて。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お兄ちゃん。私ね、助かりたい。……でも、誰かの明日を食べてまで生きるのは、こわいよ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": [
+      {
+       "label": "絶対に助ける",
+       "set": "ch7_choice"
+      },
+      {
+       "label": "誰も犠牲にしない道を探す",
+       "set": "ch7_choice"
+      },
+      {
+       "label": "ミアの気持ちを聞く",
+       "set": "ch7_choice"
+      }
+     ]
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "ひとつの命は、ひとつの未来の上に立つ。さあ——どちらかを、選べ。",
+     "face": "",
+     "effect": "red",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "narr",
+     "text": "＊ レンは「奪う奇跡」の正体を、知ってしまった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "知ってなお進むなら——もう、目を逸らすな。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "ch8",
+   "title": "第8章 ヴェイルの娘ルナ",
+   "dungeon": "ultimate",
+   "bossNm": "喪失の幻影",
+   "isFinal": false,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 第八層。先を行く男——ヴェイルの、失った日々の記憶。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "お父さん、世界で一番強い人って、誰？",
+     "face": "smile",
+     "effect": "",
+     "classic": true,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "泣きながらでも、明日を選べる人だ。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mob",
+     "text": "じゃあ、ルナのお父さんは、強いね。",
+     "face": "smile",
+     "effect": "",
+     "classic": true,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "……いや。私はきっと、弱い。お前がいなくなったら、世界を許せなくなる。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ そして、娘ルナを失う日が——来てしまった。ルナの手には、白い花。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "私は世界が憎いのではない。娘のいない世界“だけ”が、どうしても許せなかった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "だから門で願った。別の時間軸の、生きているルナを——この世界へ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "そのために、見ず知らずの誰かの娘を、奪うのか。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "少年。お前も同じだろう。妹ひとりのために、ここまで来た。私と、何が違う？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [
+    {
+     "who": "boss",
+     "text": "とりもどせ。とりもどせ。とりもどす、ために——",
+     "face": "",
+     "effect": "tremor",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "outro": [
+    {
+     "who": "narr",
+     "text": "＊ ヴェイルは何も言わず、最奥へ消えた。レンの未来を、先に歩くように。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お兄ちゃん。あの白い花……私の好きな花と、同じだね。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "key": "final",
+   "title": "最終章 ミラージュゲート",
+   "dungeon": "ultimate",
+   "bossNm": "幻影のオーブ",
+   "isFinal": true,
+   "intro": [
+    {
+     "who": "narr",
+     "text": "＊ 最奥。すべての階が、ひとつに溶けあう。願いを叶える核——幻影のオーブ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "レン。ここで願え。妹を救え。私も、ルナを取り戻す。",
+     "face": "neutral",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "そのために、世界を——ほんの少しだけ、削るだけだ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "“少しだけ”って言う人ほど、ぜんぶ持っていくんだ。",
+     "face": "worried",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "きれいごとを捨てた世界は、思ったより、汚いぞ。",
+     "face": "serious",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "本当に高いものには、値札が書いてない。……忘れないで、レン。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "選べるのは三つ。奇跡を使うか、壊すか——それとも、別の道を、探すか。",
+     "face": "sad",
+     "effect": "tremor",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お兄ちゃん。もう、いいよ。最後のカードは——使わないで。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    }
+   ],
+   "boss": [],
+   "outro": []
+  }
+ ]
+}

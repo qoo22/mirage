@@ -1,0 +1,600 @@
+{
+ "parts": [
+  {
+   "part": 1,
+   "sub": "幻影のオーブの前。ヴェイルと並び、レンは何を選ぶ——",
+   "choices": [
+    "1. 奇跡のカードを使う（妹を救う）",
+    "2. 奇跡のカードを破壊する（門を閉じる）",
+    "3. 門の仕組みを書き換える（分け合う）"
+   ],
+   "bad": [
+    {
+     "who": "narr",
+     "text": "＊ レンは、奇跡のカードを使った。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お兄ちゃん、ありがとう。私……生きてるんだね。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "うん。……誰かの、明日の上にね。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ ミアは助かり、ヴェイルの娘も戻った。だが——どこか遠くで、子どもたちの未来が消えた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 願いは叶った。一見、幸せな朝。けれどその陰で、誰かが泣いている。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ — エンド：やさしい代償 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "normal": [
+    {
+     "who": "narr",
+     "text": "＊ レンは、奇跡のカードを砕いた。門が、静かに閉じていく。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お兄ちゃん。私のために、世界を壊さなかったんだね。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": [
+      {
+       "label": "ごめん",
+       "set": "end_normal"
+      },
+      {
+       "label": "ありがとう",
+       "set": "end_normal"
+      },
+      {
+       "label": "ずっと覚えてる",
+       "set": "end_normal"
+      }
+     ]
+    },
+    {
+     "who": "mia",
+     "text": "それなら、私は消えないよ。お兄ちゃんが、覚えてるなら。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 世界は救われた。カードの奇跡は消え、ミアは還らなかった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ — エンド：閉じた門 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "trueEnd": [
+    {
+     "who": "narr",
+     "text": "＊ レンは、奪う奇跡を——分け合う力へと、書き換えた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "戻らないのか……私の、娘は。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "戻らないものは、あるよ。でも——届くものも、あるんだ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お父さん。世界を、許してあげて。私が好きだった世界だから。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "vail",
+     "text": "私は……私は、何のために、ここまで。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "garm",
+     "text": "愛した者を、忘れないためだ。——壊すためでは、ない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "お兄ちゃん。私、すぐには治らないんだね。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "noa",
+     "text": "でも、未来は戻った。それは——明日を、待てるってことだ。",
+     "face": "determined",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "lily",
+     "text": "奇跡ってさ。願いが一瞬で叶うことじゃなくて、まだ続きがあるって思えることなのかもね。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "ぼくはカードです。でも、もう、使われるだけのカードじゃありません。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "これからは、しおりになります。みんなの“続き”を、忘れないための。",
+     "face": "smile",
+     "effect": "",
+     "classic": false,
+     "star": true,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ — 真エンド：封印カードの迷宮 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "tainted": [
+    {
+     "who": "narr",
+     "text": "＊ 門を書き換えるには——“奪わずに来た手”が要った。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "pico",
+     "text": "レン。きみの手は、もう少しだけ、願いに濡れている。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mia",
+     "text": "それでも、止まろうとしてくれた。それだけで、十分だよ。",
+     "face": "sad",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ 門は閉じた。だが、本当に“書き換える”には、あと一歩、綺麗な手が要った。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ — もうひとつのエンド：濁った手 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "＊ （禁忌カードを使わずに最後の選択へ至ると、真エンドに届く）",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  },
+  {
+   "part": 2,
+   "sub": "幻影のオーブの前。レオンと並び、あなたは何を選ぶ——",
+   "choices": [
+    "1. オーブを解放する（カード化された者を戻す）",
+    "2. オーブを壊す（世界を救う）",
+    "3. カードホルダーを置く（…切らない）"
+   ],
+   "bad": [
+    {
+     "who": "hero",
+     "text": "……オーブを、解放する。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "賢明だ。さあ、皆が還ってくる。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "お兄ちゃん……どうして？",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "カード化された者たちが還った。だが同時に、世界中に迷宮が口を開いた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "私は、こんな世界で生きたかったわけじゃないよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "— BAD END：解放 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "normal": [
+    {
+     "who": "hero",
+     "text": "……オーブを、壊す。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "やめろ……皆が、消える……！",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "門は砕けた。魔物も、カードも、迷宮も、世界から消えた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "ありがとう、お兄ちゃん。これで、もう誰も願いに飲まれない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "ばいばい。私のことは、忘れていいよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "……忘れない。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "英雄は、空っぽの手で帰っていった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "— NORMAL END：破壊 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "trueEnd": [
+    {
+     "who": "hero",
+     "text": "俺は、カードホルダーを置く。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "失った者を取り戻すために、誰かを犠牲にするのは違う。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "……ああ。俺も、置くよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "レオンは、奪い集めたカードを、静かに門へ返した。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "ミアは戻らない。でも——",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "門の中の魂たちは、ようやく眠れる。それで、十分だよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "ミラージュゲートは、完全には壊されなかった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "管理された試練として、門は残った。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "探索者協会も変わった。カードを「資源」ではなく、「封印された命」として扱うようになった。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "— TRUE END：カードを置く者 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ],
+   "tainted": [
+    {
+     "who": "hero",
+     "text": "俺は、カードホルダーを置こうとした。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "hero",
+     "text": "けれど、この手はもう禁忌に触れすぎていた。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "leon",
+     "text": "濡れた手では、何も置けないよ。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "mina",
+     "text": "それでも、止まろうとしてくれた。……ありがとう、お兄ちゃん。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "門は閉じた。だが、本当に「置く」には、もう少し綺麗な手が要った。",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "— もうひとつのエンド：濁った手 —",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    },
+    {
+     "who": "narr",
+     "text": "（禁忌カードを使わずに最後の選択を迎えると、TRUE END に至る）",
+     "face": "",
+     "effect": "",
+     "classic": false,
+     "star": false,
+     "choices": []
+    }
+   ]
+  }
+ ]
+}
