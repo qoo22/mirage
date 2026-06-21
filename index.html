@@ -1979,7 +1979,16 @@ function tryHeroSkinDrop(mon){ if(!mon||mon.boss||mon.guardian) return;
     log(`🎨 ヒーロースキン【${c.name}】入手！〔${INST_RAR_JP[c.rarity]||c.rarity}〕#${String(c.mint.serial).padStart(4,'0')}${c.mutation?(' ✦'+c.mutation):''}`,"l-gold");
     if(c.mutation||c.rarity==='Mythic'||c.rarity==='Legendary') sfxRareGet&&sfxRareGet(); saveGame(); } }
 function equippedHeroSkin(){ return G.heroSkin?((G.inv||[]).find(it=>it.core.instanceId===G.heroSkin)):null; }
-function equipHeroSkin(id){ G.heroSkin=(G.heroSkin===id)?null:id; saveGame(); }
+function preloadHeroSkinFrames(finish){
+  // 焼き済みスキンの全フレーム(斜め/歩行/攻撃含む)を先読み。未ロードのフレームがベース(旧色)に化けるのを防ぐ。
+  if(!finish||finish==='azure'||finish==='prismatic'||isMythicFinish(finish)) return;
+  const set=DIR_SPRITES['hero_'+G.job]; if(!set) return;
+  for(const v in set){ const st=set[v]; for(const k in st){ const p=st[k];
+    if(typeof p==='string') getImg('assets/hero_skins/'+finish+'/'+p.split('/').pop()); } }
+}
+function equipHeroSkin(id){ G.heroSkin=(G.heroSkin===id)?null:id;
+  const inst=equippedHeroSkin(); if(inst) preloadHeroSkinFrames(inst.core.heroFinish);
+  saveGame(); }
 function registerSkinPattern(core){ if(!core||core.kind!=='hero') return; G.usedSkinPatterns=G.usedSkinPatterns||{};
   G.usedSkinPatterns[core.heroFinish+':'+core.patternSeed]=1; }
 // 伝説級（HFレジェンド/HFミシック/実行時MYTHIC）はマーケット非対応＝非売品・ドロップ限定。
@@ -2708,6 +2717,7 @@ function fillStarterBag(){
 { const ab=document.getElementById('autoBagBtn'); if(ab) ab.onclick=fillStarterBag; }
 function startRun(){
   if(typeof titleBgmStop==='function') titleBgmStop();
+  { const _hs=equippedHeroSkin&&equippedHeroSkin(); if(_hs) preloadHeroSkinFrames(_hs.core.heroFinish); } // 現職のスキン全フレーム先読み
   const d=DUNGEONS[G.dungeon];
   G._runT0=Date.now(); // クリア時間計測
   if(!G.storyMode && !G.worldMode && G.dungeon!=='tutorial') statAttempt(G.dungeon); // 挑戦回数
