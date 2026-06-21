@@ -4979,8 +4979,84 @@ function rareUseFx(id,rar){
   G._shake={r0:_rawNow(),amp:0.9};
 }
 // カード使用時の演出＋音（全カードに固有の見た目/音を割り当てる）
+
+/* ===================== カード使用カットイン（魔法陣＋カード絵の大写し＋エフェクト炸裂） ===================== */
+const FX_COL={fire:'#ff6a2c',thunder:'#6cc8ff',meteor:'#b07cff',spear:'#ffd24d',poison:'#8cff6a',death:'#c060ff',heal:'#7df0a0',mana:'#6cc8ff',barrier:'#6ca8ff',power:'#ffd24d',status:'#c08cff',sleep:'#9db8ff',teleport:'#6cf0e0',light:'#ffe79a'};
+const FX_KEYS=Object.keys(FX_COL);
+function cardFxKey(c,id){
+  if(!c||c.cat==='equip') return null;
+  if(id==='fire'||id==='mfire') return 'fire';
+  if(id==='thunder'||id==='mthunder') return 'thunder';
+  if(id==='meteo'||id==='mmeteo') return 'meteor';
+  if(c.spear) return 'spear'; if(c.poison) return 'poison'; if(c.death) return 'death';
+  if(c.mag) return 'fire';
+  if(c.mpRestore) return 'mana';
+  if(c.heal||c.healMax||c.regen||c.hpup||c.soulreturn) return 'heal';
+  if(c.barrier) return 'barrier';
+  if(c.power||c.glow||c.combo||c.speed||c.invis) return 'power';
+  if(c.sleep) return 'sleep';
+  if(c.lockAll||c.slow||c.panic||c.storm||c.charm) return 'status';
+  if(c.teleport||c.escape) return 'teleport';
+  if(c.bright||c.map||c.search||c.silent) return 'light';
+  return null;
+}
+function _cciMcSVG(col){
+  let ticks=''; for(let i=0;i<24;i++){ const a=i/24*Math.PI*2; const x1=100+Math.cos(a)*86,y1=100+Math.sin(a)*86,x2=100+Math.cos(a)*92,y2=100+Math.sin(a)*92;
+    ticks+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${col}" stroke-width="1" opacity=".7"/>`; }
+  let runes=''; const GL='✦✧❂✷❖✶◇△▽'.split('');
+  for(let i=0;i<8;i++){ const a=i/8*Math.PI*2-Math.PI/2; const x=100+Math.cos(a)*64,y=100+Math.sin(a)*64;
+    runes+=`<text x="${x.toFixed(1)}" y="${(y+4).toFixed(1)}" text-anchor="middle" font-size="11" fill="${col}" opacity=".9">${GL[i%GL.length]}</text>`; }
+  return `<svg class="cci-mc" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <g class="cci-spin"><circle cx="100" cy="100" r="92" fill="none" stroke="${col}" stroke-width="1.4"/>
+      <circle cx="100" cy="100" r="78" fill="none" stroke="${col}" stroke-width=".8" stroke-dasharray="3 5" opacity=".7"/>${ticks}
+      <polygon points="100,18 171,140 29,140" fill="none" stroke="${col}" stroke-width="1.2" opacity=".8"/></g>
+    <g class="cci-spin-rev"><polygon points="100,182 29,60 171,60" fill="none" stroke="${col}" stroke-width="1.2" opacity=".5"/>
+      <circle cx="100" cy="100" r="56" fill="none" stroke="${col}" stroke-width=".8" opacity=".6"/>${runes}</g></svg>`;
+}
+function _injectCciStyle(){
+  if(document.getElementById('cciStyle')) return;
+  const st=document.createElement('style'); st.id='cciStyle';
+  st.textContent=`
+  #cardcutin{position:fixed;inset:0;z-index:9990;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0}
+  #cardcutin.on{opacity:1}
+  #cardcutin .cci-veil{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(8,6,16,.12),rgba(2,1,6,.8))}
+  #cardcutin .cci-stage{position:relative;width:min(80vw,500px);height:min(80vw,500px);display:flex;align-items:center;justify-content:center}
+  #cardcutin .cci-mc{position:absolute;width:100%;height:100%;filter:drop-shadow(0 0 9px var(--c));animation:cciMc 1.25s ease forwards}
+  #cardcutin .cci-spin{transform-origin:100px 100px;animation:cciSpin 3s linear infinite}
+  #cardcutin .cci-spin-rev{transform-origin:100px 100px;animation:cciSpin 4s linear infinite reverse}
+  #cardcutin .cci-fx{position:absolute;width:120%;height:120%;object-fit:contain;mix-blend-mode:screen;animation:cciBurst 1.25s ease forwards}
+  #cardcutin .cci-flash{position:absolute;width:160%;height:160%;background:radial-gradient(circle at center,var(--c),transparent 60%);mix-blend-mode:screen;opacity:0;animation:cciFlash 1.25s ease forwards}
+  #cardcutin .cci-card{position:relative;width:128px;border-radius:13px;border:3px solid var(--c);background:linear-gradient(180deg,#10131f,#0a0c14);box-shadow:0 0 24px var(--c),0 10px 28px #000;padding:9px 8px;text-align:center;animation:cciCard 1.25s cubic-bezier(.2,1.4,.4,1) forwards}
+  #cardcutin .cci-card .ic{font-size:50px;line-height:1;filter:drop-shadow(0 0 8px var(--c))}
+  #cardcutin .cci-card .nm{font-weight:900;font-size:15px;margin-top:3px;color:#fff;text-shadow:0 1px 4px #000}
+  #cardcutin .cci-card .ds{font-size:10px;color:#bcd;margin-top:2px;line-height:1.3}
+  @keyframes cciMc{0%{opacity:0;transform:scale(.5)}25%{opacity:1;transform:scale(1.05)}78%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.08)}}
+  @keyframes cciSpin{to{transform:rotate(360deg)}}
+  @keyframes cciBurst{0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1.06)}72%{opacity:.92;transform:scale(1)}100%{opacity:0;transform:scale(1.13)}}
+  @keyframes cciFlash{0%{opacity:0}12%{opacity:.55}42%{opacity:0}100%{opacity:0}}
+  @keyframes cciCard{0%{opacity:0;transform:translateY(22px) scale(.6) rotate(-6deg)}45%{opacity:1;transform:translateY(0) scale(1.06) rotate(2deg)}72%{transform:scale(1) rotate(0)}100%{opacity:0;transform:scale(.97)}}`;
+  document.head.appendChild(st);
+}
+function playCardCutin(c,id){
+  try{
+    const key=cardFxKey(c,id); if(!key) return;
+    if(G.opt&&G.opt.noCutin) return;
+    _injectCciStyle();
+    const col=FX_COL[key]||'#9cf', fx='assets/fx/'+key+'.png';
+    const im=(typeof getImg==='function')?getImg(fx):null;
+    const fxImg=(im&&im._ok)?`<img class="cci-fx" src="${fx}">`:'';
+    const ov=document.createElement('div'); ov.id='cardcutin'; ov.style.setProperty('--c',col);
+    ov.innerHTML=`<div class="cci-veil"></div><div class="cci-stage">${_cciMcSVG(col)}${fxImg}<div class="cci-flash"></div>
+      <div class="cci-card"><div class="ic">${c.ic||'✨'}</div><div class="nm">${c.nm||''}</div><div class="ds">${c.ds||''}</div></div></div>`;
+    document.body.appendChild(ov);
+    requestAnimationFrame(()=>ov.classList.add('on'));
+    setTimeout(()=>{ try{ov.remove();}catch(e){} }, 1320);
+  }catch(e){}
+}
+
 function cardCastFX(c,id,target){
   const _rar=cardRarity(id);
+  playCardCutin(c,id);
   if((RAR_ORDER[_rar]||0)>=1) rareUseFx(id,_rar);  // レア(SR+)使用＝賞賛演出（音は各効果側のSEで鳴る）
   // ----- 攻撃魔法: 光線/落雷/隕石を対象へ -----
   if(c.mag||c.spear||c.death){
@@ -5143,7 +5219,7 @@ function resolveCard(i,target){
     if(G.hp<=0) gameOver();
   }
 }
-const CARD_CAST_MS=900; // カード使用→演出を見せる“ため”の時間（この後に敵が動く）
+const CARD_CAST_MS=1280; // カード使用→演出を見せる“ため”の時間（この後に敵が動く）
 function applyMagic(m,dmg,kind){
   if(m.role==="magicimmune"){ log(`${m.name} は魔法無効！`,"l-warn"); return; }
   m.hp-=dmg; log(`魔法: ${m.name} に ${dmg}`,"l-mag");
@@ -8961,6 +9037,7 @@ G.maboroshiAvail = G.endlessAvail || Math.random()<0.12;
 Object.values(DIR_SPRITES).forEach(s=>Object.values(s).forEach(v=>Object.values(v).forEach(p=>getImg(p))));
 // 武器スキン原画(40)を先読み（カードで即表示・フォールバックのちらつき防止）
 try{ WEAPON_BASES.forEach(b=>SKIN_FINISHES.forEach(f=>getImg('assets/skins/skin_'+b.id+'_'+f.id+'.png'))); }catch(e){}
+try{ FX_KEYS.forEach(k=>getImg('assets/fx/'+k+'.png')); }catch(e){}
 Object.values(MON_POSE).forEach(p=>{getImg(p.attack);getImg(p.hit);});
 Object.values(PORT).forEach(p=>{ if(p.img) getImg(p.img); });
 ['assets/ui_bg.png','assets/ui_story.png','assets/ui_free.png'].forEach(p=>getImg(p)); // UI画像先読み
