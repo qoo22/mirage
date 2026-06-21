@@ -17,7 +17,17 @@ ALL_JOBS=['warrior','wizard','gambler','ren','samurai','dragoon','paladin','sorc
 # finish -> (色相回転deg, 彩度倍, 明度倍)。azure=原色 / prismatic=虹アニメ＝実行時専用 なので焼かない。
 FIN={'crimson':(150,1.18,1.0),'verdant':(80,1.10,1.0),'golden':(200,1.22,1.0),
      'violet':(55,1.12,1.0),'aqua':(175,1.05,1.0),'inferno':(165,1.30,1.0),
-     'shadow':(0,0.45,0.72)}
+     'shadow':(0,0.45,0.72),
+     # --- 追加レアスキン（顔据え置きマスク・装備のみ再配色）---
+     'rose':(128,1.05,1.10),      # 桃/ローズ
+     'platinum':(0,0.30,1.25),    # 白銀/プラチナ
+     'obsidian':(210,0.35,0.40),  # 漆黒/オブシディアン
+     'emerald':(270,1.28,1.05),   # 翠/エメラルド
+     'sapphire':(30,1.35,0.92),   # 蒼藍/サファイア
+     'frost':(330,0.72,1.20),     # 氷/フロスト
+     'bloodmoon':(120,1.45,0.80), # 暗紅/ブラッドムーン
+     'venom':(250,1.55,1.05),     # 毒緑/ヴェノム
+     'sakura':(92,0.78,1.20)}     # 淡桜/サクラ
 
 def recolor_np(im, hue_deg, sat_mul, br_mul):
     rgba=np.asarray(im.convert('RGBA'), dtype=np.uint8)

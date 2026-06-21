@@ -1130,6 +1130,10 @@ const DIR_SPRITES={
   "キングドラゴン":dset('kingdragon'), "デーモン":dset('demon'), "カオス":dset('chaos'),
   "ミミック":dset('mimic'), "レイス":dset('wraith'), "クリスタルゴーレム":dset('crystalgolem'),
 };
+const FLIP_FIX_FRAMES=new Set([
+  't_d_warrior_side_walk1.png','t_d_dragoon_side_walk1.png','t_d_reddragoon_side_walk1.png',
+  't_d_lucifer_side_walk1.png','t_d_magicblade_side_walk2.png','t_d_magicblade_side_walk3.png'
+]);
 function dirSprite(key,e){
   const set=DIR_SPRITES[key]; if(!set) return null;
   const dx=e._dirX||0, dy=e._dirY||0;
@@ -1212,6 +1216,11 @@ function dirSprite(key,e){
     // attack/hit中にidleしか無い場合はm2ポーズを優先させる
     if((state==='attack'||state==='hit') && path===set[fb].idle) return null;
   }
+  // ★中割り反転バグ修正: 一部の歩行フレームが左右逆向きに生成されている（右へ進むと一瞬左を向く）。
+  //   該当フレームだけ描画時に追加反転して向きを揃える。ベース/カラースキン両方に効く（ファイル名一致）。
+  //   追加で見つかったら下のSetにファイル名を足すだけでOK。
+  if(path){ const _bn=path.split('/').pop();
+    if(FLIP_FIX_FRAMES.has(_bn)) flip=-flip; }
   return {path, flip};
 }
 /* 方向セットを持たないモンスター用: 攻撃/被弾の差し替えポーズ1枚 */
@@ -1635,12 +1644,12 @@ function K(base){ return (G.slot && G.slot!==1) ? base+'_'+G.slot : base; }
 function saveGame(){ try{ localStorage.setItem(K("mg_save"),
   JSON.stringify({medals:G.medals, collection:G.collection, endless:!!G.endlessAvail, slot:!!G.slotUnlocked,
     stats:G.stats||{}, cdun:G.clearedDuns||{}, monCards:G.monCards||{}, unlocked:G.unlocked||{},
-    inv:G.inv||[], serials:G._serials||{}, swordSkin:G.swordSkin||null, heroSkin:G.heroSkin||null, market:G._market||[], mktHist:G._mktHist||[],
+    inv:G.inv||[], serials:G._serials||{}, swordSkin:G.swordSkin||null, heroSkin:G.heroSkin||null, market:G._market||[], mktHist:G._mktHist||[], usedSkinPatterns:G.usedSkinPatterns||{},
     rating:G.rating, maxRankIdx:G.maxRankIdx})); }catch(e){} } // inv=個体台帳(Phase0) / rating=PvPレート
 function loadGame(){ try{ const s=JSON.parse(localStorage.getItem(K("mg_save")));
   if(s && typeof s.medals==="number"){ G.medals=s.medals; G.collection=s.collection||{}; G.endlessAvail=!!s.endless; G.slotUnlocked=!!s.slot;
     G.stats=s.stats||{}; G.clearedDuns=s.cdun||{}; G.monCards=s.monCards||{}; G.unlocked=s.unlocked||{};
-    G.inv=Array.isArray(s.inv)?s.inv:[]; G._serials=s.serials||{}; G.swordSkin=s.swordSkin||null; G.heroSkin=s.heroSkin||null; G._market=Array.isArray(s.market)?s.market:[]; G._mktHist=Array.isArray(s.mktHist)?s.mktHist:[];
+    G.inv=Array.isArray(s.inv)?s.inv:[]; G._serials=s.serials||{}; G.swordSkin=s.swordSkin||null; G.heroSkin=s.heroSkin||null; G._market=Array.isArray(s.market)?s.market:[]; G._mktHist=Array.isArray(s.mktHist)?s.mktHist:[]; G.usedSkinPatterns=s.usedSkinPatterns||{};
     G.rating=(typeof s.rating==='number')?s.rating:1000; G.maxRankIdx=s.maxRankIdx||0;
     try{ registerAllMonCards(); }catch(e){}   // 個体カードをCARDSへ動的登録（手札/袋で使えるように）
     return true; } }catch(e){}
@@ -1909,39 +1918,123 @@ const HERO_FINISHES=[
   {id:'aqua',      nm:'アクア',         hue:175, sat:1.05,w:12},
   {id:'inferno',   nm:'インフェルノ',   hue:165, sat:1.30,w:8},
   {id:'shadow',    nm:'シャドウ',       hue:0,   sat:0.45,w:8, dark:true},
+  // --- 追加レアスキン（焼き出しPNG: assets/hero_skins/<id>/）。bri は実行時CSSプレビュー用の明度補正 ---
+  {id:'rose',      nm:'ローズ',         hue:128, sat:1.05,w:10, bri:1.10},
+  {id:'platinum',  nm:'プラチナ',       hue:0,   sat:0.30,w:6,  bri:1.25},
+  {id:'obsidian',  nm:'オブシディアン', hue:210, sat:0.35,w:6,  bri:0.45},
+  {id:'emerald',   nm:'エメラルド',     hue:270, sat:1.28,w:9,  bri:1.05},
+  {id:'sapphire',  nm:'サファイア',     hue:30,  sat:1.35,w:8,  bri:0.92},
+  {id:'frost',     nm:'フロスト',       hue:330, sat:0.72,w:7,  bri:1.20},
+  {id:'bloodmoon', nm:'ブラッドムーン', hue:120, sat:1.45,w:5,  bri:0.80},
+  {id:'venom',     nm:'ヴェノム',       hue:250, sat:1.55,w:5,  bri:1.05},
+  {id:'sakura',    nm:'サクラ',         hue:92,  sat:0.78,w:6,  bri:1.20},
+  {id:'magma',     nm:'マグマ',         hue:168, sat:1.55,w:7,  bri:1.05},
+  {id:'fuchsia',   nm:'フクシャ',       hue:95,  sat:1.30,w:6,  bri:1.02},
+  {id:'lime',      nm:'ライム',         hue:285, sat:1.30,w:6,  bri:1.04},
   {id:'prismatic', nm:'プリズマティック',hue:0,  sat:1.25,w:4, rainbow:true},
+  // --- HF生成の高レア（焼き出しPNG: assets/hero_skins/hf_legend|hf_mythic/）。w:0=通常抽選から除外、絶対確率で別抽選 ---
+  {id:'hf_legend', nm:'レジェンド', hue:40,  sat:1.15, w:0, bri:1.18, hf:true, tier:'LEGEND', rar:'Legendary', glow:'#ffe6a0'},
+  {id:'hf_mythic', nm:'ミシック',   hue:200, sat:1.30, w:0, bri:1.02, hf:true, tier:'MYTHIC', rar:'Mythic',    glow:'#b59cff'},
 ];
-function heroFinishOf(id){ return HERO_FINISHES.find(f=>f.id===id)||HERO_FINISHES[0]; }
+/* ===== MYTHIC（焼き出し不要・実行時に“光る/動く”超低確率スキン） =====
+   prob = そのスキンが当たる絶対確率。anim = 実行時エフェクト種別。tier = 表示ランク。
+   ・装備（鎧/武器/マント）だけが輝き、キャラ本体（顔・体）はそのまま。
+   ・複雑配色/人気ほど桁違いに低確率（ユーザー指定）。 */
+const MYTHIC_FINISHES=[
+  {id:'radiant',    nm:'レイディアント',      tier:'LEGEND', anim:'radiant',  glow:'#ffe6a0', sat:1.30, bri:1.16, prob:0.000002,        pct:'0.0002%'},
+  {id:'astral',     nm:'アストラル',          tier:'MYTHIC', anim:'astral',   glow:'#9d8cff', sat:0.95, bri:0.92, prob:0.000002,        pct:'0.0002%'},
+  {id:'aurora',     nm:'オーロラ',            tier:'MYTHIC', anim:'aurora',   glow:'#7dffd0', sat:1.35, bri:1.10, prob:0.0000005,       pct:'0.00005%'},
+  {id:'holographic',nm:'ホログラフィック',    tier:'ULTRA',  anim:'holo',     glow:'#b6fff0', sat:1.45, bri:1.12, prob:0.000000005,     pct:'0.0000005%'},
+  {id:'chromatic',  nm:'極彩 — CHROMA',       tier:'SECRET', anim:'chromatic',glow:'#ff8af0', sat:1.70, bri:1.18, prob:0.000000000001, pct:'0.0000000001%'},
+];
+const MYTHIC_BY_ID=Object.fromEntries(MYTHIC_FINISHES.map(f=>[f.id,f]));
+function isMythicFinish(id){ return !!MYTHIC_BY_ID[id]; }
+function heroFinishOf(id){ return MYTHIC_BY_ID[id]||HERO_FINISHES.find(f=>f.id===id)||HERO_FINISHES[0]; }
+// HF生成の高レア（レジェンド/ミシック）を絶対確率で先に抽選（焼き出しPNGを使う高品質スキン）。
+function rollHFTier(){ const r=Math.random();
+  if(r<0.001) return 'hf_mythic';   // 0.1%
+  if(r<0.005) return 'hf_legend';   // +0.4% = 0.5%
+  return null; }
+// 先にMYTHICを絶対確率で抽選 → 外れたら通常スキンを重み抽選。
+function rollMythicFinish(){ let r=Math.random(),acc=0; for(const m of MYTHIC_FINISHES){ acc+=m.prob; if(r<acc) return m.id; } return null; }
 function pickHeroFinish(rng,rarity){ const hot=(rarity==='Mythic'||rarity==='Legendary');
   const pool=HERO_FINISHES.map(f=>({id:f.id,w:f.w*(hot&&(f.rainbow||f.id==='golden'||f.id==='shadow')?2:1)}));
   let tot=pool.reduce((a,b)=>a+b.w,0),x=rng()*tot; for(const p of pool){ x-=p.w; if(x<=0) return p.id; } return pool[0].id; }
 function heroHueJitter(seed){ const r=mulberry32(((seed||1)^0x07e1)>>>0); return Math.round(r()*40-20); }
 function mintHeroSkin(){
   const inst=mintInstance({name:'ヒーロースキン', atk:1, def:0, cap:[40,40,40], pay:6, emoji:'🎨'}, 'hero');
-  inst.core.heroFinish=pickHeroFinish(mulberry32(((inst.core.patternSeed||1)^0x9c3d)>>>0), inst.core.rarity);
-  inst.core.name=heroFinishOf(inst.core.heroFinish).nm+' スキン';
+  inst.core.heroFinish=rollHFTier()||rollMythicFinish()||pickHeroFinish(mulberry32(((inst.core.patternSeed||1)^0x9c3d)>>>0), inst.core.rarity);
+  const _f=heroFinishOf(inst.core.heroFinish);
+  if(_f.rar){ inst.core.rarity=_f.rar; inst.core.mythicTier=_f.tier; }      // HF高レア（レジェンド=Legendary / ミシック=Mythic）
+  else if(_f.tier){ inst.core.mythicTier=_f.tier; inst.core.rarity='Mythic'; } // 実行時MYTHICスキンは最高ランク表示
+  // 一期一会: 既に所有済みの(仕上げ×柄Seed)と衝突したら柄Seedを振り直す（同じ柄は二度と出ない）。
+  G.usedSkinPatterns=G.usedSkinPatterns||{}; let _k=inst.core.heroFinish+':'+inst.core.patternSeed, _t=0;
+  while(G.usedSkinPatterns[_k] && _t<128){ inst.core.patternSeed=(Math.random()*1e7|0); _k=inst.core.heroFinish+':'+inst.core.patternSeed; _t++; }
+  inst.core.name=_f.nm+' スキン';
   inst.core.provenance.sourceKill='染色';
   return inst;
 }
 function tryHeroSkinDrop(mon){ if(!mon||mon.boss||mon.guardian) return;
-  if(Math.random()<0.03+rankSkinBonus()){ G.inv=G.inv||[]; const inst=mintHeroSkin(); G.inv.push(inst); const c=inst.core;
+  if(Math.random()<0.03+rankSkinBonus()){ G.inv=G.inv||[]; const inst=mintHeroSkin(); G.inv.push(inst); const c=inst.core; registerSkinPattern(c);
     log(`🎨 ヒーロースキン【${c.name}】入手！〔${INST_RAR_JP[c.rarity]||c.rarity}〕#${String(c.mint.serial).padStart(4,'0')}${c.mutation?(' ✦'+c.mutation):''}`,"l-gold");
     if(c.mutation||c.rarity==='Mythic'||c.rarity==='Legendary') sfxRareGet&&sfxRareGet(); saveGame(); } }
 function equippedHeroSkin(){ return G.heroSkin?((G.inv||[]).find(it=>it.core.instanceId===G.heroSkin)):null; }
 function equipHeroSkin(id){ G.heroSkin=(G.heroSkin===id)?null:id; saveGame(); }
+function registerSkinPattern(core){ if(!core||core.kind!=='hero') return; G.usedSkinPatterns=G.usedSkinPatterns||{};
+  G.usedSkinPatterns[core.heroFinish+':'+core.patternSeed]=1; }
+// 伝説級（HFレジェンド/HFミシック/実行時MYTHIC）はマーケット非対応＝非売品・ドロップ限定。
+function isUntradableSkin(c){ return !!(c && c.kind==='hero' && (isMythicFinish(c.heroFinish) || c.heroFinish==='hf_legend' || c.heroFinish==='hf_mythic')); }
+// マーケット出品用＝通常配色のみのスキン（pickHeroFinishはw:0のHF高レアと実行時MYTHICを含まない）。
+function mintNormalSkin(){
+  const inst=mintInstance({name:'ヒーロースキン', atk:1, def:0, cap:[40,40,40], pay:6, emoji:'🎨'}, 'hero');
+  inst.core.heroFinish=pickHeroFinish(mulberry32(((inst.core.patternSeed||1)^0x9c3d)>>>0), inst.core.rarity);
+  const _f=heroFinishOf(inst.core.heroFinish); inst.core.name=_f.nm+' スキン'; inst.core.provenance.sourceKill='市場入荷';
+  G.usedSkinPatterns=G.usedSkinPatterns||{}; let _k=inst.core.heroFinish+':'+inst.core.patternSeed,_t=0;
+  while(G.usedSkinPatterns[_k]&&_t<128){ inst.core.patternSeed=(Math.random()*1e7|0); _k=inst.core.heroFinish+':'+inst.core.patternSeed; _t++; }
+  return inst;
+}
 function heroFinishCSS(core){ const f=heroFinishOf(core.heroFinish); let hue=(f.hue||0)+heroHueJitter(core.patternSeed);
-  if(f.rainbow) hue=(now()/18)%360; hue=((hue%360)+360)%360;
-  return `hue-rotate(${Math.round(hue)}deg) saturate(${f.sat||1})${f.dark?' brightness(0.72)':''}`; }
+  const t=now();
+  if(f.anim){ // MYTHIC: 時間で動く色味（装備が虹/金/極彩に脈動）
+    if(f.anim==='radiant'){ const p=0.5+0.5*Math.sin(t/240); return `saturate(${f.sat}) brightness(${(f.bri+p*0.18).toFixed(3)}) drop-shadow(0 0 ${(6+p*8).toFixed(1)}px ${f.glow})`; }
+    if(f.anim==='astral'){ hue=(t/26)%360; return `hue-rotate(${Math.round(hue)}deg) saturate(${f.sat}) brightness(${f.bri}) drop-shadow(0 0 6px ${f.glow})`; }
+    if(f.anim==='aurora'){ hue=(120+90*Math.sin(t/700))%360; return `hue-rotate(${Math.round(hue)}deg) saturate(${f.sat}) brightness(${f.bri}) drop-shadow(0 0 7px ${f.glow})`; }
+    if(f.anim==='holo'){ hue=(t/9)%360; return `hue-rotate(${Math.round(hue)}deg) saturate(${f.sat}) brightness(${f.bri}) contrast(1.08) drop-shadow(0 0 7px ${f.glow})`; }
+    if(f.anim==='chromatic'){ hue=(t/5)%360; const p=0.5+0.5*Math.sin(t/120); return `hue-rotate(${Math.round(hue)}deg) saturate(${(f.sat+p*0.4).toFixed(2)}) brightness(${(f.bri+p*0.12).toFixed(3)}) contrast(1.12) drop-shadow(0 0 ${(8+p*10).toFixed(1)}px ${f.glow})`; }
+  }
+  if(f.rainbow) hue=(t/18)%360; hue=((hue%360)+360)%360;
+  const bri=(f.bri!=null)?f.bri:(f.dark?0.72:1);
+  return `hue-rotate(${Math.round(hue)}deg) saturate(${f.sat||1})${bri!==1?' brightness('+bri+')':''}`; }
 function heroSkinFilter(){ const inst=equippedHeroSkin(); return inst?heroFinishCSS(inst.core):null; }
 // 焼き出し済み(顔据え置きマスク版)があればそのパスを返す。あれば実行時フィルタの代わりに使う。
 function bakedHeroSkinPath(origPath){ const inst=equippedHeroSkin(); if(!inst||!origPath) return null;
-  const f=inst.core.heroFinish; if(!f||f==='azure'||f==='prismatic') return null; // azure=原色 / prismatic=虹アニメは実行時のみ
+  const f=inst.core.heroFinish; if(!f||f==='azure'||f==='prismatic'||isMythicFinish(f)) return null; // azure=原色 / prismatic・MYTHIC=実行時アニメのみ
   const fn=origPath.split('/').pop(); const p='assets/hero_skins/'+f+'/'+fn;
   const im=getImg(p); return (im&&im._ok)?p:null; }
+// 一期一会の色替え: 焼き出しスキンも個体ごとに微小ジッターを掛け、同じ仕上げでも色味が必ず違う。
+function heroJitterCSS(core){ if(!core) return null; const r=mulberry32(((core.patternSeed||1)^0x51ed)>>>0);
+  const hue=Math.round(r()*30-15); const sat=(0.90+r()*0.24).toFixed(2); const bri=(0.95+r()*0.12).toFixed(2);
+  return `hue-rotate(${hue}deg) saturate(${sat}) brightness(${bri})`; }
+function bakedHeroJitter(){ const inst=equippedHeroSkin(); return inst?heroJitterCSS(inst.core):null; }
+// その個体の色味(度数)を表示用に
+function heroJitterHue(core){ const r=mulberry32(((core.patternSeed||1)^0x51ed)>>>0); return Math.round(r()*30-15); }
 
 /* ---- Phase2 足場：メダルでの個体マーケット（ローカル試作・サーバー権威化前） ---- */
 function estimatePrice(inst){
   const c=inst.core;
+  // ★スキンは基本的に超高額（簡単には手に入らない）。配色の格で桁が変わる。
+  if(c.kind==='hero'){
+    const f=heroFinishOf(c.heroFinish);
+    let p = (f&&f.tier&&!f.rar) ? 2000000      // 実行時MYTHIC（レイディアント/アストラル/オーロラ/ホロ/極彩）＝桁違い
+          : c.heroFinish==='hf_mythic' ? 500000  // HFミシック
+          : c.heroFinish==='hf_legend' ? 120000  // HFレジェンド
+          : 8000;                                 // 通常配色スキンでも超高額
+    const pt=patternTier(c.patternSeed); if(pt.tier==='gem') p*=2.0; else if(pt.tier==='good') p*=1.3; if(pt.sym) p*=1.25;
+    const mm=c.mutation?MUTATIONS.find(x=>x.name===c.mutation):null; if(mm) p*=(mm.mult||5);
+    p*=(1.1 - c.wear*0.4);
+    if(c.mint.isFounder) p*=1.5; if(c.mint.serial<=100) p*=1.2;
+    return Math.max(8000, Math.round(p));
+  }
   let p={Common:30,Rare:80,Epic:200,Legendary:600,Mythic:1800}[c.rarity]||30;
   const mm=c.mutation?MUTATIONS.find(x=>x.name===c.mutation):null; if(mm) p*=(mm.mult||5);
   const pt=patternTier(c.patternSeed); if(pt.tier==='gem') p*=2.2; else if(pt.tier==='good') p*=1.3; if(pt.sym) p*=1.15;
@@ -1954,8 +2047,10 @@ function sellInstance(id){
   const idx=(G.inv||[]).findIndex(it=>it.core.instanceId===id); if(idx<0) return 0;
   const inst=G.inv[idx]; if(inst.meta&&inst.meta._inPlay){ log("召喚中の個体は売れません","l-warn"); return 0; }
   if(inst.meta&&inst.meta._guarding){ log("城に配置中の個体は売れません（先に外す）","l-warn"); return 0; }
+  if(isUntradableSkin(inst.core)){ log("このスキンは非売品です（伝説級はマーケット取引不可）","l-warn"); sfxUIBack&&sfxUIBack(); return 0; }
   const price=estimatePrice(inst);
   if(G.swordSkin===id){ G.swordSkin=null; G.skinAtk=0; }
+  if(G.heroSkin===id){ G.heroSkin=null; }
   const tok='M:'+id; if(CARDS[tok]) delete CARDS[tok];
   G.bag=(G.bag||[]).filter(x=>x!==tok); G.hand=(G.hand||[]).filter(x=>x!==tok);
   G.inv.splice(idx,1); G.medals=(G.medals||0)+price;
@@ -1965,9 +2060,11 @@ function genMarketListings(n){
   const out=[]; const names=Object.keys(MONSTERS);
   for(let i=0;i<n;i++){
     let inst;
-    if(Math.random()<0.5){ const nm=names[(Math.random()*names.length)|0], M=MONSTERS[nm];
+    const _r=Math.random();
+    if(_r<0.4){ const nm=names[(Math.random()*names.length)|0], M=MONSTERS[nm];
       inst=mintInstance({name:nm,atk:M.atk,def:M.def,cap:M.cap,pay:M.pay,emoji:M.emoji},'monster'); inst.core.provenance.sourceKill='市場入荷'; }
-    else inst=mintWeaponInstance();
+    else if(_r<0.72){ inst=mintWeaponInstance(); }
+    else { inst=mintNormalSkin(); }
     out.push({inst, price:Math.round(estimatePrice(inst)*(1.05+Math.random()*0.30))}); // 買値=相場＋スプレッド
   }
   return out;
@@ -1977,6 +2074,7 @@ function buyListing(idx){
   if((G.medals||0)<L.price){ log("メダルが足りない","l-warn"); sfxCard&&sfxCard('fail'); return; }
   G.medals-=L.price; G.inv=G.inv||[]; G.inv.push(L.inst);
   if(L.inst.core.kind==='monster') registerMonCard(L.inst);
+  if(L.inst.core.kind==='hero') registerSkinPattern(L.inst.core);
   G._market.splice(idx,1);
   log(`🛒 ${L.inst.core.name} を購入 -${L.price}メダル`,"l-good"); sfxUIConfirm&&sfxUIConfirm(); saveGame();
 }
@@ -2251,6 +2349,14 @@ function shopkeeperLine(stock){
   if(owned<=2) return '🧔 なんだ、カード全然持ってないじゃねーか。まず一枚どうだ？';
   return '🧔 いらっしゃい！ ゆっくり見ていきな。';
 }
+// 高額/高レアのカードを買うと店員が褒める（安物は通常セリフに戻す＝nullを返す）
+function shopBuyPraise(c, rar){
+  const cost=c.cost||0;
+  if(cost>=300||rar>=4) return '🧔‼ た、大金じゃねえか…！ あんた只者じゃねえな。毎度あり、大事に使ってくれよ！！';
+  if(cost>=150||rar>=3) return '🧔✨ おぉ、奮発したな！ あんたみたいな上客は大歓迎だ、ありがとよ！';
+  if(cost>=70 ||rar>=2) return '🧔 いい買い物だ！ それは当たりだぜ、毎度あり！';
+  return null;
+}
 function showShop(where, toBag, it){
   const stock=shopStock(where, it);
   const cards=stock.map((s,si)=>{ const c=CARDS[s.id]; const rar=cardRarity(s.id);
@@ -2294,7 +2400,13 @@ function showShop(where, toBag, it){
         cw.innerHTML='';
         el.classList.add('sold'); el.style.opacity='.4'; el.style.filter='grayscale(1)';
         const foot=el.querySelector('.cfoot span:last-child'); if(foot) foot.textContent='売切';
-        const ln=document.getElementById('shopLine'); if(ln) ln.textContent=shopkeeperLine(stock);
+        // 高いカードを買うと店員が褒める（値段/レア度に応じて）
+        const ln=document.getElementById('shopLine');
+        if(ln){ const praise=shopBuyPraise(c, RAR_ORDER[cardRarity(s.id)]||0);
+          if(praise){ ln.textContent=praise; ln.style.transition='none'; ln.style.transform='scale(1.08)';
+            setTimeout(()=>{ ln.style.transition='transform .3s'; ln.style.transform='scale(1)'; },30);
+            if((c.cost||0)>=150) sfxRareGet&&sfxRareGet(); }
+          else ln.textContent=shopkeeperLine(stock); }
       };
     };
   });
@@ -2374,6 +2486,14 @@ function slotLadyLine(){
   if(G.medals>=500) return '💃 ふふ、景気がいいじゃない！ ちょっと遊んでく？';
   return '💃 ちょっと遊んでく？ 冒険に必要なカードは、自らの手で手に入れな！';
 }
+// 高額当選＝当選額に応じてお姉ちゃんが褒める
+function slotLadyWinLine(coins,bestRar){
+  if(coins>=400||bestRar>=4) return '💃✨ だ、大当たりィィィ!!! あんた…持ってるねぇ！ 一生ついてくわ！！';
+  if(coins>=200||bestRar>=3) return '💃✨ きゃー！ こんなに増やすなんて、あんた最高だよ！！';
+  if(coins>=80||bestRar>=2)  return '💃 やるじゃない！ その引きの強さ、見直したわ！';
+  if(coins>=30||bestRar>=1)  return '💃 いい引き！ ツイてるわね、その調子よ！';
+  return '💃 おっ、当たり！ ちょっとずつ増やしていこ！';
+}
 function showSlot(opts){
   if(typeof opts==='boolean') opts={inD:opts, type:'gambler'};
   opts=opts||{};
@@ -2448,6 +2568,12 @@ function showSlot(opts){
     const box=document.getElementById('slResult');
     if(!res.wins.length){ box.textContent='……ハズレ。もう一回？'; saveGame(); if(_slot.inD) refreshUI&&refreshUI(); return; }
     sfxGem&&sfxGem();
+    // お姉ちゃんが当選額に応じて褒める
+    { const bestRar=(res.cards||[]).reduce((m,id)=>Math.max(m,RAR_ORDER[cardRarity(id)]||0),0);
+      const ll=document.getElementById('slLadyLine'); if(ll){ ll.textContent=slotLadyWinLine(res.coins||0,bestRar);
+        ll.style.transition='none'; ll.style.transform='scale(1.12)'; ll.style.color='#ffe7a0';
+        setTimeout(()=>{ ll.style.transition='transform .3s,color .3s'; ll.style.transform='scale(1)'; ll.style.color='#ffd9f0'; },30);
+        if((res.coins||0)>=200||bestRar>=3) sfxRareGet&&sfxRareGet(); } }
     const head = res.wins.some(w=>w.sym==='diamond')?'💎 DIAMOND WILD！'
                : res.wins.some(w=>w.sym==='special')?'⭐ SPECIAL CARD！'
                : res.wins.map(w=>SLOT_SYMS[w.sym].nm+'揃い').join('・')+'！';
@@ -3512,11 +3638,13 @@ function draw(){
   let _heroPath=pds?pds.path:SPRITES.player;
   // ヒーローのカラースキン：焼き出し済み(顔据え置きマスク版)があれば優先、無ければ実行時リカラー
   const _baked=bakedHeroSkinPath(_heroPath); if(_baked) _heroPath=_baked;
-  const _hsf=(!_baked)?heroSkinFilter():null;
+  const _hsf=(!_baked)?heroSkinFilter():bakedHeroJitter(); // baked=個体ごとの一期一会ジッター
   if(_hsf){ ctx.save(); ctx.filter=_hsf; }
+  drawHeroFinishFX(true, ppx, ppy+eqLift); // MYTHIC: スプライト背後のオーラ/グロー
   drawUnitSprite(_heroPath, j.emoji, ppx, ppy+eqLift, 1.5,
     pds?pds.flip:(G._face||1), pfl, psx, psy, atkSpinOff(G), 0); // 攻撃の回転斬りのみ回転 / 被弾=左右揺れだけ
   if(_hsf){ ctx.restore(); }
+  drawHeroFinishFX(false, ppx, ppy+eqLift); // MYTHIC: スプライト前面のきらめき/オーロラ帯
   if(G._equipPose && eqK>0){ // 頭上に掲げた装備アイコン＋光輪＋きらめき
     const cx=ppx+TW/2, cy=ppy+TILE*0.16 - eqK*30;
     ctx.save();
@@ -3547,6 +3675,39 @@ function draw(){
   if(G._curseDim && tN<G._curseDim){ const k=(G._curseDim-tN)/520;
     ctx.fillStyle='rgba(20,0,30,'+(0.55*k).toFixed(3)+')'; ctx.fillRect(0,0,cv.width,cv.height); }
   drawHUD();
+}
+/* ----- MYTHIC スキンの実行時エフェクト（背後グロー＋前面きらめき/オーロラ帯） -----
+   under=true: スプライト背後の放射グロー/周回スター。under=false: 前面の光沢スイープ＋上昇きらめき。 */
+function drawHeroFinishFX(under, px, py){
+  const inst=equippedHeroSkin(); if(!inst) return;
+  const f=heroFinishOf(inst.core.heroFinish); if(!f||!f.anim) return;
+  if(G.opt&&G.opt.reduceFx&&!under) return; // エフェクト軽減: 前面の帯/きらめきは省く（背後の淡いグローのみ残す）
+  const t=now(); const cx=px+TW/2, cy=py+TILE/2; const glow=f.glow||'#ffffff';
+  ctx.save(); ctx.globalCompositeOperation='lighter';
+  if(under){
+    const p=0.5+0.5*Math.sin(t/300), R=TW*(0.92+p*0.26);
+    const g=ctx.createRadialGradient(cx,cy,2,cx,cy,R);
+    g.addColorStop(0,hexA(glow,0.50*(0.6+p*0.4))); g.addColorStop(0.5,hexA(glow,0.16)); g.addColorStop(1,hexA(glow,0));
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+    if(f.anim==='astral'||f.anim==='chromatic'){
+      for(let s=0;s<10;s++){ const a=t/600+s*0.628, r=TW*(0.46+0.46*((s%3)/2));
+        ctx.globalAlpha=0.45+0.4*Math.sin(t/200+s); ctx.fillStyle=glow; ctx.font='10px serif';
+        ctx.fillText('✦', cx+Math.cos(a)*r, cy+Math.sin(a)*r*0.78); }
+    }
+  } else {
+    if(f.anim==='holo'||f.anim==='chromatic'||f.anim==='aurora'){
+      const sweep=((t/900)%1), bx=px-TW*0.5+sweep*TW*2;
+      const grad=ctx.createLinearGradient(bx-14,py,bx+14,py+TILE);
+      grad.addColorStop(0,hexA('#ffffff',0)); grad.addColorStop(0.5,hexA('#ffffff',0.5)); grad.addColorStop(1,hexA('#ffffff',0));
+      ctx.fillStyle=grad; ctx.fillRect(px,py,TW,TILE);
+    }
+    const n=(f.anim==='chromatic')?7:4;
+    for(let s=0;s<n;s++){ const ph=(t/700+s*0.37)%1, a=1-ph;
+      const sx=cx+Math.sin(s*2.2+t/500)*TW*0.5, sy=py+TILE*(1-ph);
+      ctx.globalAlpha=a*0.9; ctx.fillStyle=(f.anim==='chromatic')?`hsl(${(t/4+s*60)%360},100%,70%)`:glow;
+      ctx.font=(7+a*7|0)+'px serif'; ctx.fillText('✦',sx,sy); }
+  }
+  ctx.restore(); ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1;
 }
 /* ----- 🧭/⤡ 向きインジケータ（faceMode/diagMode時にプレイヤーの向きを矢印で表示） ----- */
 function drawFacingArrow(cx,cy){
@@ -3602,15 +3763,24 @@ function outlineText(txt,x,y,size,fill,align){
 function drawHUD(){
   if(!G.map) return;
   const d=DUNGEONS[G.dungeon];
+  // [修正] 表示HPは敵の攻撃が当たる瞬間(G._hit.t0)まで減らさない（内部G.hpは即時）。
+  if(G._hpShown==null) G._hpShown=G.hp;
+  let _hpTgt=G.hp;
+  if(G._hit && now()<G._hit.t0) _hpTgt=Math.max(G._hpShown,G.hp); // 着弾前は保持
+  G._hpShown += (_hpTgt-G._hpShown)*0.4; if(Math.abs(_hpTgt-G._hpShown)<0.5) G._hpShown=_hpTgt;
+  const _dispHp=Math.max(0,Math.round(G._hpShown));
+  // DOM側のHP数値/バーも表示HPに同期
+  { const he=document.getElementById('hp'); if(he) he.textContent=_dispHp;
+    const hb=document.getElementById('hpbar'); if(hb) hb.style.width=clamp(G._hpShown/G.maxhp*100,0,100)+"%"; }
   // --- HP (top-left) ---
   outlineText("HP",12,26,15,"#fff");
-  outlineText(String(Math.max(0,Math.round(G.hp))),46,28,24,"#fff");
-  outlineText("/"+G.maxhp,46+ctx.measureText(String(Math.max(0,Math.round(G.hp)))).width+4,27,13,"#e0e0e0");
+  outlineText(String(_dispHp),46,28,24,"#fff");
+  outlineText("/"+G.maxhp,46+ctx.measureText(String(_dispHp)).width+4,27,13,"#e0e0e0");
   // hp bar
   const bw=170;
   ctx.fillStyle="#000"; ctx.fillRect(12,33,bw,11);
   ctx.strokeStyle="#fff"; ctx.lineWidth=1.5; ctx.strokeRect(11.5,32.5,bw+1,12);
-  const r=clamp(G.hp/G.maxhp,0,1);
+  const r=clamp(G._hpShown/G.maxhp,0,1);
   const grad=ctx.createLinearGradient(0,33,0,44);
   grad.addColorStop(0, r>.35?"#9cf06a":"#ff9c5a"); grad.addColorStop(1, r>.35?"#3fae2a":"#e04a20");
   ctx.fillStyle=grad; ctx.fillRect(13,34.5,(bw-2)*r,8);
@@ -3855,8 +4025,13 @@ function drawMon(m,ox,oy,ally){
   drawUnitSprite(img, m.emoji, px,py,
     big?1.38:1.2, ds?ds.flip:(m._face||1), fl, sqx, sqy, hrot, 0); // 被弾=左右しなり＋回転
   if(ally){ ctx.restore(); ctx.filter='none'; }
-  // hp bar
-  const ratio=clamp(m.hp/m.maxhp,0,1);
+  // hp bar — [修正] 表示HPは「攻撃が当たる瞬間(_hit.t0)」まで減らさない。
+  //   内部 m.hp は即時減算（撃破/ターン判定用）だが、見た目のバーは着弾まで保持してから減る。
+  if(m._hpShown==null) m._hpShown=m.hp;
+  let _tgt=m.hp;
+  if(m._hit && now()<m._hit.t0) _tgt=Math.max(m._hpShown, m.hp); // 着弾前は減らさず保持
+  m._hpShown += (_tgt-m._hpShown)*0.4; if(Math.abs(_tgt-m._hpShown)<0.5) m._hpShown=_tgt;
+  const ratio=clamp(m._hpShown/m.maxhp,0,1);
   ctx.fillStyle="#000a"; ctx.fillRect(px+6,py+TILE-10,TW-12,7);
   ctx.fillStyle= ally?"#5bb8ff": (ratio>.5?"#ff8c69":"#ff5b6e");
   ctx.fillRect(px+6,py+TILE-10,(TW-12)*ratio,7);
@@ -4136,10 +4311,11 @@ function doPlayerAttack(mon){
     // 命中ヒットストップ（敵に当たった瞬間を強調）: 通常110ms / 会心260ms。
     // 威力＝停止量。会心は画面揺れ、通常も軽い揺れを足して「当たった！」を強める
     if(!_kill){ setTimeout(()=>{ hitstop(crit?260:120); G._shake={r0:_rawNow(),amp:crit?1:0.5}; },120); } } // [監修#10] 命中hitstop 640/240→260/120（コメントの意図値に整合・連戦のテンポ改善）
+  // ダメージ数字は「踏み込みが当たる瞬間(≈120ms)」に出す（着弾前に数字が出ないように）
   if(crit){ log(`💥 会心の一撃！ ${mon.name} に ${dmg} ダメージ！`,"l-gold");
-    popText(mon.x,mon.y,"-"+dmg,"#fff3a0",true); }
+    popText(mon.x,mon.y,"-"+dmg,"#fff3a0",true,120); }
   else { log(`▶ ${mon.name} に ${dmg} ダメージ！`,"l-dmg");
-    popText(mon.x,mon.y,"-"+dmg,"#ffffff"); }
+    popText(mon.x,mon.y,"-"+dmg,"#ffffff",false,120); }
   // ドレインソードの吸収を弱体化＋格納（毎回フル回復しないように）:
   //   ・吸収率 1/4 → 1/8、1回の回復は最大4まで。
   //   ・HP満タンのときは回復しない（“毎回回復している”感を解消）。
@@ -4517,17 +4693,17 @@ function summonMenu(){
       const rr=MON_RAR_MAP[c.rarity]||'R', mut=c.mutation?`<span style="color:#c9a0ff"> ✦${c.mutation}</span>`:'';
       return `<button class="smpick" data-i="${o.i}" style="display:block;width:100%;text-align:left;margin:3px 0">${ic} <b>${c.name}</b> #${String(c.mint.serial).padStart(4,'0')} <span class="tag">${rr} ⚔${c.statRoll.atk} 🛡${c.statRoll.def}</span>${mut} <span class="tag">召喚MP${summonMP(c.rarity)}</span></button>`; }).join('')
     : `<p class="muted" style="font-size:12px">手札にモンスター個体がいません。敵撃破で稀に手に入る「個体カード」を、出撃前に <b>袋</b> へ入れて持ち込み、ここ／手札から使うと召喚されます。</p>`;
-  // レガシー: 旧 monCards（型カウント）を持つ古いセーブ向けの簡易召喚
-  const legacy=Object.entries(G.monCards||{}).filter(([nm,c])=>c>0);
-  const legacyList = legacy.length ? `<div class="tag" style="margin-top:8px;color:#9ab">旧コレクション（型）</div>`+legacy.map(([nm,c])=>{ const M=MONSTERS[nm]||{hp:0,atk:0};
-      return `<button class="smpickL" data-n="${nm}" style="display:block;width:100%;text-align:left;margin:3px 0">${(M.emoji||'👹')} ${nm} ×${c} <span class="tag">HP${M.hp} ATK${M.atk}</span></button>`; }).join('') : '';
+  // [修正] 旧 monCards（型カウント）からの“持ち込み無し召喚”は廃止。
+  //   コレクションの個体は、出撃前に「袋」へ入れて手札に持ち込んだ時だけ召喚できる（フリー召喚の抜け穴を塞ぐ）。
+  const legacyList = '';
+  const legacyNote = (Object.values(G.monCards||{}).some(c=>c>0))
+    ? `<p class="muted" style="font-size:11px;color:#9ab;margin-top:6px">📦 コレクションのモンスターは、出撃前に<b>袋</b >へ入れて持ち込むと召喚できます（ダンジョン内でカード無しの召喚はできません）。</p>` : '';
   const cur = G.summon ? `<p style="font-size:13px">現在召喚中: <b class="gold">${G.summon.name}</b>（HP ${Math.max(0,Math.round(G.summon.hp))}/${G.summon.maxhp}）</p>` : '';
   showModal(`<h2>👹 仲間を召喚（同時に1体まで）</h2>${cur}
     <p class="muted" style="font-size:12px">手札の<b>モンスター個体カード</b>を使うと召喚。青く表示され、階が変わってもついてきて敵を攻撃します。倒れると50%で個体に戻ります。</p>
-    <div class="scroll" style="max-height:260px">${monList}${legacyList}</div>
+    <div class="scroll" style="max-height:260px">${monList}${legacyList}</div>${legacyNote}
     <div class="grid2" style="margin-top:10px">${G.summon?'<button id="smDismiss" class="danger">送還（手札に戻す）</button>':'<span></span>'}<button id="smClose">閉じる</button></div>`);
   document.querySelectorAll('.smpick').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; hideModal(); summonFromCard(i); });
-  document.querySelectorAll('.smpickL').forEach(b=>b.onclick=()=>{ summonAlly(b.dataset.n); hideModal(); });
   const dm=document.getElementById('smDismiss'); if(dm) dm.onclick=()=>{ dismissSummon(); hideModal(); };
   document.getElementById('smClose').onclick=hideModal;
 }
@@ -4617,18 +4793,21 @@ function enemyAttack(m,ranged,mult){
     setTimeout(()=>{ hitstop(280); G._shake={r0:_rawNow(),amp:0.5}; },off+BOLT_MS); // 着弾ヒットストップ4倍＋画面わずか揺れ
   }
   G._lockUntil=now()+off+240; // 敵の攻撃を見届けるまで入力を軽くロック
-  G.hp-=dmg;
+  const _impact=off+(ranged?BOLT_MS:140); // 命中（着弾）の瞬間
   log(`✖ ${m.name} の${ranged?"遠距離":""}攻撃 ${dmg} ダメージ`,"l-dmg");
-  popText(G.px,G.py,"-"+dmg,"#ff7a6a",false,off+(ranged?BOLT_MS:140));
-  // knockback
-  if(m.role==="knock" && !ranged){
-    const dx=Math.sign(G.px-m.x), dy=Math.sign(G.py-m.y);
-    let kx=G.px+dx, ky=G.py+dy;
-    if(canStep(G.px,G.py,kx,ky)&&!occupied(kx,ky)){ G.px=kx;G.py=ky; log("吹き飛ばされた！","l-warn"); }
-  }
-  // poison tile
-  if(m.role==="poison"){ /* simplified: small dot handled by adjacency */ }
-  if(G.hp<=0){ gameOver(); }
+  popText(G.px,G.py,"-"+dmg,"#ff7a6a",false,_impact);
+  // ★HPの減少・ノックバック・ゲームオーバー判定は「攻撃が当たった瞬間」に行う。
+  //   （以前は即座にG.hpを引いていたため、着弾前にHPバーが減り、命中前に死亡することがあった）
+  setTimeout(()=>{
+    if(G.over) return;
+    G.hp-=dmg;
+    if(m.role==="knock" && !ranged){
+      const dx=Math.sign(G.px-m.x), dy=Math.sign(G.py-m.y);
+      let kx=G.px+dx, ky=G.py+dy;
+      if(canStep(G.px,G.py,kx,ky)&&!occupied(kx,ky)){ G.px=kx;G.py=ky; log("吹き飛ばされた！","l-warn"); }
+    }
+    if(G.hp<=0){ gameOver(); }
+  }, _impact);
 }
 function onLine(ax,ay,bx,by){ return ax===bx||ay===by||Math.abs(ax-bx)===Math.abs(ay-by); }
 function clearLine(ax,ay,bx,by){
@@ -4948,11 +5127,23 @@ function resolveCard(i,target){
     }
   }
   else sfxCard('fail');                          // ブブッ（不発）
-  // using a card costs a turn (enemy acts) unless it failed
-  if(consumed){ enemyPhase(); tickStatuses(); }
-  computeVisibility(); refreshUI(); draw();
-  if(G.hp<=0) gameOver();
+  // [演出を見せる] カードの演出（魔法弾/オーラ/装備掲げ）を1拍ぶん見せてから敵フェイズへ。
+  //   それまで入力はロック（連打防止）。敵が即座に動いて演出を潰すのを防ぐ。
+  if(consumed){
+    G.busy=true;
+    computeVisibility(); refreshUI(); draw();
+    setTimeout(()=>{
+      G.busy=false;
+      enemyPhase(); tickStatuses();
+      computeVisibility(); refreshUI(); draw();
+      if(G.hp<=0) gameOver();
+    }, CARD_CAST_MS);
+  } else {
+    computeVisibility(); refreshUI(); draw();
+    if(G.hp<=0) gameOver();
+  }
 }
+const CARD_CAST_MS=900; // カード使用→演出を見せる“ため”の時間（この後に敵が動く）
 function applyMagic(m,dmg,kind){
   if(m.role==="magicimmune"){ log(`${m.name} は魔法無効！`,"l-warn"); return; }
   m.hp-=dmg; log(`魔法: ${m.name} に ${dmg}`,"l-mag");
@@ -6052,9 +6243,59 @@ function gameOver(){
   }
   G.over=true; draw();
   const lost=G.hand.length; G.hand=[]; saveGame();
-  if(G.worldMode){ worldOnLose(lost); return; }
-  endScreen("GAME OVER 💀", `${DUNGEONS[G.dungeon].jp} ${G.floor}F で力尽きた。<br>BET、配当(${G.loot})、持ち込んだカード${lost}枚を失った。`,
-    "#ff5b6e");
+  // ★敗北演出: 道半ばで力尽き、その場にがくりと座り込む → GAME OVER。
+  playDeathSequence(()=>{
+    if(G.worldMode){ worldOnLose(lost); return; }
+    endScreen("GAME OVER 💀", `${DUNGEONS[G.dungeon].jp} ${G.floor}F で力尽きた。<br>BET、配当(${G.loot})、持ち込んだカード${lost}枚を失った。`,
+      "#ff5b6e");
+  });
+}
+// ============ 敗北アニメ（座り込む → GAME OVER） ============
+function playDeathSequence(cb){
+  try{
+    bgmStop&&bgmStop();
+    if(!document.getElementById('deathfxStyle')){
+      const st=document.createElement('style'); st.id='deathfxStyle';
+      st.textContent=`
+        #deathfx{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;
+          align-items:center;justify-content:center;pointer-events:none;
+          background:radial-gradient(ellipse at 50% 58%,rgba(10,6,12,.2),rgba(3,2,4,.96));
+          opacity:0;transition:opacity .6s ease}
+        #deathfx.on{opacity:1}
+        #deathfx .dhero{width:148px;height:148px;object-fit:contain;
+          transform-origin:50% 100%;filter:grayscale(.15) brightness(1);
+          transform:translateY(0) scaleY(1) rotate(0deg)}
+        #deathfx.fall .dhero{animation:dHeroFall 1.5s cubic-bezier(.4,1.3,.5,1) forwards}
+        @keyframes dHeroFall{
+          0%{transform:translateY(0) scaleY(1) rotate(0)}
+          18%{transform:translateY(-6px) scaleY(1.04) rotate(0)}
+          46%{transform:translateY(10px) scaleY(.84) rotate(-7deg);filter:grayscale(.5) brightness(.85)}
+          100%{transform:translateY(34px) scaleY(.66) rotate(-15deg);filter:grayscale(.92) brightness(.55)}}
+        #deathfx .dsigh{margin-top:6px;font-size:26px;letter-spacing:6px;color:#c9b8c2;
+          opacity:0;text-shadow:0 2px 8px #000}
+        #deathfx.fall .dsigh{animation:dSigh .9s ease .55s forwards}
+        @keyframes dSigh{0%{opacity:0;transform:translateY(-6px)}100%{opacity:.9;transform:translateY(0)}}
+        #deathfx .dgo{margin-top:18px;font-size:46px;font-weight:900;letter-spacing:8px;
+          color:#ff4d5e;text-shadow:0 0 24px rgba(255,60,80,.6),0 4px 0 #4a0008;
+          opacity:0;transform:scale(.6) translateY(20px)}
+        #deathfx.go .dgo{animation:dGO 1s cubic-bezier(.2,1.4,.4,1) forwards}
+        @keyframes dGO{0%{opacity:0;transform:scale(.6) translateY(20px)}
+          60%{opacity:1;transform:scale(1.08) translateY(0)}
+          100%{opacity:1;transform:scale(1) translateY(0)}}`;
+      document.head.appendChild(st);
+    }
+    const job=(G.job||'warrior'), emoji=((JOBS[job]&&JOBS[job].emoji)||'🧝');
+    const ov=document.createElement('div'); ov.id='deathfx';
+    ov.innerHTML=`<img class="dhero" src="assets/t_hero_${job}.png"
+        onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'dhero',style:'display:flex;align-items:center;justify-content:center;font-size:96px',textContent:'${emoji}'}))">
+      <div class="dsigh">…………</div><div class="dgo">GAME OVER</div>`;
+    document.body.appendChild(ov);
+    requestAnimationFrame(()=>{ ov.classList.add('on'); requestAnimationFrame(()=>ov.classList.add('fall')); });
+    sfxUIBack&&sfxUIBack();
+    setTimeout(()=>{ ov.classList.add('go'); sfxVanish&&sfxVanish('stone',0,1.0); }, 1500);
+    setTimeout(()=>{ ov.style.transition='opacity .5s'; ov.style.opacity='0';
+      setTimeout(()=>{ ov.remove(); cb&&cb(); }, 520); }, 2900);
+  }catch(e){ cb&&cb(); }
 }
 function endScreen(title,body,color){
   bgmStop();
@@ -7345,7 +7586,7 @@ function instCardHTML(inst){
     ${skinArt?`<div style="text-align:center;margin:2px 0"><img src="${skinArt}" alt="" style="max-height:64px;max-width:100%;object-fit:contain;filter:drop-shadow(0 0 6px ${swatch})"></div>`:''}
     ${fin?`<div style="font-size:10px;color:${swatch};margin:1px 0">🎨 ${fin.nm}フィニッシュ</div>`:''}
     ${isHero?(heroBakedPrev
-        ?`<div style="text-align:center;margin:2px 0"><img src="${heroBakedPrev}" alt="" style="height:62px;object-fit:contain"></div>`
+        ?`<div style="text-align:center;margin:2px 0"><img src="${heroBakedPrev}" alt="" style="height:62px;object-fit:contain;filter:${heroJitterCSS(c)}"></div>`
         :(heroPrev?`<div style="text-align:center;margin:2px 0"><img src="${heroPrev}" alt="" style="height:62px;object-fit:contain;filter:${heroFinishCSS(c)}"></div>`:'')):''}
     ${heroFin?`<div style="font-size:10px;margin:1px 0">🎨 ${heroFin.nm}（現職に色変え${heroBakedPrev?'・焼済':''}）</div>`:''}
     ${isHero?`<button class="heroEqBtn" data-id="${c.instanceId}" style="width:100%;margin:3px 0;font-size:11px;padding:3px;border-radius:6px;border:1px solid ${heroEq?'#ffd24d':'#5a8'};background:${heroEq?'rgba(80,64,20,.5)':'rgba(20,40,30,.5)'};color:${heroEq?'#ffd24d':'#bdf0d2'};cursor:pointer">${heroEq?'★ 着用中（クリックで外す）':'🎨 このスキンを着る'}</button>`:''}
@@ -7359,7 +7600,7 @@ function instCardHTML(inst){
     <div style="font-size:11px;margin:4px 0 2px">⚔${c.statRoll.atk} 🛡${c.statRoll.def} 会${Math.round(c.statRoll.crit*100)}%</div>
     <div style="margin:1px 0 3px">${traits}</div>
     ${badges?`<div style="font-size:10px;color:#ffd24d">${badges}</div>`:''}
-    <div style="font-size:10px;color:#ffd24d;margin:1px 0">💰 相場 ${estimatePrice(inst)}メダル</div>
+    <div style="font-size:10px;color:#ffd24d;margin:1px 0">${isHero&&isUntradableSkin(c)?'🚫 <b>非売品</b>（伝説級・ドロップ限定）':'💰 相場 '+estimatePrice(inst)+'メダル'}</div>
     ${isWeapon?`<button class="eqBtn" data-id="${c.instanceId}" style="width:100%;margin:3px 0;font-size:11px;padding:3px;border-radius:6px;border:1px solid ${equipped?'#ffd24d':'#5a8'};background:${equipped?'rgba(80,64,20,.5)':'rgba(20,40,30,.5)'};color:${equipped?'#ffd24d':'#bdf0d2'};cursor:pointer">${equipped?'★ 装備中（クリックで外す）':'🗡️ 武器スキンを装備'}</button>`:''}
     <div style="font-size:9.5px;line-height:1.35" class="muted">📜 ${isWeapon?('鍛造・由来 '+c.provenance.dungeonJp):(c.provenance.dungeonJp+' '+c.provenance.floor+'F・'+c.provenance.sourceKill+'討伐')}<br>${(c.provenance.bornAt||'').slice(0,10)}　ID ${c.instanceId}</div>
   </div>`;
@@ -7443,7 +7684,8 @@ function histSVG(arr,w,h){
     <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2"/>
     <circle cx="${X(arr.length-1).toFixed(1)}" cy="${Y(arr[arr.length-1]).toFixed(1)}" r="2.6" fill="${col}"/></svg>`;
 }
-function mktMatch(c){ if(_mktF.kind!=='all'&&c.kind!==_mktF.kind) return false;
+function mktMatch(c){ if(isUntradableSkin(c)) return false;
+  if(_mktF.kind!=='all'&&c.kind!==_mktF.kind) return false;
   if(_mktF.rar!=='all'&&c.rarity!==_mktF.rar) return false;
   if(_mktF.mut==='mut'&&!c.mutation) return false; return true; }
 function mktSortArr(arr,gi){ const k=_mktF.sort; return arr.slice().sort((a,b)=>{ const A=gi(a),B=gi(b);
@@ -7458,7 +7700,7 @@ function showMarket(noTick){
   const chg=idx0?Math.round((idxNow/idx0-1)*100):0; const chgCol=chg>=0?'#7df0a0':'#ff8a6a';
   const opt=(v,cur,label)=>`<option value="${v}"${v===cur?' selected':''}>${label}</option>`;
   const filterBar=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0">
-    <select id="fKind" style="font-size:11px">${opt('all',_mktF.kind,'種別:すべて')}${opt('monster',_mktF.kind,'モンスター')}${opt('weapon',_mktF.kind,'武器')}</select>
+    <select id="fKind" style="font-size:11px">${opt('all',_mktF.kind,'種別:すべて')}${opt('monster',_mktF.kind,'モンスター')}${opt('weapon',_mktF.kind,'武器')}${opt('hero',_mktF.kind,'スキン')}</select>
     <select id="fRar" style="font-size:11px">${['all','Common','Rare','Epic','Legendary','Mythic'].map(v=>opt(v,_mktF.rar,v==='all'?'レア度:すべて':(INST_RAR_JP[v]||v))).join('')}</select>
     <select id="fMut" style="font-size:11px">${opt('all',_mktF.mut,'変異:すべて')}${opt('mut',_mktF.mut,'✦変異のみ')}</select>
     <select id="fSort" style="font-size:11px">${opt('price_desc',_mktF.sort,'並び:価格↓')}${opt('price_asc',_mktF.sort,'価格↑')}${opt('wear_asc',_mktF.sort,'状態◎')}${opt('serial_asc',_mktF.sort,'若番#')}</select></div>`;
@@ -7838,6 +8080,8 @@ function showOptions(){
       ${seg('fx',['off','on'],o.reduceFx?'on':'off')}</div>
     <div class="optrow"><div><label>操作方法</label><div class="od">移動=矢印/WASD・攻撃=向いて移動・カード=クリック</div></div>
       <button id="optHelp">表示</button></div>
+    <div class="optrow"><div><label>スキン図鑑</label><div class="od">全ヒーロースキンの見本（伝説/神話/極彩の超低確率スキンも閲覧）</div></div>
+      <button id="optSkins">🎨 図鑑</button></div>
     <div class="optrow"><div><label>セーブ管理</label><div class="od danger">⚠ 全データ初期化はもとに戻せません</div></div>
       <span><button id="optMute">${G.muted?'🔇':'🔊'} 音 全体</button> <button id="optWipe" class="danger">全消去</button></span></div>
     <div class="center" style="margin-top:12px"><button class="primary" id="optClose">閉じる</button></div>`);
@@ -7851,6 +8095,7 @@ function showOptions(){
   document.querySelectorAll('[data-seg="fx"] button').forEach(b=>b.onclick=()=>{ o.reduceFx=(b.dataset.v==='on');
     document.querySelectorAll('[data-seg="fx"] button').forEach(x=>x.classList.toggle('on',x===b)); applyOpt(); saveOpt(); });
   document.getElementById('optHelp').onclick=()=>{ if(typeof showHelp==='function'){ showHelp(); } else alert('移動: 矢印キー / WASD\n攻撃: 敵の方へ移動\nカード: クリックで使用\nゴール: 祭壇のオーブを取って脱出'); };
+  document.getElementById('optSkins').onclick=()=>{ showSkinGallery(); };
   document.getElementById('optMute').onclick=()=>{ const sb=document.getElementById('sndBtn'); if(sb) sb.click(); hideModal(); showOptions(); };
   document.getElementById('optWipe').onclick=()=>{
     confirmMulti([
@@ -7863,6 +8108,38 @@ function showOptions(){
       showOptions);
   };
   document.getElementById('optClose').onclick=()=>{ saveOpt(); hideModal(); };
+}
+
+/* ===================== 🎨 スキン図鑑（全ヒーロースキン見本） ===================== */
+let _skinGalTimer=null;
+function showSkinGallery(){
+  const job=(G.job&&HERO_SPRITE[G.job])?G.job:'warrior';
+  const slug=(job==='mage')?'wizard':job;
+  const base='assets/t_d_'+slug+'_front_idle.png';
+  const tierCol={LEGEND:'#ffd24d',MYTHIC:'#b98cff',ULTRA:'#7dffd0',SECRET:'#ff8af0'};
+  const tile=(f,opts)=>{ const myth=!!f.anim; const baked=opts.baked;
+    const src = baked ? ('assets/hero_skins/'+f.id+'/t_d_'+slug+'_front_idle.png') : base;
+    const filt = (baked||f.id==='azure') ? 'none' : heroFinishCSS({heroFinish:f.id,patternSeed:7});
+    const badge = myth ? `<div style="font-size:9px;font-weight:800;color:${tierCol[f.tier]||'#fff'}">${f.tier} · ${f.pct}</div>` : '';
+    const glow = myth ? `box-shadow:0 0 14px ${f.glow},inset 0 0 10px ${hexA(f.glow,0.5)};border-color:${f.glow}` : '';
+    return `<div style="text-align:center;border:1px solid var(--line);border-radius:10px;padding:6px 4px;background:var(--panel2);${glow}">
+      <img class="${myth?'galmyth':''}" data-fin="${f.id}" src="${src}" onerror="this.src='${base}'" style="height:74px;object-fit:contain;filter:${filt};image-rendering:auto">
+      <div style="font-size:11px;color:#e8e8f0;margin-top:2px">${f.nm}</div>${badge}</div>`; };
+  const normals=HERO_FINISHES.map(f=>tile(f,{baked:(f.id!=='azure'&&f.id!=='prismatic')})).join('');
+  const myths=MYTHIC_FINISHES.map(f=>tile(f,{baked:false})).join('');
+  showModal(`<h2>🎨 ヒーロースキン図鑑</h2>
+    <p class="muted" style="font-size:12px">職業「${JOBS[job].name}」の見本。装備の色・輝きだけが変わり、キャラ本体はそのまま。</p>
+    <div class="tag">通常スキン（焼き出し済み）</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px;margin:6px 0 12px">${normals}</div>
+    <div class="tag">✦ MYTHIC — 超低確率で“光る/動く”スキン</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px;margin:6px 0">${myths}</div>
+    <div class="center" style="margin-top:12px"><button class="primary" id="galClose">閉じる</button></div>`);
+  // MYTHICタイルのアニメ色味を毎フレーム更新（hue回転/脈動）
+  if(_skinGalTimer){ clearInterval(_skinGalTimer); _skinGalTimer=null; }
+  _skinGalTimer=setInterval(()=>{ const els=document.querySelectorAll('.galmyth'); if(!els.length){ clearInterval(_skinGalTimer); _skinGalTimer=null; return; }
+    els.forEach(im=>{ im.style.filter=heroFinishCSS({heroFinish:im.dataset.fin,patternSeed:7}); }); },60);
+  const close=()=>{ if(_skinGalTimer){ clearInterval(_skinGalTimer); _skinGalTimer=null; } hideModal(); showOptions(); };
+  document.getElementById('galClose').onclick=close;
 }
 
 /* ===================== タイトルBGM（自作ループ） ===================== */
@@ -8469,6 +8746,11 @@ function confirmSortie(c){
     const badge=document.createElement('div');
     badge.style.cssText='position:absolute;top:2px;right:2px;background:rgba(0,0,0,.72);color:#ffe79a;border:1px solid var(--gold);border-radius:9px;min-width:22px;text-align:center;padding:1px 5px;font-size:13px;font-weight:800;display:none;z-index:5;pointer-events:none';
     el.appendChild(badge);
+    // [修正] 所持数を常時表示（左下バッジ）。選択しなくても何枚持っているか分かる。
+    const own=document.createElement('div');
+    own.textContent='所持'+n;
+    own.style.cssText='position:absolute;bottom:2px;left:2px;background:rgba(10,20,30,.82);color:#bfe6ff;border:1px solid #4a7fa0;border-radius:8px;padding:1px 6px;font-size:11px;font-weight:700;z-index:5;pointer-events:none';
+    el.appendChild(own);
     t.el=el; t.badge=badge; tiles.push(t);
     coll.appendChild(el);
   });
